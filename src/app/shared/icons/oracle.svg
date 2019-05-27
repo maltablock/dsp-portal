@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>02__elements / icons / oracle</title>
+    <desc>Created with Sketch.</desc>
+    <g id="02__elements-/-icons-/-oracle" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" fill="#FC4A71" x="0" y="0" width="32" height="32" rx="16"></rect>
+        <path d="M16,13 C10.4797337,13 6,11.5067554 6,9 C6,6.49324457 10.4797337,5 16,5 C21.5202663,5 26,6.49324457 26,9 C26,11.5067554 21.5202663,13 16,13 Z M16,11 C20.4208592,11 24,9.80695307 24,9 C24,8.19304693 20.4208592,7 16,7 C11.5791408,7 8,8.19304693 8,9 C8,9.80695307 11.5791408,11 16,11 Z" id="Oval" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M24,16 C24,15.4477153 24.4477153,15 25,15 C25.5522847,15 26,15.4477153 26,16 C26,18.511827 21.5423388,20 16,20 C10.4576612,20 6,18.511827 6,16 C6,15.4477153 6.44771525,15 7,15 C7.55228475,15 8,15.4477153 8,16 C8,16.8127884 11.5561637,18 16,18 C20.4438363,18 24,16.8127884 24,16 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+        <path d="M6,9 C6,8.44771525 6.44771525,8 7,8 C7.55228475,8 8,8.44771525 8,9 L8,23 C8,23.8127884 11.5561637,25 16,25 C20.4438363,25 24,23.8127884 24,23 L24,9 C24,8.44771525 24.4477153,8 25,8 C25.5522847,8 26,8.44771525 26,9 L26,23 C26,25.511827 21.5423388,27 16,27 C10.4576612,27 6,25.511827 6,23 L6,9 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"></path>
+    </g>
+</svg>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 54.1 (76490) - https://sketchapp.com -->
+    <title>close</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="03__components-/-search-/search-complex" transform="translate(-226.000000, -15.000000)" fill="#8CA0C2" fill-rule="nonzero">
+            <g id="close" transform="translate(226.000000, 15.000000)">
+                <polygon id="Path" points="16 1.61142857 14.3885714 0 8 6.38857143 1.61142857 0 0 1.61142857 6.38857143 8 0 14.3885714 1.61142857 16 8 9.61142857 14.3885714 16 16 14.3885714 9.61142857 8"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
