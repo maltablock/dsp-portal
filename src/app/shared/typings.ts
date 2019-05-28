@@ -14,6 +14,9 @@ export interface IDappPackageData {
 }
 
 export interface IEOSNetwork {
-  chain_id            : string // "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906",
-  node_endpoint       : string // "https://public.eosinfra.io"
+  chainId      : string // "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906",
+  nodeEndpoint : string // "https://public.eosinfra.io"
+  protocol     : string,
+  host         : string,
+  port         : number,
 }

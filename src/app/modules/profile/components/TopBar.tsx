@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import maltablockIcon from 'app/shared/icons/malta_block_icon.png';
 import Button from 'app/shared/components/Button';
+import { wallet } from 'app/shared/eos';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,10 +28,26 @@ const LoginButton = styled(Button)`
 `;
 
 const TopBar = () => {
+  const handleLogin = React.useCallback(async () => {
+    try {
+      await wallet.connect();
+      // last Scatter login is saved, need to remove to be able to login again
+      if(wallet.accountInfo) {
+        await wallet.logout();
+      }
+      const accountInfo = await wallet.login();
+
+      // can use accountInfo.account_name to display login
+      console.log(accountInfo)
+    } catch (error) {
+      console.error(error.message)
+    }
+  }, [])
+
   return (
     <Wrapper>
       <Logo src={maltablockIcon} />
-      <LoginButton>Login</LoginButton>
+      <LoginButton type="button" onClick={handleLogin}>Login</LoginButton>
     </Wrapper>
   )
 }
