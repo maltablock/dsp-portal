@@ -5,6 +5,7 @@ import demoData from '../demo-data.json';
 import DappPackage from './DappPackage';
 import RootStore from 'app/root/RootStore.js';
 import { IDappPackageData } from 'app/shared/typings.js';
+import { fetchAllRows } from 'app/shared/eos';
 
 class DappPackageStore {
   rootStore: RootStore;
@@ -37,16 +38,16 @@ class DappPackageStore {
 
   @action handleStakeValueChange = e => {
     this.stakeValue = e.target.value;
-  }
+  };
 
   @action handleStakeButtonClick = () => {
     this.isStakedDialogVisible = true;
-  }
+  };
 
   @action closeStakeDialog = () => {
     this.isStakedDialogVisible = false;
     this.selectPackage(null);
-  }
+  };
 
   /**
    * Listing packages in the UI (based on search/filter/sort params)
@@ -55,10 +56,11 @@ class DappPackageStore {
   @computed get foundPackages() {
     const searchText = this.rootStore.searchStore.searchText.toLowerCase();
     if (!searchText) return this.dappPackages;
-    return this.dappPackages.filter(p =>
-      p.data.service.toLowerCase().includes(searchText) ||
-      p.data.provider.toLowerCase().includes(searchText) ||
-      p.data.package_id.toLowerCase().includes(searchText)
+    return this.dappPackages.filter(
+      p =>
+        p.data.service.toLowerCase().includes(searchText) ||
+        p.data.provider.toLowerCase().includes(searchText) ||
+        p.data.package_id.toLowerCase().includes(searchText),
     );
   }
 
@@ -78,7 +80,7 @@ class DappPackageStore {
         const field = {
           quota: 'quotaNumber',
           min_stake_quantity: 'minStakeNumber',
-          min_unstake_period: 'min_unstake_period'
+          min_unstake_period: 'min_unstake_period',
         }[sortBy];
         return this.filteredPackages.sort((a, b) => a[field] - b[field]);
       case 'provider':
@@ -99,16 +101,16 @@ class DappPackageStore {
   @observable dappPackages: DappPackage[] = [];
 
   @action async fetchDappPackages() {
-    const data = process.env.REACT_APP_USE_DEMO_DATA
-    ? demoData
-    : (
-      await axios.post<{ rows: IDappPackageData[] }>(
-        'https://public.eosinfra.io/v1/chain/get_table_rows',
-        { table: 'package', scope: 'dappservices', code: 'dappservices', limit: 100, json: true },
-        // @ts-ignore
-        { crossdomain: true }
-      )).data;
-
+    let data: { rows: IDappPackageData[] } = { rows: [] };
+    if (process.env.REACT_APP_USE_DEMO_DATA) data = demoData;
+    else {
+      const options = {
+        code: `dappservices`,
+        scope: `dappservices`,
+        table: `package`,
+      };
+      data.rows = await fetchAllRows(options);
+    }
 
     const packages = data.rows.map(row => ({ ...row, icon: '' }));
 
@@ -121,17 +123,19 @@ class DappPackageStore {
         this.dappPackages[index].data.icon = cachedIcon;
       } else {
         try {
-          // @ts-ignore
-          const res = await axios.get(dsp.package_json_uri, { crossdomain: true });
+          const res = await axios.get(dsp.data.package_json_uri, {
+            // @ts-ignore
+            crossdomain: true,
+          });
           const icon = res && res.data && res.data.logo && res.data.logo.logo_256;
 
           if (icon) {
             localStorage.setItem(dsp.data.package_json_uri, icon);
             this.dappPackages[index].data.icon = icon;
           }
-        } catch(e) {}
+        } catch (e) { }
       }
-    })
+    });
   }
 }
 
