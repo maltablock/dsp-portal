@@ -1,8 +1,10 @@
 import React from 'react'
 import styled from 'styled-components';
+import { observer, inject } from 'mobx-react';
+
 import maltablockIcon from 'app/shared/icons/malta_block_icon.png';
 import Button from 'app/shared/components/Button';
-import { wallet } from 'app/shared/eos';
+import { ProfileStore } from 'app/modules/profile';
 
 const Wrapper = styled.div`
   display: flex;
@@ -27,29 +29,19 @@ const LoginButton = styled(Button)`
   background: linear-gradient(0deg, #5460ff 0%, #414eff 100%);
 `;
 
-const TopBar = () => {
-  const handleLogin = React.useCallback(async () => {
-    try {
-      await wallet.connect();
-      // last Scatter login is saved, need to remove to be able to login again
-      if(wallet.accountInfo) {
-        await wallet.logout();
-      }
-      const accountInfo = await wallet.login();
+type Props = {
+  profileStore?: ProfileStore
+}
 
-      // can use accountInfo.account_name to display login
-      console.log(accountInfo)
-    } catch (error) {
-      console.error(error.message)
-    }
-  }, [])
-
+const TopBar = ({ profileStore }: Props) => {
   return (
     <Wrapper>
       <Logo src={maltablockIcon} />
-      <LoginButton type="button" onClick={handleLogin}>Login</LoginButton>
+      <LoginButton type="button" onClick={profileStore!.handleLogin}>
+        Login
+      </LoginButton>
     </Wrapper>
   )
 }
 
-export default TopBar;
+export default inject('profileStore')(observer(TopBar));
