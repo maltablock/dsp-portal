@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components';
+import { observer, inject } from 'mobx-react';
+
 import maltablockIcon from 'app/shared/icons/malta_block_icon.png';
 import Button from 'app/shared/components/Button';
+import { ProfileStore } from 'app/modules/profile';
 
 const Wrapper = styled.div`
   display: flex;
@@ -26,13 +29,19 @@ const LoginButton = styled(Button)`
   background: linear-gradient(0deg, #5460ff 0%, #414eff 100%);
 `;
 
-const TopBar = () => {
+type Props = {
+  profileStore?: ProfileStore
+}
+
+const TopBar = ({ profileStore }: Props) => {
   return (
     <Wrapper>
       <Logo src={maltablockIcon} />
-      <LoginButton>Login</LoginButton>
+      <LoginButton type="button" onClick={profileStore!.handleLogin}>
+        Login
+      </LoginButton>
     </Wrapper>
   )
 }
 
-export default TopBar;
+export default inject('profileStore')(observer(TopBar));
