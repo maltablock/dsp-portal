@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import { wallet, fetchRows, decomposeAsset, Symbol } from 'app/shared/eos';
 import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
 import { getTableBoundsForName } from 'app/shared/eos/name';
@@ -139,6 +139,14 @@ class ProfileStore {
 
     get vestingEndDate() {
         return new Date(`2021-02-26T16:00:00.000`);
+    }
+
+    @computed get totalStakedDappAmount() {
+        return (this.stakes || []).reduce((sum, stake) => sum + stake.balance, 0)
+    }
+
+    @computed get totalDappAmount() {
+        return this.totalStakedDappAmount + (this.dappInfo ? this.dappInfo.unstakedBalance : 0)
     }
 }
 
