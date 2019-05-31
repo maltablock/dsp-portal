@@ -2,6 +2,7 @@ import { observable, action } from 'mobx';
 import { wallet, fetchRows, decomposeAsset, Symbol } from 'app/shared/eos';
 import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
 import { getTableBoundsForName } from 'app/shared/eos/name';
+import demoData from '../demo-data.json';
 
 // AccountInfo from eeos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -12,7 +13,7 @@ type StakeInfo = {
     account: string;
     balance: number;
     symbol: Symbol;
-    id: string;
+    id: number;
     last_reward: string;
     last_usage: string;
     package: string;
@@ -60,6 +61,8 @@ class ProfileStore {
             } catch {}
             const accountInfo = (await wallet.login()) as unknown;
             this.accountInfo = accountInfo as AccountInfoFixed;
+            // reset all observables to not have stale data from previous account
+            this.stakes = this.dappHdlInfo = this.dappInfo = undefined;
             this.fetchInfo();
         } catch (error) {
             console.error(error.message);
@@ -68,6 +71,14 @@ class ProfileStore {
 
     @action fetchInfo = async () => {
         if (!this.accountInfo) return;
+
+        if (process.env.REACT_APP_USE_DEMO_DATA) {
+            this.dappInfo = demoData.dappInfo;
+            this.dappHdlInfo = demoData.dappHdlInfo;
+            this.stakes = demoData.stakes;
+
+            return;
+        }
 
         try {
             const dappInfoResult = await fetchRows<AccountBalanceRow>({
@@ -81,7 +92,7 @@ class ProfileStore {
                 };
             }
 
-            // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service
+            // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service. ALL LITTLE ENDIAN (!)
             // https://github.com/liquidapps-io/zeus-dapp-network/blob/9f0fd5d8cff78d7f429a6284aedeb23f45f21263/dapp-services/contracts/eos/dappservices/dappservices.cpp#L116
             const nameBounds = getTableBoundsForName(this.accountInfo.account_name);
             const servicePart = `0`.repeat(16);
@@ -127,7 +138,7 @@ class ProfileStore {
     };
 
     get vestingEndDate() {
-        return `?`;
+        return new Date(`2021-02-26T16:00:00.000`);
     }
 }
 

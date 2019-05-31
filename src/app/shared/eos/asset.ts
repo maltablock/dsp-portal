@@ -9,21 +9,38 @@ export type Asset = {
     symbol: Symbol;
 };
 
+type FormatOptions = {
+    withSymbol?: boolean
+    separateThousands?: boolean
+}
+
 /**
  * Example:
  * { amount: 1230000, symbol: { symbolCode: 'DAPP', precision: 4 }} => '123.0000 DAPP'
  */
-export function formatAsset({ amount, symbol }: Asset): string {
+export function formatAsset({ amount, symbol }: Asset, formatOptions? : FormatOptions): string {
+    const options:FormatOptions = Object.assign({
+        withSymbol: true,
+        separateThousands: false,
+    }, formatOptions || {})
     const { precision, symbolCode } = symbol;
     let s = String(amount);
     while (s.length < precision + 1) {
         s = `0${s}`;
     }
 
-    const pre = s.slice(0, -precision);
-    const end = s.slice(-precision);
+    let pre = s.slice(0, -precision);
+    const decimals = s.slice(-precision);
 
-    return `${pre}.${end} ${symbolCode}`;
+    if(options.separateThousands) {
+        // adds `,` thousand separators
+        // https://stackoverflow.com/a/2901298/9843487
+        pre = pre.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    let result = `${pre}.${decimals}`
+    if(options.withSymbol) result = `${result} ${symbolCode}`
+    return result;
 }
 
 
