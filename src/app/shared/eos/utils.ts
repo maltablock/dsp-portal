@@ -8,8 +8,8 @@ type GetTableRowsOptions = {
   code?: string;
   scope?: string;
   table?: string;
-  lower_bound?: number;
-  upper_bound?: number;
+  lower_bound?: number | string;
+  upper_bound?: number | string;
   limit?: number;
   key_type?: string;
   index_position?: string;
@@ -17,7 +17,7 @@ type GetTableRowsOptions = {
 
 // work around the limit bug in nodes due to max timeout
 // https://github.com/EOSIO/eos/issues/3965
-export async function fetchAllRows(options: GetTableRowsOptions, indexName = `id`) {
+export async function fetchRows<T>(options: GetTableRowsOptions): Promise<T[]> {
   const mergedOptions = {
     json: true,
     lower_bound: 0,
@@ -26,7 +26,29 @@ export async function fetchAllRows(options: GetTableRowsOptions, indexName = `id
     ...options,
   };
 
-  let rows = [];
+  let lowerBound = mergedOptions.lower_bound;
+
+  const result = await rpc.get_table_rows({
+    ...mergedOptions,
+    lower_bound: lowerBound,
+  });
+
+  return result.rows;
+}
+
+export async function fetchAllRows<T>(
+  options: GetTableRowsOptions,
+  indexName = `id`,
+): Promise<T[]> {
+  const mergedOptions = {
+    json: true,
+    lower_bound: 0,
+    upper_bound: -1,
+    limit: 9999,
+    ...options,
+  };
+
+  let rows: T[] = [];
   let lowerBound = mergedOptions.lower_bound;
 
   for (let i = 0; i < MAX_PAGINATION_FETCHES; i++) {

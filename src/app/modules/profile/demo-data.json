@@ -1,0 +1,21 @@
+{
+    "dappInfo": { "unstakedBalance": 30023595 },
+    "dappHdlInfo": { "balance": 0, "allocation": 1556347, "staked": 0, "claimed": false },
+    "stakes": [
+        {
+            "id": 64,
+            "account": "maltablock.e",
+            "service": "oracleservic",
+            "provider": "eosnationdsp",
+            "quota": 998,
+            "balance": 20000000,
+            "last_usage": "1559233785000",
+            "last_reward": "1559233785000",
+            "package": "oracle1",
+            "pending_package": "oracle1",
+            "package_started": "1559233722500",
+            "package_end": "1559320122500",
+            "symbol": { "precision": 4, "symbolCode": "DAPP" }
+        }
+    ]
+}

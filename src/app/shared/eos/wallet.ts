@@ -5,9 +5,9 @@ import { getNetwork } from './networks';
 const network = getNetwork();
 
 const accessContext = initAccessContext({
-    appName: 'DAPP Portal Malta Block',
-    network,
-    walletProviders: [scatter()],
+  appName: 'DAPP Portal Malta Block',
+  network,
+  walletProviders: [scatter()],
 });
 
 const walletProviders = accessContext.getWalletProviders();
