@@ -2,7 +2,7 @@ import React from 'react'
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import styled from 'styled-components';
 import ProfileStore from '../state/ProfileStore';
-import { inject } from 'mobx-react';
+import { inject, observer } from 'mobx-react';
 
 const CardWrapper = styled(BlueGradientCard)`
   width: 640px;
@@ -52,10 +52,14 @@ const AuthRequiredCard = ({ profileStore }: Props) => {
         dApp Service Providers (DSPs) provide the tools that help developers work more effectively.
       </Message>
       <CtaButton onClick={profileStore!.login}>
-        Login to Get Started
+        {
+          profileStore!.isLoggingIn
+          ? 'Logging in with Scatter...'
+          : 'Login to Get Started'
+        }
       </CtaButton>
     </CardWrapper>
   )
 }
 
-export default inject('profileStore')(AuthRequiredCard);
+export default inject('profileStore')(observer(AuthRequiredCard));
