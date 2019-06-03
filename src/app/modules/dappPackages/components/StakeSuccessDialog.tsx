@@ -8,7 +8,7 @@ import DappPackageStore from '../state/DappPackageStore';
 
 const DialogContainer = styled.div`
   position: fixed;
-  z-index: 10;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   width: 100%;

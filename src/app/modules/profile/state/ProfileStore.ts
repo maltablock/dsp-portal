@@ -46,28 +46,73 @@ type AccountHodlRow = {
   claimed: number;
 };
 
-class ProfileStore {
-  @observable accountInfo?: AccountInfoFixed;
-  @observable stakes?: StakeInfo[];
-  @observable dappHdlInfo?: DappHdlInfo;
-  @observable dappInfo?: DappInfo;
+const LOGGED_IN_LS_KEY = 'app__is_logged_in';
 
-  @action handleLogin = async () => {
+class ProfileStore {
+  /*
+   * Login logic and account info
+   */
+
+  @observable isLoggingIn = false;
+  @observable accountInfo?: AccountInfoFixed | null;
+
+  @computed get isLoggedIn() {
+    return !!this.accountInfo;
+  }
+
+  @action login = async () => {
+    if (this.isLoggingIn) return;
+
+    this.isLoggingIn = true;
+
     try {
       await wallet.connect();
-      // last Scatter login is saved, need to remove to be able to login again
-      try {
-        await wallet.logout();
-      } catch {}
       const accountInfo = (await wallet.login()) as unknown;
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
       this.stakes = this.dappHdlInfo = this.dappInfo = undefined;
       this.fetchInfo();
-    } catch (error) {
-      console.error(error.message);
+    } catch (err) {
+      console.error(err.message);
     }
-  };
+
+    localStorage.setItem(LOGGED_IN_LS_KEY, 'true');
+    this.isLoggingIn = false;
+  }
+
+  @action logout = async () => {
+    try {
+      await wallet.logout();
+      this.accountInfo = null;
+      localStorage.removeItem(LOGGED_IN_LS_KEY);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  @action init = () => {
+    if (localStorage.getItem(LOGGED_IN_LS_KEY) === 'true') {
+      this.login();
+    }
+  }
+
+  /*
+   * Showing staked DAPPs cards logic (used only for mobile view)
+   */
+
+  @observable isCardsExpanded = false;
+
+  @action toggleCardsExpanded = () => {
+    this.isCardsExpanded = !this.isCardsExpanded;
+  }
+
+  /*
+   * Stakes logic
+   */
+
+  @observable stakes?: StakeInfo[];
+  @observable dappHdlInfo?: DappHdlInfo;
+  @observable dappInfo?: DappInfo;
 
   @action fetchInfo = async () => {
     if (!this.accountInfo) return;
@@ -141,12 +186,24 @@ class ProfileStore {
     return new Date(`2021-02-26T16:00:00.000`);
   }
 
+  @computed get unstakedBalance() {
+    return this.dappInfo ? this.dappInfo.unstakedBalance : 0;
+  }
+
   @computed get totalStakedDappAmount() {
     return (this.stakes || []).reduce((sum, stake) => sum + stake.balance, 0);
   }
 
   @computed get totalDappAmount() {
-    return this.totalStakedDappAmount + (this.dappInfo ? this.dappInfo.unstakedBalance : 0);
+    return this.totalStakedDappAmount + this.unstakedBalance;
+  }
+
+  @computed get dappHdlAmount() {
+    return this.dappHdlInfo ? this.dappHdlInfo.staked : 0;
+  }
+
+  @computed get dappHdlBalance() {
+    return this.dappHdlInfo ? this.dappHdlInfo.balance : 0;
   }
 }
 

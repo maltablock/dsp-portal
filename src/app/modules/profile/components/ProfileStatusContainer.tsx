@@ -1,18 +1,18 @@
 import React from 'react';
+import { observer, inject } from 'mobx-react';
+
+import ProfileStore from '../state/ProfileStore';
 import AuthRequiredCard from './AuthRequiredCard';
-import styled from 'styled-components';
+import StakeStatusContainer from './StakeStatusContainer';
 
-const Wrapper = styled.div`
-  margin: 74px auto 97px;
-`;
+type Props = {
+  profileStore?: ProfileStore
+};
 
-const ProfileStatusContainer = () => {
-  return (
-    <Wrapper>
-      <AuthRequiredCard />
-    </Wrapper>
-
-  )
+const ProfileStatusContainer = ({ profileStore }: Props) => {
+  return profileStore!.isLoggedIn
+    ? <StakeStatusContainer />
+    : <AuthRequiredCard />
 }
 
-export default ProfileStatusContainer;
+export default inject('profileStore')(observer(ProfileStatusContainer));

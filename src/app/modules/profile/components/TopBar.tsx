@@ -2,20 +2,27 @@ import React from 'react'
 import styled from 'styled-components';
 import { observer, inject } from 'mobx-react';
 
+import { ProfileStore } from 'app/modules/profile';
 import maltablockIcon from 'app/shared/icons/malta_block_icon.png';
 import Button from 'app/shared/components/Button';
-import { ProfileStore } from 'app/modules/profile';
+import MenuSimple from 'app/shared/components/MenuSimple';
 
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
   margin: 0 auto;
-  padding: 8px 24px;
+  padding: 8px 16px;
   width: 100%;
 
   @media (min-width: 1440px) {
     width: 1440px;
   }
+`;
+
+const LeftBlock = styled.div``;
+
+const RightBlock = styled.div`
+  margin-left: auto;
 `;
 
 const Logo = styled.img`
@@ -25,7 +32,6 @@ const Logo = styled.img`
 `;
 
 const LoginButton = styled(Button)`
-  margin-left: auto;
   background: linear-gradient(0deg, #5460ff 0%, #414eff 100%);
 `;
 
@@ -36,10 +42,28 @@ type Props = {
 const TopBar = ({ profileStore }: Props) => {
   return (
     <Wrapper>
-      <Logo src={maltablockIcon} />
-      <LoginButton type="button" onClick={profileStore!.handleLogin}>
-        Login
-      </LoginButton>
+      <LeftBlock>
+        <Logo src={maltablockIcon} />
+      </LeftBlock>
+
+      <RightBlock>
+        {
+          profileStore!.isLoggedIn
+          ? <MenuSimple
+              text={profileStore!.accountInfo!.account_name}
+              options={[
+                { text: "Logout", onClick: profileStore!.logout}
+              ]}
+            />
+          : <LoginButton
+              type="button"
+              onClick={profileStore!.login}
+              disabled={profileStore!.isLoggingIn}
+            >
+              {profileStore!.isLoggingIn ? 'Logging in...' : 'Login'}
+            </LoginButton>
+        }
+      </RightBlock>
     </Wrapper>
   )
 }

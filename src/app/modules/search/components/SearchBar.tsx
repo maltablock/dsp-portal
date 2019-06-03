@@ -6,15 +6,19 @@ import SearchInput from 'app/shared/components/SearchInput';
 import Menu from 'app/shared/components/Menu';
 import SearchStore from '../state/SearchStore';
 
+const MAX_WIDTH = 976;
+
 const Wrapper = styled.div`
   display: flex;
   align-content: space-between;
   margin: 0 auto;
-  width: ${976 + 16 * 2}px;
+  width: ${MAX_WIDTH + 16 * 2}px;
 
-  @media (max-width: 976px) {
-    width: 100%;
+
+  @media (max-width: ${MAX_WIDTH}px) {
+    width: calc(100% - 32px);
     margin: 0 16px;
+    flex-direction: column;
   }
 `;
 
@@ -22,6 +26,10 @@ const ControlsWrapper = styled.div`
   display: flex;
   margin: 16px;
   width: 100%;
+
+  @media (max-width: ${MAX_WIDTH}px) {
+    margin: 8px 0;
+  }
 `;
 
 const MenuWrapper = styled.div`

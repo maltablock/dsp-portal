@@ -9,6 +9,7 @@ class RootStore {
 
   init() {
     this.dappPackageStore.fetchDappPackages();
+    this.profileStore.init();
   }
 }
 

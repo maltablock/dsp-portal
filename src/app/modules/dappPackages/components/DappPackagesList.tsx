@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   }
 
   @media (max-width: 671px) {
-    width: ${310 + 16 * 2}px;
+    width: 100%;
   }
 `;
 

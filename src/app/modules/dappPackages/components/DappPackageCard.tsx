@@ -13,6 +13,8 @@ import Input from 'app/shared/components/Input';
 import Button from 'app/shared/components/Button';
 import { DappPackageStore } from '..';
 
+const MOBILE_WIDTH = 671;
+
 const CardWrapper = styled.div<any>`
   display: inline-flex;
   flex-direction: column;
@@ -29,6 +31,10 @@ const CardWrapper = styled.div<any>`
   z-index: ${props => props.isSelected ? 1 : 'auto'};
 
   transition: opacity 0.2s ease;
+
+  @media (max-width: ${MOBILE_WIDTH}px) {
+    width: calc(100% - 32px);
+  }
 `;
 
 const TitleAndCheckboxWrapper = styled.div<any>`
