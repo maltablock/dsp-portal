@@ -3,6 +3,7 @@ import { inject, observer } from 'mobx-react';
 
 import { ProfileStore } from 'app/modules/profile';
 import { StakeStatusCardsWrapper, StakeStatusCard, ToggleExpandButton } from './StakeStatusComponents';
+import { DAPP_SYMBOL } from 'app/shared/eos/constants';
 
 type Props = {
   profileStore?: ProfileStore
@@ -10,6 +11,8 @@ type Props = {
 
 const StakeStatusContainer = (props: Props) => {
   const store = props.profileStore!;
+
+  const dappToUsd = dapp => dapp / Math.pow(10, DAPP_SYMBOL.precision) * store.usdPerDapp
 
   return (
     <StakeStatusCardsWrapper>
@@ -19,10 +22,10 @@ const StakeStatusContainer = (props: Props) => {
 
       {
         [
-          { text: 'Total DAPP', amount: store.totalDappAmount, amountUsd: 0 },
-          { text: 'Staked DAPP', amount: store.totalStakedDappAmount, amountUsd: 0 },
-          { text: 'Unstaked DAPP', amount: store.unstakedBalance, amountUsd: 0 },
-          { text: 'Air-HODLed token', amount: store.dappHdlAmount, amountUsd: store.dappHdlBalance },
+          { text: 'Total DAPP', amount: store.totalDappAmount, amountUsd: dappToUsd(store.totalDappAmount) },
+          { text: 'Staked DAPP', amount: store.totalStakedDappAmount, amountUsd: dappToUsd(store.totalStakedDappAmount) },
+          { text: 'Unstaked DAPP', amount: store.unstakedBalance, amountUsd: dappToUsd(store.unstakedBalance) },
+          { text: 'Air-HODLed token', amount: store.dappHdlBalance, amountUsd: dappToUsd(store.dappHdlBalance) },
         ].map(({ text, amount, amountUsd }, index, arr) =>
           <StakeStatusCard
             key={text}
