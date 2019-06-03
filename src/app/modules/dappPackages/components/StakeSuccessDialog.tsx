@@ -1,10 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { inject, observer } from 'mobx-react';
 import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import Button from 'app/shared/components/Button';
-import DappPackageStore from '../state/DappPackageStore';
+import DappPackageStore, { TransactionStatus } from '../state/DappPackageStore';
 
 const DialogContainer = styled.div`
   position: fixed;
@@ -15,7 +15,7 @@ const DialogContainer = styled.div`
   height: 100%;
   top: 0;
   left: 0;
-  background-color: rgba(0,0,0,0.7);
+  background-color: rgba(0, 0, 0, 0.7);
 `;
 
 const DialogCard = styled(BlueGradientCard)`
@@ -77,44 +77,105 @@ const CloseBtn = styled(Button)`
 `;
 
 type Props = {
-  dappPackageStore?: DappPackageStore
-}
+  dappPackageStore?: DappPackageStore;
+};
+
+const getContent = (dappPackageStore: DappPackageStore) => {
+  const {
+    stakeValue,
+    selectedPackage,
+    transactionId,
+    transactionError,
+    transactionStatus,
+  } = dappPackageStore;
+
+  switch (transactionStatus) {
+    case TransactionStatus.Pending: {
+      return (
+        <Content>
+          <div>
+            Staking <AmountText>{stakeValue} DAPP</AmountText> to
+          </div>
+          <ContentInfo>
+            <HighlightedText>{selectedPackage!.data.provider}</HighlightedText>
+            for
+            <HighlightedText>{selectedPackage!.data.package_id}</HighlightedText>
+          </ContentInfo>
+        </Content>
+      );
+    }
+    case TransactionStatus.Success: {
+      return (
+        <React.Fragment>
+          <Content>
+            <div>
+              You have staked <AmountText>{stakeValue} DAPP</AmountText> to
+            </div>
+            <ContentInfo>
+              <HighlightedText>{selectedPackage!.data.provider}</HighlightedText>
+              for
+              <HighlightedText>{selectedPackage!.data.package_id}</HighlightedText>
+            </ContentInfo>
+          </Content>
+
+          <Info>See Transaction</Info>
+
+          <HighlightedText2>{transactionId}</HighlightedText2>
+        </React.Fragment>
+      );
+    }
+    case TransactionStatus.Failure: {
+      return (
+        <Content>
+          <div>The transaction failed.</div>
+          <ContentInfo>
+            <HighlightedText>{transactionError}</HighlightedText>
+          </ContentInfo>
+        </Content>
+      );
+    }
+  }
+};
+
+const getTitle = (status: TransactionStatus) => {
+  switch (status) {
+    case TransactionStatus.Pending: {
+      return `Sending transaction ...`;
+    }
+    case TransactionStatus.Success: {
+      return `Transactions Successful`;
+    }
+    case TransactionStatus.Failure: {
+      return `Transaction failed`;
+    }
+  }
+};
 
 const StakeSuccessDialog = ({ dappPackageStore }: Props) => {
-  const { stakeValue, isStakedDialogVisible, closeStakeDialog, selectedPackage } = dappPackageStore!;
+  const {
+    isStakedDialogVisible,
+    closeStakeDialog,
+    selectedPackage,
+  } = dappPackageStore!;
 
   if (!isStakedDialogVisible || !selectedPackage) return null;
+
+  const content = getContent(dappPackageStore!);
+  const title = getTitle(dappPackageStore!.transactionStatus);
 
   return (
     <DialogContainer>
       <DialogCard>
-        <Title>
-          Transactions Successful
-        </Title>
+        <Title>{title}</Title>
 
-        <Content>
-          <div>You have staked <AmountText>{stakeValue} DAPP</AmountText> to</div>
-          <ContentInfo>
-            <HighlightedText>{selectedPackage.data.provider}</HighlightedText>
-            for
-            <HighlightedText>{selectedPackage.data.package_id}</HighlightedText>
-          </ContentInfo>
-        </Content>
-
-        <Info>
-          See Transaction
-        </Info>
-
-        <HighlightedText2>
-          a7de1bcd43955b6f0f685d618da7b3f587c2d70ce7868f143df09abc887c2d70ce
-        </HighlightedText2>
+        {content}
 
         <ButtonsWrapper>
           <CloseBtn onClick={closeStakeDialog}>Close</CloseBtn>
         </ButtonsWrapper>
       </DialogCard>
     </DialogContainer>
-  )
-}
+  );
+};
 
 export default inject('dappPackageStore')(observer(StakeSuccessDialog));
