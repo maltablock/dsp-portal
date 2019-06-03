@@ -1,10 +1,15 @@
 import { observable, action, computed } from 'mobx';
 import { wallet, fetchRows, decomposeAsset, Symbol } from 'app/shared/eos';
-import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
+import {
+  DAPPSERVICES_CONTRACT,
+  DAPPHODL_CONTRACT,
+  DAPPPRICE_CONTRACT,
+  DAPP_TOKENS_PER_CYCLE,
+} from 'app/shared/eos/constants';
 import { getTableBoundsForName } from 'app/shared/eos/name';
 import demoData from '../demo-data.json';
 
-// AccountInfo from eeos-transit/lib has the wrong types
+// AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
   account_name: string;
 };
@@ -45,6 +50,10 @@ type AccountHodlRow = {
   staked: string;
   claimed: number;
 };
+type CycleRow = {
+  total_payins: string;
+  number: number;
+};
 
 const LOGGED_IN_LS_KEY = 'app__is_logged_in';
 
@@ -78,7 +87,7 @@ class ProfileStore {
 
     localStorage.setItem(LOGGED_IN_LS_KEY, 'true');
     this.isLoggingIn = false;
-  }
+  };
 
   @action logout = async () => {
     try {
@@ -88,13 +97,45 @@ class ProfileStore {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 
   @action init = () => {
     if (localStorage.getItem(LOGGED_IN_LS_KEY) === 'true') {
       this.login();
     }
-  }
+    this.fetchDappPrice();
+  };
+
+  /*
+   * Converting DAPP to USD
+   */
+
+  @observable usdPerDapp = 0;
+
+  @action fetchDappPrice = async () => {
+    try {
+      const [dappPriceResult, eosPriceResult] = await Promise.all([
+        fetchRows<CycleRow>({
+          code: DAPPPRICE_CONTRACT,
+          scope: DAPPPRICE_CONTRACT,
+          table: `cycle`,
+          limit: 1,
+          reverse: true,
+        }),
+        fetch(`https://min-api.cryptocompare.com/data/price?fsym=EOS&tsyms=USD`).then(response =>
+          response.json(),
+        ),
+      ]);
+
+      if (dappPriceResult[0] && eosPriceResult.USD) {
+        const eosInCurrentCycle = decomposeAsset(dappPriceResult[0].total_payins).amount / 1e4;
+        const usdInCurrentCycle = eosInCurrentCycle * eosPriceResult.USD;
+        this.usdPerDapp = usdInCurrentCycle / DAPP_TOKENS_PER_CYCLE;
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   /*
    * Showing staked DAPPs cards logic (used only for mobile view)
@@ -104,7 +145,7 @@ class ProfileStore {
 
   @action toggleCardsExpanded = () => {
     this.isCardsExpanded = !this.isCardsExpanded;
-  }
+  };
 
   /*
    * Stakes logic

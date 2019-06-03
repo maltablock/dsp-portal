@@ -13,6 +13,7 @@ type GetTableRowsOptions = {
   limit?: number;
   key_type?: string;
   index_position?: string;
+  reverse?: boolean
 };
 
 // work around the limit bug in nodes due to max timeout

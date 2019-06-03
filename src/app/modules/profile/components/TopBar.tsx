@@ -52,7 +52,7 @@ const TopBar = ({ profileStore }: Props) => {
           ? <MenuSimple
               text={profileStore!.accountInfo!.account_name}
               options={[
-                { text: "Logout", onClick: profileStore!.logout}
+                { text: "Logout", value: "logout", onClick: profileStore!.logout}
               ]}
             />
           : <LoginButton

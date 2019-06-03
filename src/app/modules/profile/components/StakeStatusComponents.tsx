@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import Button from 'app/shared/components/Button';
 import liquidAppsLogo from 'app/shared/icons/liquidapps_logo.svg';
+import { formatAsset } from 'app/shared/eos';
+import { DAPP_SYMBOL } from 'app/shared/eos/constants';
 
 const MOBILE_WIDTH = 960;
 
@@ -73,7 +75,7 @@ export const StakeStatusCard = ({ text, amount, amountUsd, zIndex, expanded }: C
       <Logo src={liquidAppsLogo}/>
       <Text>{text}</Text>
       <Amount>
-        {(amount / 1000).toFixed(4)}
+        {formatAsset({ amount, symbol: DAPP_SYMBOL }, { withSymbol: false, separateThousands: true })}
       </Amount>
       <AmountUsd>${amountUsd.toFixed(2)}</AmountUsd>
     </Wrapper>

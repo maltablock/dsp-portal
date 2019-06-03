@@ -138,6 +138,7 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
   const p = dappPackage;
   const serviceIcon = iconByService[p.data.service] || iconByService.default;
   const serviceColor = colorByService[p.data.service] || colorByService.default;
+  const minStakeAmountNoSymbol = p.data.min_stake_quantity.split(` `)[0]
 
   return (
     <CardWrapper
@@ -184,7 +185,7 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
           <Input
             value={store.stakeValue}
             onChange={store.handleStakeValueChange}
-            placeholder="Stake Amount"
+            placeholder={`Stake Amount ${minStakeAmountNoSymbol}`}
             label="DAPP"
             autoFocus
           />
@@ -200,7 +201,7 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
         p.isSelected &&
         <StakeButtonWrapper>
           <StakeButton
-            disabled={!store.stakeValue}
+            disabled={!store.stakeValueValid}
             color={serviceColor}
             onClick={store.handleStakeButtonClick}
           >
