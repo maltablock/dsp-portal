@@ -7,12 +7,15 @@ import liquidAppsLogo from 'app/shared/icons/liquidapps_logo.svg';
 import { formatAsset } from 'app/shared/eos';
 import { DAPP_SYMBOL } from 'app/shared/eos/constants';
 import { secondsToTimeObject } from 'app/shared/utils/time';
+import { observer } from 'mobx-react';
 
 const MOBILE_WIDTH = 960;
 
 const Wrapper = styled.div<any>`
   width: 100%;
   margin: 8px;
+  border-radius: 8px;
+  box-shadow: rgba(0,0,0,0.4) 0px 5px 10px 3px;
   transition: margin-bottom 0.5s ease;
 
   @media (max-width: ${MOBILE_WIDTH}px) {
@@ -29,9 +32,9 @@ const CardWrapper = styled(BlueGradientCard)<any>`
   flex-direction: column;
   position: relative;
   padding: 16px 24px;
+  border-radius: 8px;
   height: 193px;
   width: 100%;
-  box-shadow: rgba(0,0,0,0.4) -1px 5px 12px 3px;
 `;
 
 const StakeButton = styled(Button)`
@@ -65,15 +68,34 @@ const AmountUsd = styled.div`
   opacity: 0.6;
 `;
 
-const RemainingTimeBlock = styled.div`
+const RemainingTimeWrapper = styled.div`
   background-color: #45D3C2;
   font-size: 13px;
   color: #11141E;
-  border-radius: 4px;
+  border-radius: 0 0 8px 8px;
   padding: 16px 16px 8px 24px;
   margin-top: -8px;
   z-index: -1;
 `;
+
+type RemainingTimeProps = { remainingTilDate: string };
+
+class RemainingTime extends React.Component<RemainingTimeProps> {
+  componentDidMount() {
+    setInterval(() => this.forceUpdate(), 1000);
+  }
+  render() {
+    const { remainingTilDate } = this.props;
+    const secondsFromNow = Math.floor((new Date(remainingTilDate).getTime() - Date.now()) / 1000);
+    const t = secondsToTimeObject(secondsFromNow);
+
+    return (
+      <RemainingTimeWrapper>
+        {t.days} Days : {t.hours} hr : {t.minutes} min : {t.seconds} sec
+      </RemainingTimeWrapper>
+    )
+  }
+}
 
 type CardProps = {
   text: string,
@@ -81,21 +103,27 @@ type CardProps = {
   amountUsd: number,
   zIndex?: number,
   expanded?: boolean,
-  remainingTime?: number,
+  remainingTilDate?: string,
+  buttonText?: string,
+  buttonOnClick?: () => void,
 }
 
-export const StakeStatusCard = ({
+const StakeStatusCardComponent = observer(({
   text,
   amount,
   amountUsd,
-  zIndex,
-  expanded,
-  remainingTime,
+  remainingTilDate,
+  buttonText,
+  buttonOnClick,
 }: CardProps) => {
   return (
-    <Wrapper zIndex={zIndex} expanded={expanded}>
+    <React.Fragment>
       <CardWrapper>
-        <StakeButton>Stake</StakeButton>
+        {
+          (buttonText && buttonOnClick)
+          ? <StakeButton onClick={buttonOnClick}>{buttonText}</StakeButton>
+          : null
+        }
         <Logo src={liquidAppsLogo}/>
         <Text>{text}</Text>
         <Amount>
@@ -105,47 +133,17 @@ export const StakeStatusCard = ({
       </CardWrapper>
 
       {
-        !remainingTime ? null : (() => {
-          const t = secondsToTimeObject(remainingTime);
-          return (
-            <RemainingTimeBlock>
-              {t.days} Days : {t.hours} hr : {t.minutes} min : {t.seconds} sec
-            </RemainingTimeBlock>
-          )
-        })()
+        remainingTilDate &&
+        <RemainingTime remainingTilDate={remainingTilDate} />
       }
-    </Wrapper>
+    </React.Fragment>
   )
-}
+});
 
-export const StakeStatusCardsWrapper = styled.div`
-  position: relative;
-  display: flex;
-  width: 100%;
-  margin: 74px auto 97px;
-  padding: 0 8px;
+const StakeStatusCard = observer(({ zIndex, expanded, ...props }: CardProps) =>
+  <Wrapper zIndex={zIndex} expanded={expanded}>
+    <StakeStatusCardComponent {...props} />
+  </Wrapper>
+);
 
-  @media (max-width: ${MOBILE_WIDTH}px) {
-    flex-direction: column;
-    margin: 32px 8px;
-    padding: 0;
-    width: calc(100% - 32px);
-  }
-
-  @media (min-width: 1200px) {
-    width: 1200px;
-  }
-`;
-
-export const ToggleExpandButton = styled.div`
-  position: absolute;
-  top: 150px;
-  right: 16px;
-  z-index: 10;
-  padding: 8px;
-  cursor: pointer;
-
-  @media (min-width: ${MOBILE_WIDTH + 1}px) {
-    display: none;
-  }
-`;
+export default StakeStatusCard;

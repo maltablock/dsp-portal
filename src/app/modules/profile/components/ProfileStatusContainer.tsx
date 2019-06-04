@@ -3,7 +3,7 @@ import { observer, inject } from 'mobx-react';
 
 import ProfileStore from '../state/ProfileStore';
 import AuthRequiredCard from './AuthRequiredCard';
-import StakeStatusContainer from './StakeStatusContainer';
+import StakeStatusList from './StakeStatusList';
 
 type Props = {
   profileStore?: ProfileStore
@@ -11,7 +11,7 @@ type Props = {
 
 const ProfileStatusContainer = ({ profileStore }: Props) => {
   return profileStore!.isLoggedIn
-    ? <StakeStatusContainer />
+    ? <StakeStatusList/>
     : <AuthRequiredCard />
 }
 
