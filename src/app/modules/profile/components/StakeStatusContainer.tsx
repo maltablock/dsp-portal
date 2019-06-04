@@ -22,16 +22,34 @@ const StakeStatusContainer = (props: Props) => {
 
       {
         [
-          { text: 'Total DAPP', amount: store.totalDappAmount, amountUsd: dappToUsd(store.totalDappAmount) },
-          { text: 'Staked DAPP', amount: store.totalStakedDappAmount, amountUsd: dappToUsd(store.totalStakedDappAmount) },
-          { text: 'Unstaked DAPP', amount: store.unstakedBalance, amountUsd: dappToUsd(store.unstakedBalance) },
-          { text: 'Air-HODLed token', amount: store.dappHdlBalance, amountUsd: dappToUsd(store.dappHdlBalance) },
-        ].map(({ text, amount, amountUsd }, index, arr) =>
+          {
+            text: 'Total DAPP',
+            amount: store.totalDappAmount,
+            amountUsd: dappToUsd(store.totalDappAmount)
+          },
+          {
+            text: 'Staked DAPP',
+            amount: store.totalStakedDappAmount,
+            amountUsd: dappToUsd(store.totalStakedDappAmount)
+          },
+          {
+            text: 'Unstaked DAPP',
+            amount: store.unstakedBalance,
+            amountUsd: dappToUsd(store.unstakedBalance)
+          },
+          {
+            text: 'Air-HODLed token',
+            amount: store.dappHdlBalance,
+            amountUsd: dappToUsd(store.dappHdlBalance),
+            remainingTime: Math.floor((store.vestingEndDate.getTime() - Date.now()) / 1000),
+          },
+        ].map(({ text, amount, amountUsd, remainingTime }, index, arr) =>
           <StakeStatusCard
             key={text}
             text={text}
             amount={amount}
             amountUsd={amountUsd}
+            remainingTime={remainingTime}
             expanded={store.isCardsExpanded}
             zIndex={arr.length - index}
           />

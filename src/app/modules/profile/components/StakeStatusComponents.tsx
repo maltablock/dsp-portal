@@ -6,18 +6,13 @@ import Button from 'app/shared/components/Button';
 import liquidAppsLogo from 'app/shared/icons/liquidapps_logo.svg';
 import { formatAsset } from 'app/shared/eos';
 import { DAPP_SYMBOL } from 'app/shared/eos/constants';
+import { secondsToTimeObject } from 'app/shared/utils/time';
 
 const MOBILE_WIDTH = 960;
 
-const Wrapper = styled(BlueGradientCard)<any>`
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding: 16px 24px;
-  height: 193px;
-  margin: 8px;
+const Wrapper = styled.div<any>`
   width: 100%;
-  box-shadow: rgba(0,0,0,0.4) -1px 5px 12px 3px;
+  margin: 8px;
   transition: margin-bottom 0.5s ease;
 
   @media (max-width: ${MOBILE_WIDTH}px) {
@@ -27,6 +22,16 @@ const Wrapper = styled(BlueGradientCard)<any>`
       margin-bottom: ${props => props.expanded ? 0 : -150}px;
     }
   }
+`;
+
+const CardWrapper = styled(BlueGradientCard)<any>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 16px 24px;
+  height: 193px;
+  width: 100%;
+  box-shadow: rgba(0,0,0,0.4) -1px 5px 12px 3px;
 `;
 
 const StakeButton = styled(Button)`
@@ -60,24 +65,55 @@ const AmountUsd = styled.div`
   opacity: 0.6;
 `;
 
+const RemainingTimeBlock = styled.div`
+  background-color: #45D3C2;
+  font-size: 13px;
+  color: #11141E;
+  border-radius: 4px;
+  padding: 16px 16px 8px 24px;
+  margin-top: -8px;
+  z-index: -1;
+`;
+
 type CardProps = {
   text: string,
   amount: number,
   amountUsd: number,
   zIndex?: number,
   expanded?: boolean,
+  remainingTime?: number,
 }
 
-export const StakeStatusCard = ({ text, amount, amountUsd, zIndex, expanded }: CardProps) => {
+export const StakeStatusCard = ({
+  text,
+  amount,
+  amountUsd,
+  zIndex,
+  expanded,
+  remainingTime,
+}: CardProps) => {
   return (
     <Wrapper zIndex={zIndex} expanded={expanded}>
-      <StakeButton>Stake</StakeButton>
-      <Logo src={liquidAppsLogo}/>
-      <Text>{text}</Text>
-      <Amount>
-        {formatAsset({ amount, symbol: DAPP_SYMBOL }, { withSymbol: false, separateThousands: true })}
-      </Amount>
-      <AmountUsd>${amountUsd.toFixed(2)}</AmountUsd>
+      <CardWrapper>
+        <StakeButton>Stake</StakeButton>
+        <Logo src={liquidAppsLogo}/>
+        <Text>{text}</Text>
+        <Amount>
+          {formatAsset({ amount, symbol: DAPP_SYMBOL }, { withSymbol: false, separateThousands: true })}
+        </Amount>
+        <AmountUsd>${amountUsd.toFixed(2)}</AmountUsd>
+      </CardWrapper>
+
+      {
+        !remainingTime ? null : (() => {
+          const t = secondsToTimeObject(remainingTime);
+          return (
+            <RemainingTimeBlock>
+              {t.days} Days : {t.hours} hr : {t.minutes} min : {t.seconds} sec
+            </RemainingTimeBlock>
+          )
+        })()
+      }
     </Wrapper>
   )
 }
