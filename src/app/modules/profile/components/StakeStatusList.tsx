@@ -13,7 +13,7 @@ const ListWrapper = styled.div`
   display: flex;
   align-items: flex-start;
   width: 100%;
-  margin: 74px auto 97px;
+  margin: 74px auto 56px;
   padding: 0 8px;
 
   @media (max-width: ${MOBILE_WIDTH}px) {

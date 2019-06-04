@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { observer } from 'mobx-react';
 
 import checkboxChecked from 'app/shared/icons/checkbox_checked.svg';
 import checkboxUnchecked from 'app/shared/icons/checkbox_unchecked.svg';
@@ -8,10 +7,11 @@ import cronIcon from 'app/shared/icons/cron.svg';
 import ifpIcon from 'app/shared/icons/ifp.svg';
 import oracleIcon from 'app/shared/icons/oracle.svg';
 
-import DappPackage from '../state/DappPackage';
 import Input from 'app/shared/components/Input';
 import Button from 'app/shared/components/Button';
-import { DappPackageStore } from '..';
+import DappPackage from '../state/DappPackage';
+import StakedPackage from '../state/StakedPackage';
+import { observer } from 'mobx-react';
 
 const MOBILE_WIDTH = 671;
 
@@ -67,6 +67,7 @@ const ServiceName = styled.div`
 
 const DetailsWrapper = styled.div`
   font-size: 14px;
+  min-height: 64px;
 `;
 
 const DetailsRow = styled.div`
@@ -130,15 +131,28 @@ const colorByService = {
 };
 
 type Props = {
-  dappPackage: DappPackage
-  store: DappPackageStore
+  package: DappPackage | StakedPackage
+  details: {
+    label: string,
+    value: string
+  }[],
+  input: {
+    placeholder: string,
+  },
+  button: {
+    text: string,
+    onClick: (...any) => any,
+  },
 }
 
-const DappPackageCard = ({ dappPackage, store }: Props) => {
-  const p = dappPackage;
+const PackageCard = ({
+  package: p,
+  details,
+  input,
+  button,
+}: Props) => {
   const serviceIcon = iconByService[p.data.service] || iconByService.default;
   const serviceColor = colorByService[p.data.service] || colorByService.default;
-  const minStakeAmountNoSymbol = p.data.min_stake_quantity.split(` `)[0]
 
   return (
     <CardWrapper
@@ -151,7 +165,7 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
         onClick={p.handleDeselect}
       >
         <Title>
-          {p.data.package_id.toUpperCase()}
+          {p.packageId.toUpperCase()}
         </Title>
 
         <Checkbox src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
@@ -166,11 +180,7 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
 
       <DetailsWrapper>
         {
-          [
-            { label: 'Quota', value: p.data.quota },
-            { label: 'Min Stake', value: p.data.min_stake_quantity },
-            { label: 'Unstake time', value: p.unstakeTimeText }
-          ].map(({ label, value }) =>
+          details.map(({ label, value }) =>
             <DetailsRow key={label}>
               <DetailsLabel>{label}</DetailsLabel>
               <DetailsValue color={serviceColor}>{value}</DetailsValue>
@@ -183,9 +193,9 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
         p.isSelected &&
         <AmountInputWrapper>
           <Input
-            value={store.stakeValue}
-            onChange={store.handleStakeValueChange}
-            placeholder={`Stake Amount ${minStakeAmountNoSymbol}`}
+            value={p.packageStore.stakeValue}
+            onChange={p.packageStore.handleStakeValueChange}
+            placeholder={input.placeholder}
             label="DAPP"
             autoFocus
           />
@@ -201,11 +211,11 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
         p.isSelected &&
         <StakeButtonWrapper>
           <StakeButton
-            disabled={!store.stakeValueValid}
+            disabled={!p.packageStore.stakeValueValid}
             color={serviceColor}
-            onClick={store.handleStakeButtonClick}
+            onClick={button.onClick}
           >
-            Stake
+            {button.text}
           </StakeButton>
         </StakeButtonWrapper>
       }
@@ -213,4 +223,4 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
   )
 }
 
-export default observer(DappPackageCard);
+export default observer(PackageCard);

@@ -1,7 +1,15 @@
 import { observable, action, computed } from "mobx";
+import RootStore from "app/root/RootStore";
+import { searchFn, filterFn, sortFn } from "../utils";
 
 class SearchStore {
-  /**
+  rootStore: RootStore;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+
+  /*
    * Search
    */
 
@@ -75,7 +83,40 @@ class SearchStore {
   @observable selectedTab = 'Packages';
 
   @action handleSelectTab = tabName => {
+    this.rootStore.packageStore.selectPackage(null);
     this.selectedTab = tabName;
+  }
+
+  /**
+   * sortedDappPackages will be showed the UI (based on search/filter/sort params)
+   */
+
+  @computed get foundDappPackages() {
+    return searchFn(this.rootStore.packageStore.dappPackages, this.searchText);
+  }
+
+  @computed get filteredDappPackages() {
+    return filterFn(this.foundDappPackages, this.filterBy);
+  }
+
+  @computed get sortedDappPackages() {
+    return sortFn(this.filteredDappPackages, this.sortBy);
+  }
+
+  /**
+   * sortedStakedPackages will be showed the UI (based on search/filter/sort params)
+   */
+
+  @computed get foundStakedPackages() {
+    return searchFn(this.rootStore.packageStore.stakedPackages, this.searchText);
+  }
+
+  @computed get filteredStakedPackages() {
+    return filterFn(this.foundStakedPackages, this.filterBy);
+  }
+
+  @computed get sortedStakedPackages() {
+    return sortFn(this.filteredStakedPackages, this.sortBy);
   }
 }
 

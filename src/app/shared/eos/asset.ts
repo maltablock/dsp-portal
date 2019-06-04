@@ -1,13 +1,4 @@
-// mimicks EOS C++ smart contract asset and symbol class
-export type Symbol = {
-  symbolCode: string;
-  precision: number;
-};
-
-export type Asset = {
-  amount: number;
-  symbol: Symbol;
-};
+import { Asset } from "app/shared/typings";
 
 type FormatOptions = {
   withSymbol?: boolean;
