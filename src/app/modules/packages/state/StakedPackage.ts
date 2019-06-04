@@ -9,24 +9,34 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     super(data, packageStore);
   }
 
+  @computed get dappPackage() {
+    const dappPackage = this.packageStore.dappPackages.find(dappPackage => {
+      return dappPackage.providerLowercased === this.providerLowercased
+        && dappPackage.serviceLowercased === this.serviceLowercased
+        && dappPackage.packageId === this.packageId
+    })
+    return dappPackage
+  }
+
   @computed get quotaNumber() {
     return this.data.quota;
   }
 
   @computed get minStakeNumber() {
-    // TODO: can we fetch min_stake_period for staked packages?
-    return 0;
+    if(!this.dappPackage) return 0
+    return this.dappPackage.minStakeNumber
   }
 
   @computed get minUnstakePeriod() {
-    // TODO: fetch this data if possible
-    return 0;
+    if(!this.dappPackage) return 0
+    return this.dappPackage.minUnstakePeriod
   }
 
   @computed get packageId() {
-    // TODO: staked package doesn't have `package_id` property. Can we fetch it?
-    // (expamples of `package_id`: "package1", "community" or "gold")
-    return this.data.service;
+    // `selectpkg` action sets pending_package
+    // if enough staked through `stake` action, package is set to pending_package
+    // so package field is the current active package, pending the selected one
+    return this.data.package || this.data.pending_package;
   }
 }
 

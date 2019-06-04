@@ -16,6 +16,10 @@ class PackageBase<T extends IStakedPackageData | IDappPackageData> {
     return this.data.provider.toLowerCase();
   }
 
+  @computed get serviceLowercased() {
+    return this.data.service.toLowerCase();
+  }
+
   @computed get isSelected() {
     return this.packageStore.selectedPackageId === this.data.id;
   }

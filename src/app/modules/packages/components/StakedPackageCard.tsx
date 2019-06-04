@@ -9,6 +9,12 @@ type Props = {
   stakedPackage: StakedPackage
 }
 
+const formatUnstakePeriod = seconds => {
+  const hours = (seconds / 3600).toFixed(2)
+  const postfix = hours == `1.00` ? `Hour` : `Hours`
+  return `${hours} ${postfix}`
+}
+
 const StakedPackageCard = ({ stakedPackage }: Props) => {
   const p = stakedPackage;
 
@@ -17,11 +23,13 @@ const StakedPackageCard = ({ stakedPackage }: Props) => {
       package={stakedPackage}
       details={[
         {
-          label: 'Amount Staked',
+          label: 'Amount Staked:',
           value: formatAsset({ amount: p.data.balance, symbol: p.data.symbol }),
+        },
+        {
+          label: 'Unstake Time:',
+          value: formatUnstakePeriod(p.minUnstakePeriod),
         }
-        // TODO: we also need to provide unstake time
-        // but there's no such data for staked packages
       ]}
       input={{
         placeholder: "UnStake Amount",
