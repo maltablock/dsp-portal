@@ -27,6 +27,7 @@
     "start:kylin": "cross-env REACT_APP_EOS_NETWORK=kylin react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "deploy": "npm run build && sh ./deploy.sh",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
