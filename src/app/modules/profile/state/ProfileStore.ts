@@ -223,8 +223,12 @@ class ProfileStore {
     }
   };
 
+
+  @action handleUnstake = () => {} // TODO
+  @action handleWithdraw = () => {} // TODO
+
   get vestingEndDate() {
-    return new Date(`2021-02-26T16:00:00.000`);
+    return "2021-02-26T16:00:00.000";
   }
 
   @computed get unstakedBalance() {

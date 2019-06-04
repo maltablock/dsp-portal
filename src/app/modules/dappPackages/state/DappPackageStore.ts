@@ -190,7 +190,7 @@ class DappPackageStore {
         scope: `dappservices`,
         table: `package`,
       };
-      data.rows = await fetchAllRows(options);
+      data.rows = await fetchAllRows<IDappPackageData>(options);
     }
 
     const packages = data.rows.map(row => ({ ...row, icon: '' }));
