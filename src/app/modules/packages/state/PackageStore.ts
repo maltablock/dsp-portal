@@ -136,51 +136,6 @@ class PackageStore {
   };
 
   /**
-   * Listing packages in the UI (based on search/filter/sort params)
-   */
-
-  @computed get foundPackages() {
-    const searchText = this.rootStore.searchStore.searchText.toLowerCase();
-    if (!searchText) return this.dappPackages;
-    return this.dappPackages.filter(
-      p =>
-        p.data.service.toLowerCase().includes(searchText) ||
-        p.data.provider.toLowerCase().includes(searchText) ||
-        p.data.package_id.toLowerCase().includes(searchText),
-    );
-  }
-
-  @computed get filteredPackages() {
-    const filterBy = this.rootStore.searchStore.filterBy;
-    if (filterBy === 'all') return this.foundPackages;
-    return this.foundPackages.filter(p => p.data.service === filterBy);
-  }
-
-  @computed get sortedPackages() {
-    const sortBy = this.rootStore.searchStore.sortBy;
-
-    switch (sortBy) {
-      case 'quota':
-      case 'min_stake_quantity':
-      case 'min_unstake_period':
-        const field = {
-          quota: 'quotaNumber',
-          min_stake_quantity: 'minStakeNumber',
-          min_unstake_period: 'min_unstake_period',
-        }[sortBy];
-        return this.filteredPackages.sort((a, b) => a[field] - b[field]);
-      case 'provider':
-        return this.filteredPackages.sort((a, b) => {
-          const aVal = a.providerLowercased;
-          const bVal = b.providerLowercased;
-          return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-        });
-      default:
-        return this.filteredPackages;
-    }
-  }
-
-  /**
    * DAPP packages
    */
 

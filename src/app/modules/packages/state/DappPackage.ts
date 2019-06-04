@@ -20,6 +20,10 @@ class DappPackage extends PackageBase<IDappPackageData> {
     return stringToNumber(this.data.min_stake_quantity);
   }
 
+  @computed get minUnstakePeriod() {
+    return this.data.min_unstake_period
+  }
+
   @computed get packageId() {
     return this.data.package_id;
   }

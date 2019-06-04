@@ -18,6 +18,11 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     return 0;
   }
 
+  @computed get minUnstakePeriod() {
+    // TODO: fetch this data if possible
+    return 0;
+  }
+
   @computed get packageId() {
     // TODO: staked package doesn't have `package_id` property. Can we fetch it?
     // (expamples of `package_id`: "package1", "community" or "gold")

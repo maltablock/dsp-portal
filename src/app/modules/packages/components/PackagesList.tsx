@@ -21,19 +21,18 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  packageStore?: PackageStore;
   searchStore?: SearchStore;
 }
 
-const PackagesList = ({ packageStore, searchStore }: Props) => {
+const PackagesList = ({ searchStore }: Props) => {
   return (
     <Wrapper>
       {
         searchStore!.selectedTab === 'Staked'
-        ? packageStore!.stakedPackages.map(p =>
+        ? searchStore!.sortedStakedPackages.map(p =>
             <StakedPackageCard key={p.data.id} stakedPackage={p} />
           )
-        : packageStore!.sortedPackages.map(p =>
+        : searchStore!.sortedDappPackages.map(p =>
             <DappPackageCard key={p.data.id} dappPackage={p} />
           )
       }
@@ -41,4 +40,4 @@ const PackagesList = ({ packageStore, searchStore }: Props) => {
   )
 }
 
-export default inject('packageStore', 'searchStore')(observer(PackagesList));
+export default inject('searchStore')(observer(PackagesList));
