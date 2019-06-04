@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react';
 
 import DappPackageStore from '../state/DappPackageStore';
 import DappPackageCard from './DappPackageCard';
+import { SearchStore } from 'app/modules/search';
 
 const Wrapper = styled.div`
   margin: 0 auto;
@@ -20,19 +21,25 @@ const Wrapper = styled.div`
 
 type Props = {
   dappPackageStore?: DappPackageStore;
+  searchStore?: SearchStore;
 }
 
-const DappPackagesList = (props: Props) => {
-  const store = props.dappPackageStore!;
+const PackagesList = ({ dappPackageStore, searchStore }: Props) => {
   return (
     <Wrapper>
       {
-        store.sortedPackages.map(p =>
-          <DappPackageCard key={p.data.id} dappPackage={p} store={store} />
-        )
+        searchStore!.selectedTab === 'Staked'
+        ? dappPackageStore!.stakedPackages.map(p =>
+            <div>
+              {JSON.stringify(p.data)}
+            </div>
+          )
+        : dappPackageStore!.sortedPackages.map(p =>
+            <DappPackageCard key={p.data.id} dappPackage={p} />
+          )
       }
     </Wrapper>
   )
 }
 
-export default inject('dappPackageStore')(observer(DappPackagesList));
+export default inject('dappPackageStore', 'searchStore')(observer(PackagesList));

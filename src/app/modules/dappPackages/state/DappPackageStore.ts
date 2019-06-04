@@ -7,6 +7,7 @@ import RootStore from 'app/root/RootStore.js';
 import { IDappPackageData } from 'app/shared/typings';
 import { fetchAllRows, wallet, formatAsset, getTableBoundsForName, fetchRows, decomposeAsset } from 'app/shared/eos';
 import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL } from 'app/shared/eos/constants';
+import StakedPackage from './StakedPackage';
 
 export enum TransactionStatus {
   Pending= 0,
@@ -221,9 +222,9 @@ class DappPackageStore {
 
   /** Staked packages */
 
-  @observable stakes: any[] = [];
+  @observable stakedPackages: StakedPackage[] = [];
 
-  @action fetchStakes = async () => {
+  @action fetchStakedPackages = async () => {
     const { accountInfo } = this.rootStore.profileStore;
     if (!accountInfo) return;
 
@@ -242,15 +243,17 @@ class DappPackageStore {
       lower_bound: `${nameBounds.lower_bound}`,
       upper_bound: `${nameBounds.upper_bound}`,
     });
-    this.stakes = stakesResult.map(stake => {
+    this.stakedPackages = stakesResult.map(stake => {
       const { amount: balance, symbol } = decomposeAsset(stake.balance);
       const { amount: quota } = decomposeAsset(stake.quota);
-      return {
+      const data = {
         ...stake,
         balance,
         symbol,
         quota,
+        icon: '',
       };
+      return new StakedPackage(data, this);
     });
   }
 }

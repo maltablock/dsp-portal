@@ -131,10 +131,9 @@ const colorByService = {
 
 type Props = {
   dappPackage: DappPackage
-  store: DappPackageStore
 }
 
-const DappPackageCard = ({ dappPackage, store }: Props) => {
+const DappPackageCard = ({ dappPackage }: Props) => {
   const p = dappPackage;
   const serviceIcon = iconByService[p.data.service] || iconByService.default;
   const serviceColor = colorByService[p.data.service] || colorByService.default;
@@ -183,8 +182,8 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
         p.isSelected &&
         <AmountInputWrapper>
           <Input
-            value={store.stakeValue}
-            onChange={store.handleStakeValueChange}
+            value={p.dappPackageStore.stakeValue}
+            onChange={p.dappPackageStore.handleStakeValueChange}
             placeholder={`Stake Amount ${minStakeAmountNoSymbol}`}
             label="DAPP"
             autoFocus
@@ -201,9 +200,9 @@ const DappPackageCard = ({ dappPackage, store }: Props) => {
         p.isSelected &&
         <StakeButtonWrapper>
           <StakeButton
-            disabled={!store.stakeValueValid}
+            disabled={!p.dappPackageStore.stakeValueValid}
             color={serviceColor}
-            onClick={store.handleStakeButtonClick}
+            onClick={p.dappPackageStore.handleStakeButtonClick}
           >
             Stake
           </StakeButton>

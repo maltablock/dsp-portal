@@ -16,7 +16,7 @@ export type IDappPackageData = {
 export type IStakedPackageData = {
   account         : string;
   balance         : number;
-  symbol          : Symbol;
+  symbol          : AssetSymbol;
   id              : number;
   last_reward     : string;
   last_usage      : string;
@@ -27,6 +27,7 @@ export type IStakedPackageData = {
   provider        : string;
   quota           : number;
   service         : string;
+  icon?           : string;
 };
 
 export type IEOSNetwork = {
