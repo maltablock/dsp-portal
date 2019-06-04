@@ -15,7 +15,7 @@ export enum TransactionStatus {
   Failure
 }
 
-class DappPackageStore {
+class PackageStore {
   rootStore: RootStore;
 
   constructor(rootStore: RootStore) {
@@ -258,4 +258,4 @@ class DappPackageStore {
   }
 }
 
-export default DappPackageStore;
+export default PackageStore;

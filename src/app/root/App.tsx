@@ -3,7 +3,7 @@ import { Provider as MobxProvider, observer } from 'mobx-react';
 
 import RootStore from './RootStore';
 import PageWrapper from './components/PageWrapper';
-import { PackagesList, StakeSuccessDialog } from 'app/modules/dappPackages';
+import { PackagesList, StakeSuccessDialog } from 'app/modules/packages';
 import { ProfileStatusContainer, TopBar } from 'app/modules/profile';
 import { SearchBar, PackagesTabs } from 'app/modules/search';
 

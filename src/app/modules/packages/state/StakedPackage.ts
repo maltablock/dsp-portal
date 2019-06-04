@@ -1,12 +1,12 @@
 import { computed } from "mobx";
 
 import { IStakedPackageData } from "app/shared/typings";
-import DappPackageStore from "./DappPackageStore";
+import PackageStore from "./PackageStore";
 import PackageBase from "./PackageBase";
 
 class StakedPackage extends PackageBase<IStakedPackageData> {
-  constructor(data: IStakedPackageData, dappPackageStore: DappPackageStore) {
-    super(data, dappPackageStore);
+  constructor(data: IStakedPackageData, packageStore: PackageStore) {
+    super(data, packageStore);
   }
 
   @computed get quotaNumber() {

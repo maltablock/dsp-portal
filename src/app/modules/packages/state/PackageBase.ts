@@ -1,15 +1,15 @@
 import { observable, computed, action } from "mobx";
 
-import DappPackageStore from "./DappPackageStore";
+import PackageStore from "./PackageStore";
 import { IStakedPackageData, IDappPackageData } from "app/shared/typings";
 
 class PackageBase<T extends IStakedPackageData | IDappPackageData> {
-  dappPackageStore: DappPackageStore;
+  packageStore: PackageStore;
   @observable data: T;
 
-  constructor(data: T, dappPackageStore: DappPackageStore) {
+  constructor(data: T, packageStore: PackageStore) {
     this.data = data;
-    this.dappPackageStore = dappPackageStore;
+    this.packageStore = packageStore;
   }
 
   @computed get providerLowercased() {
@@ -17,21 +17,21 @@ class PackageBase<T extends IStakedPackageData | IDappPackageData> {
   }
 
   @computed get isSelected() {
-    return this.dappPackageStore.selectedPackageId === this.data.id;
+    return this.packageStore.selectedPackageId === this.data.id;
   }
 
   @computed get isHidden() {
-    return this.dappPackageStore.selectedPackageId !== null && !this.isSelected;
+    return this.packageStore.selectedPackageId !== null && !this.isSelected;
   }
 
   @action handleSelect = () => {
-    if (!this.isSelected) this.dappPackageStore.selectPackage(this.data.id);
+    if (!this.isSelected) this.packageStore.selectPackage(this.data.id);
   }
 
   @action handleDeselect = evt => {
     if (this.isSelected) {
       evt.stopPropagation();
-      this.dappPackageStore.selectPackage(null);
+      this.packageStore.selectPackage(null);
     }
   }
 }

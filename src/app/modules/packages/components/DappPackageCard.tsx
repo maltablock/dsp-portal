@@ -11,7 +11,6 @@ import oracleIcon from 'app/shared/icons/oracle.svg';
 import DappPackage from '../state/DappPackage';
 import Input from 'app/shared/components/Input';
 import Button from 'app/shared/components/Button';
-import { DappPackageStore } from '..';
 
 const MOBILE_WIDTH = 671;
 
@@ -182,8 +181,8 @@ const DappPackageCard = ({ dappPackage }: Props) => {
         p.isSelected &&
         <AmountInputWrapper>
           <Input
-            value={p.dappPackageStore.stakeValue}
-            onChange={p.dappPackageStore.handleStakeValueChange}
+            value={p.packageStore.stakeValue}
+            onChange={p.packageStore.handleStakeValueChange}
             placeholder={`Stake Amount ${minStakeAmountNoSymbol}`}
             label="DAPP"
             autoFocus
@@ -200,9 +199,9 @@ const DappPackageCard = ({ dappPackage }: Props) => {
         p.isSelected &&
         <StakeButtonWrapper>
           <StakeButton
-            disabled={!p.dappPackageStore.stakeValueValid}
+            disabled={!p.packageStore.stakeValueValid}
             color={serviceColor}
-            onClick={p.dappPackageStore.handleStakeButtonClick}
+            onClick={p.packageStore.handleStakeButtonClick}
           >
             Stake
           </StakeButton>

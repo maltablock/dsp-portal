@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import Button from 'app/shared/components/Button';
-import DappPackageStore, { TransactionStatus } from '../state/DappPackageStore';
+import PackageStore, { TransactionStatus } from '../state/PackageStore';
 
 const DialogContainer = styled.div`
   position: fixed;
@@ -77,17 +77,17 @@ const CloseBtn = styled(Button)`
 `;
 
 type Props = {
-  dappPackageStore?: DappPackageStore;
+  packageStore?: PackageStore;
 };
 
-const getContent = (dappPackageStore: DappPackageStore) => {
+const getContent = (packageStore: PackageStore) => {
   const {
     stakeValue,
     selectedPackage,
     transactionId,
     transactionError,
     transactionStatus,
-  } = dappPackageStore;
+  } = packageStore;
 
   switch (transactionStatus) {
     case TransactionStatus.Pending: {
@@ -151,17 +151,17 @@ const getTitle = (status: TransactionStatus) => {
   }
 };
 
-const StakeSuccessDialog = ({ dappPackageStore }: Props) => {
+const StakeSuccessDialog = ({ packageStore }: Props) => {
   const {
     isStakedDialogVisible,
     closeStakeDialog,
     selectedPackage,
-  } = dappPackageStore!;
+  } = packageStore!;
 
   if (!isStakedDialogVisible || !selectedPackage) return null;
 
-  const content = getContent(dappPackageStore!);
-  const title = getTitle(dappPackageStore!.transactionStatus);
+  const content = getContent(packageStore!);
+  const title = getTitle(packageStore!.transactionStatus);
 
   return (
     <DialogContainer>
@@ -178,4 +178,4 @@ const StakeSuccessDialog = ({ dappPackageStore }: Props) => {
   );
 };
 
-export default inject('dappPackageStore')(observer(StakeSuccessDialog));
+export default inject('packageStore')(observer(StakeSuccessDialog));

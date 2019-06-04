@@ -1,14 +1,14 @@
-import { DappPackageStore } from 'app/modules/dappPackages';
+import { PackageStore } from 'app/modules/packages';
 import { SearchStore } from 'app/modules/search';
 import { ProfileStore } from 'app/modules/profile';
 
 class RootStore {
-  dappPackageStore = new DappPackageStore(this);
+  packageStore = new PackageStore(this);
   searchStore = new SearchStore();
   profileStore = new ProfileStore(this);
 
   init() {
-    this.dappPackageStore.fetchDappPackages();
+    this.packageStore.fetchDappPackages();
     this.profileStore.init();
   }
 }

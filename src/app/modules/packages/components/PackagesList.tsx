@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 
-import DappPackageStore from '../state/DappPackageStore';
+import PackageStore from '../state/PackageStore';
 import DappPackageCard from './DappPackageCard';
 import { SearchStore } from 'app/modules/search';
 
@@ -20,21 +20,21 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  dappPackageStore?: DappPackageStore;
+  packageStore?: PackageStore;
   searchStore?: SearchStore;
 }
 
-const PackagesList = ({ dappPackageStore, searchStore }: Props) => {
+const PackagesList = ({ packageStore, searchStore }: Props) => {
   return (
     <Wrapper>
       {
         searchStore!.selectedTab === 'Staked'
-        ? dappPackageStore!.stakedPackages.map(p =>
+        ? packageStore!.stakedPackages.map(p =>
             <div>
               {JSON.stringify(p.data)}
             </div>
           )
-        : dappPackageStore!.sortedPackages.map(p =>
+        : packageStore!.sortedPackages.map(p =>
             <DappPackageCard key={p.data.id} dappPackage={p} />
           )
       }
@@ -42,4 +42,4 @@ const PackagesList = ({ dappPackageStore, searchStore }: Props) => {
   )
 }
 
-export default inject('dappPackageStore', 'searchStore')(observer(PackagesList));
+export default inject('packageStore', 'searchStore')(observer(PackagesList));

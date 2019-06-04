@@ -166,7 +166,7 @@ class ProfileStore {
         };
       }
 
-      await this.rootStore.dappPackageStore.fetchStakedPackages();
+      await this.rootStore.packageStore.fetchStakedPackages();
 
       const dappHodlResult = await fetchRows<AccountHodlRow>({
         code: DAPPHODL_CONTRACT,
@@ -200,7 +200,7 @@ class ProfileStore {
   }
 
   @computed get totalStakedDappAmount() {
-    return this.rootStore.dappPackageStore.stakedPackages.reduce(
+    return this.rootStore.packageStore.stakedPackages.reduce(
       (sum, stake) => sum + stake.data.balance, 0
     );
   }
