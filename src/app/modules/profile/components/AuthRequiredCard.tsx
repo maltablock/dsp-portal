@@ -18,13 +18,13 @@ const CardWrapper = styled(BlueGradientCard)`
 
 const Title = styled.div`
   font-size: 23px;
-  font-family: Montserrat-Bold;
+  font-weight: 600;
   margin: 0 auto;
 `;
 
 const Message = styled.div`
-  font-family: Montserrat;
   font-size: 16px;
+  font-weight: 500;
   line-height: 1.5;
   max-width: 400px;
   margin: 8px auto 0;
@@ -32,8 +32,8 @@ const Message = styled.div`
 `;
 
 const CtaButton = styled.div`
-  font-family: Montserrat-Bold;
   font-size: 16px;
+  font-weight: 700;
   margin: 26px auto 0;
   cursor: pointer;
 `;

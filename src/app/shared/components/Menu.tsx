@@ -20,7 +20,7 @@ export const _MenuInput = styled.div`
   padding: 16px 18px;
   color: #67768E;
   font-size: 14px;
-  font-family: Montserrat-SemiBold;
+  font-weight: 600;
 `;
 
 export const _Icon = styled.img`

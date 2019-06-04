@@ -13,7 +13,7 @@ const InputElement = styled.input`
   padding: 11px 16px;
   color: #333;
   font-size: 14px;
-  font-family: Montserrat-SemiBold;
+  font-weight: 600;
   outline: none;
 
   ::placeholder {
@@ -28,6 +28,7 @@ const InputRightLabel = styled.div`
   right: 0;
   padding: 12px 16px;
   font-size: 12px;
+  font-weight: 700;
 `;
 
 const Input = ({

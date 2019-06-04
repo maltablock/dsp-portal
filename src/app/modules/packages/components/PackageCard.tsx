@@ -45,7 +45,7 @@ const TitleAndCheckboxWrapper = styled.div<any>`
 
 const Title = styled.div`
   font-size: 18px;
-  font-family: Montserrat-Bold;
+  font-weight: 600;
 `;
 
 const Checkbox = styled.img`
@@ -104,6 +104,7 @@ const ProviderIcon = styled.div<any>`
 
 const ProviderName = styled.div`
   margin-left: 16px;
+  font-size: 14px;
   opacity: 0.5;
 `;
 
