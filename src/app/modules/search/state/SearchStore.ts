@@ -68,7 +68,15 @@ class SearchStore {
     this.sortBy = value;
   }
 
+  /*
+   * Packages/Staked tabs
+   */
 
+  @observable selectedTab = 'Packages';
+
+  @action handleSelectTab = tabName => {
+    this.selectedTab = tabName;
+  }
 }
 
 export default SearchStore;

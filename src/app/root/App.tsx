@@ -5,7 +5,7 @@ import RootStore from './RootStore';
 import PageWrapper from './components/PageWrapper';
 import { DappPackagesList, StakeSuccessDialog } from 'app/modules/dappPackages';
 import { ProfileStatusContainer, TopBar } from 'app/modules/profile';
-import { SearchBar } from 'app/modules/search';
+import { SearchBar, PackagesTabs } from 'app/modules/search';
 
 const rootStore = new RootStore();
 
@@ -24,6 +24,7 @@ class App extends React.Component {
         <PageWrapper>
           <TopBar />
           <ProfileStatusContainer />
+          <PackagesTabs />
           <SearchBar />
           <DappPackagesList />
           <StakeSuccessDialog />
