@@ -5,7 +5,7 @@ import { ProfileStore } from 'app/modules/profile';
 class RootStore {
   dappPackageStore = new DappPackageStore(this);
   searchStore = new SearchStore();
-  profileStore = new ProfileStore();
+  profileStore = new ProfileStore(this);
 
   init() {
     this.dappPackageStore.fetchDappPackages();

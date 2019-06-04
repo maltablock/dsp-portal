@@ -1,18 +1,15 @@
-import { observable, action, computed } from 'mobx';
+import { computed } from 'mobx';
 import distanceInWordsStrict from 'date-fns/distance_in_words_strict'
 
 import { IDappPackageData } from 'app/shared/typings';
 import DappPackageStore from './DappPackageStore';
+import PackageBase from './PackageBase';
 
 const stringToNumber = str => Number(str.replace(/[^\d^\.]+/ig, ''));
 
-class DappPackage {
-  dappPackageStore: DappPackageStore
-  @observable data: IDappPackageData;
-
-  constructor(dappPackageData: IDappPackageData, dappPackageStore: DappPackageStore) {
-    this.data = dappPackageData;
-    this.dappPackageStore = dappPackageStore;
+class DappPackage extends PackageBase<IDappPackageData> {
+  constructor(data: IDappPackageData, dappPackageStore: DappPackageStore) {
+    super(data, dappPackageStore);
   }
 
   @computed get quotaNumber() {
@@ -21,29 +18,6 @@ class DappPackage {
 
   @computed get minStakeNumber() {
     return stringToNumber(this.data.min_stake_quantity);
-  }
-
-  @computed get providerLowercased() {
-    return this.data.provider.toLowerCase();
-  }
-
-  @action handleSelect = () => {
-    if (!this.isSelected) this.dappPackageStore.selectPackage(this.data.id);
-  }
-
-  @action handleDeselect = evt => {
-    if (this.isSelected) {
-      evt.stopPropagation();
-      this.dappPackageStore.selectPackage(null);
-    }
-  }
-
-  @computed get isSelected() {
-    return this.dappPackageStore.selectedPackageId === this.data.id;
-  }
-
-  @computed get isHidden() {
-    return this.dappPackageStore.selectedPackageId !== null && !this.isSelected;
   }
 
   @computed get unstakeTimeText() {

@@ -5,7 +5,7 @@ import demoData from '../demo-data.json';
 import DappPackage from './DappPackage';
 import RootStore from 'app/root/RootStore.js';
 import { IDappPackageData } from 'app/shared/typings';
-import { fetchAllRows, wallet, formatAsset } from 'app/shared/eos';
+import { fetchAllRows, wallet, formatAsset, getTableBoundsForName, fetchRows, decomposeAsset } from 'app/shared/eos';
 import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL } from 'app/shared/eos/constants';
 
 export enum TransactionStatus {
@@ -176,7 +176,7 @@ class DappPackageStore {
   }
 
   /**
-   * Fetching packages
+   * DAPP packages
    */
 
   @observable dappPackages: DappPackage[] = [];
@@ -216,6 +216,41 @@ class DappPackageStore {
           }
         } catch (e) { }
       }
+    });
+  }
+
+  /** Staked packages */
+
+  @observable stakes: any[] = [];
+
+  @action fetchStakes = async () => {
+    const { accountInfo } = this.rootStore.profileStore;
+    if (!accountInfo) return;
+
+    // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service. ALL LITTLE ENDIAN (!)
+    // https://github.com/liquidapps-io/zeus-dapp-network/blob/9f0fd5d8cff78d7f429a6284aedeb23f45f21263/dapp-services/contracts/eos/dappservices/dappservices.cpp#L116
+    const nameBounds = getTableBoundsForName(accountInfo.account_name);
+    const servicePart = `0`.repeat(16);
+    nameBounds.lower_bound = `0x${servicePart}${nameBounds.lower_bound}`;
+    nameBounds.upper_bound = `0x${servicePart}${nameBounds.upper_bound}`;
+    const stakesResult = await fetchRows<any>({
+      code: DAPPSERVICES_CONTRACT,
+      scope: `DAPP`,
+      table: `accountext`,
+      index_position: `3`, // &accountext::by_account_service
+      key_type: `i128`,
+      lower_bound: `${nameBounds.lower_bound}`,
+      upper_bound: `${nameBounds.upper_bound}`,
+    });
+    this.stakes = stakesResult.map(stake => {
+      const { amount: balance, symbol } = decomposeAsset(stake.balance);
+      const { amount: quota } = decomposeAsset(stake.quota);
+      return {
+        ...stake,
+        balance,
+        symbol,
+        quota,
+      };
     });
   }
 }

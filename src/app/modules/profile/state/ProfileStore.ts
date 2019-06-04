@@ -1,33 +1,18 @@
 import { observable, action, computed } from 'mobx';
-import { wallet, fetchRows, decomposeAsset, Symbol } from 'app/shared/eos';
+import { wallet, fetchRows, decomposeAsset } from 'app/shared/eos';
 import {
   DAPPSERVICES_CONTRACT,
   DAPPHODL_CONTRACT,
   DAPPPRICE_CONTRACT,
   DAPP_TOKENS_PER_CYCLE,
 } from 'app/shared/eos/constants';
-import { getTableBoundsForName } from 'app/shared/eos/name';
+
 import demoData from '../demo-data.json';
+import RootStore from 'app/root/RootStore.js';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
   account_name: string;
-};
-
-type StakeInfo = {
-  account: string;
-  balance: number;
-  symbol: Symbol;
-  id: number;
-  last_reward: string;
-  last_usage: string;
-  package: string;
-  package_end: string;
-  package_started: string;
-  pending_package: string;
-  provider: string;
-  quota: number;
-  service: string;
 };
 
 type DappHdlInfo = {
@@ -58,6 +43,12 @@ type CycleRow = {
 const LOGGED_IN_LS_KEY = 'app__is_logged_in';
 
 class ProfileStore {
+  rootStore: RootStore;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+
   /*
    * Login logic and account info
    */
@@ -79,7 +70,7 @@ class ProfileStore {
       const accountInfo = (await wallet.login()) as unknown;
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
-      this.stakes = this.dappHdlInfo = this.dappInfo = undefined;
+      this.dappHdlInfo = this.dappInfo = undefined;
       this.fetchInfo();
     } catch (err) {
       console.error(err.message);
@@ -151,7 +142,6 @@ class ProfileStore {
    * Stakes logic
    */
 
-  @observable stakes?: StakeInfo[];
   @observable dappHdlInfo?: DappHdlInfo;
   @observable dappInfo?: DappInfo;
 
@@ -161,8 +151,6 @@ class ProfileStore {
     if (process.env.REACT_APP_USE_DEMO_DATA) {
       this.dappInfo = demoData.dappInfo;
       this.dappHdlInfo = demoData.dappHdlInfo;
-      this.stakes = demoData.stakes;
-
       return;
     }
 
@@ -178,31 +166,7 @@ class ProfileStore {
         };
       }
 
-      // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service. ALL LITTLE ENDIAN (!)
-      // https://github.com/liquidapps-io/zeus-dapp-network/blob/9f0fd5d8cff78d7f429a6284aedeb23f45f21263/dapp-services/contracts/eos/dappservices/dappservices.cpp#L116
-      const nameBounds = getTableBoundsForName(this.accountInfo.account_name);
-      const servicePart = `0`.repeat(16);
-      nameBounds.lower_bound = `0x${servicePart}${nameBounds.lower_bound}`;
-      nameBounds.upper_bound = `0x${servicePart}${nameBounds.upper_bound}`;
-      const stakesResult = await fetchRows<any>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: `DAPP`,
-        table: `accountext`,
-        index_position: `3`, // &accountext::by_account_service
-        key_type: `i128`,
-        lower_bound: `${nameBounds.lower_bound}`,
-        upper_bound: `${nameBounds.upper_bound}`,
-      });
-      this.stakes = stakesResult.map(stake => {
-        const { amount: balance, symbol } = decomposeAsset(stake.balance);
-        const { amount: quota } = decomposeAsset(stake.quota);
-        return {
-          ...stake,
-          balance,
-          symbol,
-          quota,
-        };
-      });
+      await this.rootStore.dappPackageStore.fetchStakes();
 
       const dappHodlResult = await fetchRows<AccountHodlRow>({
         code: DAPPHODL_CONTRACT,
@@ -236,7 +200,7 @@ class ProfileStore {
   }
 
   @computed get totalStakedDappAmount() {
-    return (this.stakes || []).reduce((sum, stake) => sum + stake.balance, 0);
+    return (this.rootStore.dappPackageStore.stakes).reduce((sum, stake) => sum + stake.balance, 0);
   }
 
   @computed get totalDappAmount() {

@@ -1,4 +1,4 @@
-export interface IDappPackageData {
+export type IDappPackageData = {
   id                 : number // 1,
   api_endpoint       : string // "https://dspapi.eosinfra.io",
   package_json_uri   : string // "https://eosinfra.io/dsp-package.json",
@@ -13,10 +13,37 @@ export interface IDappPackageData {
   icon?              : string // URL
 }
 
-export interface IEOSNetwork {
+export type IStakedPackageData = {
+  account         : string;
+  balance         : number;
+  symbol          : Symbol;
+  id              : number;
+  last_reward     : string;
+  last_usage      : string;
+  package         : string;
+  package_end     : string;
+  package_started : string;
+  pending_package : string;
+  provider        : string;
+  quota           : number;
+  service         : string;
+};
+
+export type IEOSNetwork = {
   chainId      : string // "aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906",
   nodeEndpoint : string // "https://public.eosinfra.io"
   protocol     : string,
   host         : string,
   port         : number,
 }
+
+// mimicks EOS C++ smart contract asset and symbol class
+export type AssetSymbol = {
+  symbolCode: string;
+  precision: number;
+};
+
+export type Asset = {
+  amount: number;
+  symbol: AssetSymbol;
+};
