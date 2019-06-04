@@ -23,8 +23,8 @@ const ListWrapper = styled.div`
     width: calc(100% - 32px);
   }
 
-  @media (min-width: 1200px) {
-    width: 1200px;
+  @media (min-width: 1300px) {
+    width: 1300px;
   }
 `;
 
