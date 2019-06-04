@@ -5,8 +5,8 @@ const Button = styled.button<any>`
   padding: 11px 28px;
   /* background-color: ${props => props.color || '#5826FF'}; */
   background-color: #5826FF;
-  font-family: Montserrat-Bold;
   font-size: 14px;
+  font-weight: 700;
   color: #fff;
   border: none;
   outline: none;

@@ -17,7 +17,7 @@ const InputElement = styled.input`
   padding: 15px 62px;
   color: #fff;
   font-size: 15px;
-  font-family: Montserrat-SemiBold;
+  font-weight: 600;
   outline: none;
 
   ::placeholder {
