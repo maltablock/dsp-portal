@@ -57,7 +57,7 @@ class PackageStore {
     this.stakeValueValid = /\d+\.\d{4}/.test(this.stakeValue)
   };
 
-  @action handleStakeButtonClick = async () => {
+  @action handleStake = async () => {
     this.transactionStatus = TransactionStatus.Pending;
     this.transactionError = undefined;
     this.transactionId = undefined;
@@ -124,6 +124,10 @@ class PackageStore {
       console.error(err.message);
     }
   };
+
+  @action handleUnstake = async () => {
+    // TODO
+  }
 
   @action closeStakeDialog = () => {
     this.isStakedDialogVisible = false;

@@ -20,6 +20,10 @@ class DappPackage extends PackageBase<IDappPackageData> {
     return stringToNumber(this.data.min_stake_quantity);
   }
 
+  @computed get packageId() {
+    return this.data.package_id;
+  }
+
   @computed get unstakeTimeText() {
     return this.data.min_unstake_period
       ? distanceInWordsStrict(0, this.data.min_unstake_period * 1000)

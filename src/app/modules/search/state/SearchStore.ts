@@ -1,6 +1,13 @@
 import { observable, action, computed } from "mobx";
+import RootStore from "app/root/RootStore";
 
 class SearchStore {
+  rootStore: RootStore;
+
+  constructor(rootStore: RootStore) {
+    this.rootStore = rootStore;
+  }
+
   /**
    * Search
    */
@@ -75,6 +82,7 @@ class SearchStore {
   @observable selectedTab = 'Packages';
 
   @action handleSelectTab = tabName => {
+    this.rootStore.packageStore.selectPackage(null);
     this.selectedTab = tabName;
   }
 }

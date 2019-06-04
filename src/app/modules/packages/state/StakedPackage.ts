@@ -17,6 +17,12 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     // TODO: can we fetch min_stake_period for staked packages?
     return 0;
   }
+
+  @computed get packageId() {
+    // TODO: staked package doesn't have `package_id` property. Can we fetch it?
+    // (expamples of `package_id`: "package1", "community" or "gold")
+    return this.data.service;
+  }
 }
 
 export default StakedPackage;

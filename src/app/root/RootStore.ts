@@ -4,7 +4,7 @@ import { ProfileStore } from 'app/modules/profile';
 
 class RootStore {
   packageStore = new PackageStore(this);
-  searchStore = new SearchStore();
+  searchStore = new SearchStore(this);
   profileStore = new ProfileStore(this);
 
   init() {

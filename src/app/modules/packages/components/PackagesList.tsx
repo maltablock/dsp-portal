@@ -5,6 +5,7 @@ import { inject, observer } from 'mobx-react';
 import PackageStore from '../state/PackageStore';
 import DappPackageCard from './DappPackageCard';
 import { SearchStore } from 'app/modules/search';
+import StakedPackageCard from './StakedPackageCard';
 
 const Wrapper = styled.div`
   margin: 0 auto;
@@ -30,9 +31,7 @@ const PackagesList = ({ packageStore, searchStore }: Props) => {
       {
         searchStore!.selectedTab === 'Staked'
         ? packageStore!.stakedPackages.map(p =>
-            <div>
-              {JSON.stringify(p.data)}
-            </div>
+            <StakedPackageCard key={p.data.id} stakedPackage={p} />
           )
         : packageStore!.sortedPackages.map(p =>
             <DappPackageCard key={p.data.id} dappPackage={p} />
