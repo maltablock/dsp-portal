@@ -83,7 +83,7 @@ type Props = {
 const getContent = (packageStore: PackageStore) => {
   const {
     stakeValue,
-    selectedPackage,
+    selectedDappPackage,
     transactionId,
     transactionError,
     transactionStatus,
@@ -97,9 +97,9 @@ const getContent = (packageStore: PackageStore) => {
             Staking <AmountText>{stakeValue} DAPP</AmountText> to
           </div>
           <ContentInfo>
-            <HighlightedText>{selectedPackage!.data.provider}</HighlightedText>
+            <HighlightedText>{selectedDappPackage!.data.provider}</HighlightedText>
             for
-            <HighlightedText>{selectedPackage!.data.package_id}</HighlightedText>
+            <HighlightedText>{selectedDappPackage!.data.package_id}</HighlightedText>
           </ContentInfo>
         </Content>
       );
@@ -112,9 +112,9 @@ const getContent = (packageStore: PackageStore) => {
               You have staked <AmountText>{stakeValue} DAPP</AmountText> to
             </div>
             <ContentInfo>
-              <HighlightedText>{selectedPackage!.data.provider}</HighlightedText>
+              <HighlightedText>{selectedDappPackage!.data.provider}</HighlightedText>
               for
-              <HighlightedText>{selectedPackage!.data.package_id}</HighlightedText>
+              <HighlightedText>{selectedDappPackage!.data.package_id}</HighlightedText>
             </ContentInfo>
           </Content>
 
@@ -155,10 +155,10 @@ const StakeSuccessDialog = ({ packageStore }: Props) => {
   const {
     isStakedDialogVisible,
     closeStakeDialog,
-    selectedPackage,
+    selectedDappPackage,
   } = packageStore!;
 
-  if (!isStakedDialogVisible || !selectedPackage) return null;
+  if (!isStakedDialogVisible || !selectedDappPackage) return null;
 
   const content = getContent(packageStore!);
   const title = getTitle(packageStore!.transactionStatus);

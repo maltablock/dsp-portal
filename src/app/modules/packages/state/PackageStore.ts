@@ -35,8 +35,12 @@ class PackageStore {
 
   @observable selectedPackageId: number | null = null;
 
-  @computed get selectedPackage() {
-    return this.dappPackages.find(p => p.data.id === this.selectedPackageId);
+  @computed get selectedDappPackage() {
+    return this.dappPackages.find(p => p.isSelected);
+  }
+
+  @computed get selectedStakedPackage() {
+    return this.stakedPackages.find(p => p.isSelected);
   }
 
   @action selectPackage(id: number | null) {
@@ -68,8 +72,8 @@ class PackageStore {
         await this.rootStore.profileStore.login()
       }
 
-      const selectedPackage = this.selectedPackage
-      if(!selectedPackage) throw new Error(`Selected package not found.`)
+      const selectedDappPackage = this.selectedDappPackage
+      if(!selectedDappPackage) throw new Error(`Selected package not found.`)
 
       const result = await wallet.eosApi
       .transact({
@@ -85,9 +89,9 @@ class PackageStore {
             ],
             data: {
               owner: wallet.auth!.accountName,
-              provider: selectedPackage.data.provider,
-              service: selectedPackage.data.service,
-              package: selectedPackage.data.package_id
+              provider: selectedDappPackage.data.provider,
+              service: selectedDappPackage.data.service,
+              package: selectedDappPackage.data.package_id
             }
           },
           {
@@ -101,8 +105,8 @@ class PackageStore {
             ],
             data: {
               from: wallet.auth!.accountName,
-              provider: selectedPackage.data.provider,
-              service: selectedPackage.data.service,
+              provider: selectedDappPackage.data.provider,
+              service: selectedDappPackage.data.service,
               quantity: `${this.stakeValue} ${DAPP_SYMBOL.symbolCode}`
             }
           }
@@ -126,6 +130,8 @@ class PackageStore {
   };
 
   @action handleUnstake = async () => {
+    const stakedPackage = this.selectedStakedPackage;
+    if (!stakedPackage) return;
     // TODO
   }
 
