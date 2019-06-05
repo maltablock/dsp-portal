@@ -47,57 +47,6 @@ class PackageStore {
     this.stakeValueValid = /\d+\.\d{4}/.test(this.stakeValue)
   };
 
-  @action handleUnstake = async () => {
-    // const stakedPackage = this.selectedStakedPackage;
-    // if (!stakedPackage) return;
-    
-    // this.transactionStatus = TransactionStatus.Pending;
-    // this.transactionError = undefined;
-    // this.transactionId = undefined;
-    // this.isStakedDialogVisible = true;
-
-    // try {
-    //   if(!this.rootStore.profileStore.isLoggedIn) {
-    //     await this.rootStore.profileStore.login()
-    //   }
-
-    //   const result = await wallet.eosApi
-    //   .transact({
-    //     actions: [
-    //       {
-    //         account: DAPPSERVICES_CONTRACT,
-    //         name: 'unstake',
-    //         authorization: [
-    //           {
-    //             actor: wallet.auth!.accountName,
-    //             permission: wallet.auth!.permission
-    //           }
-    //         ],
-    //         data: {
-    //           to: wallet.auth!.accountName,
-    //           provider: stakedPackage.providerLowercased,
-    //           service: stakedPackage.serviceLowercased,
-    //           quantity: `${this.stakeValue} ${DAPP_SYMBOL.symbolCode}`
-    //         }
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     broadcast: true,
-    //     blocksBehind: 3,
-    //     expireSeconds: 60
-    //   }
-    // )
-
-    // this.transactionId = result.transaction_id
-    // this.transactionStatus = TransactionStatus.Success
-    // await this.rootStore.profileStore.fetchInfo()
-    // } catch (err) {
-    //   this.transactionStatus = TransactionStatus.Failure
-    //   this.transactionError = err.message
-    //   console.error(err.message);
-    // }
-  }
 
   /**
    * DAPP packages

@@ -31,7 +31,7 @@ const PackagesList = ({ searchStore, dialogStore }: Props) => {
       {
         searchStore!.selectedTab === 'Staked'
         ? searchStore!.sortedStakedPackages.map(p =>
-            <StakedPackageCard key={p.data.id} stakedPackage={p} />
+            <StakedPackageCard key={p.data.id} dialogStore={dialogStore!} stakedPackage={p} />
           )
         : searchStore!.sortedDappPackages.map(p =>
             <DappPackageCard key={p.data.id} dialogStore={dialogStore!} dappPackage={p} />

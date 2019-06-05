@@ -56,3 +56,38 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
       }
     )
 }
+
+type UnstakePayload = {
+  provider: string
+  service: string 
+  quantity: string
+}
+export const unstakeTransaction = async (stake: UnstakePayload): Promise<TransactionResult> => {
+    return await wallet.eosApi
+    .transact({
+      actions: [
+        {
+          account: DAPPSERVICES_CONTRACT,
+          name: 'unstake',
+          authorization: [
+            {
+              actor: wallet.auth!.accountName,
+              permission: wallet.auth!.permission
+            }
+          ],
+          data: {
+            to: wallet.auth!.accountName,
+            provider: stake.provider,
+            service: stake.service,
+            quantity: `${stake.quantity} ${DAPP_SYMBOL.symbolCode}`
+          }
+        }
+      ]
+    },
+    {
+      broadcast: true,
+      blocksBehind: 3,
+      expireSeconds: 60
+    }
+  )
+}

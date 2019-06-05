@@ -4,9 +4,13 @@ import { observer } from 'mobx-react';
 import StakedPackage from '../state/StakedPackage';
 import PackageCard from './PackageCard';
 import { formatAsset } from 'app/shared/eos';
+import { DialogStore } from 'app/modules/dialogs';
+import { unstakeTransaction } from 'app/shared/eos/transactions';
+import { ContentInfo, HighlightedText, AmountText } from 'app/shared/components/TransactionStyles';
 
 type Props = {
   stakedPackage: StakedPackage
+  dialogStore: DialogStore
 }
 
 const formatUnstakePeriod = seconds => {
@@ -15,8 +19,54 @@ const formatUnstakePeriod = seconds => {
   return `${hours} ${postfix}`
 }
 
-const StakedPackageCard = ({ stakedPackage }: Props) => {
+const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
   const p = stakedPackage;
+  const onClick = () => {
+    const selectedStakedPackage = p.packageStore.selectedStakedPackage;
+    if(!selectedStakedPackage) return;
+
+    const stakePayload = {
+      provider: selectedStakedPackage.providerLowercased,
+      service: selectedStakedPackage.serviceLowercased,
+      package: selectedStakedPackage.packageId,
+      quantity: p.packageStore.stakeValue,
+    }
+
+    dialogStore.openTransactionDialog({
+      contentSuccess: (
+        <React.Fragment>
+          <div>
+            You have <strong>un</strong>staked <AmountText>{stakePayload.quantity} DAPP</AmountText> from
+          </div>
+          <ContentInfo>
+            <HighlightedText>{stakePayload.provider}</HighlightedText>
+            for
+            <HighlightedText>{stakePayload.package}</HighlightedText>
+          </ContentInfo>
+        </React.Fragment>
+      ),
+      contentPending: (
+        <React.Fragment>
+          <div>
+            <strong>Un</strong>Staking <AmountText>{stakePayload.quantity} DAPP</AmountText> from
+          </div>
+          <ContentInfo>
+            <HighlightedText>{stakePayload.provider}</HighlightedText>
+            for
+            <HighlightedText>{stakePayload.package}</HighlightedText>
+          </ContentInfo>
+        </React.Fragment>
+      ),
+      performTransaction: async () => {
+        const result = unstakeTransaction(stakePayload);
+        await p.packageStore.rootStore.profileStore.fetchInfo();
+        return result;
+      },
+      onClose: () => {
+        p.packageStore.selectPackage(null)
+      }
+    });
+  };
 
   return (
     <PackageCard
@@ -36,7 +86,7 @@ const StakedPackageCard = ({ stakedPackage }: Props) => {
       }}
       button={{
         text: 'UnStake',
-        onClick: p.packageStore.handleUnstake,
+        onClick,
       }}
     />
   )

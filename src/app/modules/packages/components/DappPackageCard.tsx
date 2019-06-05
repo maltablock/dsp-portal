@@ -51,7 +51,6 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
         </React.Fragment>
       ),
       performTransaction: async () => {
-        if (!selectedDappPackage) throw new Error(`Selected package not found.`);
         const result = stakeTransaction(stakePayload);
         await p.packageStore.rootStore.profileStore.fetchInfo();
         return result;
