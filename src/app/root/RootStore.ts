@@ -7,7 +7,7 @@ class RootStore {
   packageStore = new PackageStore(this);
   searchStore = new SearchStore(this);
   profileStore = new ProfileStore(this);
-  dialogStore = new DialogStore();
+  dialogStore = new DialogStore(this);
 
   init() {
     this.packageStore.fetchDappPackages();
