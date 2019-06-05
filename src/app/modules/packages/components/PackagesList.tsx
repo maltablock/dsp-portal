@@ -2,9 +2,9 @@ import React from 'react'
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 
-import PackageStore from '../state/PackageStore';
-import DappPackageCard from './DappPackageCard';
 import { SearchStore } from 'app/modules/search';
+import { DialogStore } from 'app/modules/dialogs';
+import DappPackageCard from './DappPackageCard';
 import StakedPackageCard from './StakedPackageCard';
 
 const Wrapper = styled.div`
@@ -22,9 +22,10 @@ const Wrapper = styled.div`
 
 type Props = {
   searchStore?: SearchStore;
+  dialogStore?: DialogStore;
 }
 
-const PackagesList = ({ searchStore }: Props) => {
+const PackagesList = ({ searchStore, dialogStore }: Props) => {
   return (
     <Wrapper>
       {
@@ -33,11 +34,11 @@ const PackagesList = ({ searchStore }: Props) => {
             <StakedPackageCard key={p.data.id} stakedPackage={p} />
           )
         : searchStore!.sortedDappPackages.map(p =>
-            <DappPackageCard key={p.data.id} dappPackage={p} />
+            <DappPackageCard key={p.data.id} dialogStore={dialogStore!} dappPackage={p} />
           )
       }
     </Wrapper>
   )
 }
 
-export default inject('searchStore')(observer(PackagesList));
+export default inject('searchStore','dialogStore')(observer(PackagesList));

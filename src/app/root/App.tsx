@@ -3,7 +3,8 @@ import { Provider as MobxProvider, observer } from 'mobx-react';
 
 import RootStore from './RootStore';
 import PageWrapper from './components/PageWrapper';
-import { PackagesList, StakeSuccessDialog } from 'app/modules/packages';
+import { PackagesList } from 'app/modules/packages';
+import { AllDialogsContainer } from 'app/modules/dialogs';
 import { ProfileStatusContainer, TopBar } from 'app/modules/profile';
 import { SearchBar, PackagesTabs } from 'app/modules/search';
 
@@ -27,7 +28,7 @@ class App extends React.Component {
           <PackagesTabs />
           <SearchBar />
           <PackagesList />
-          <StakeSuccessDialog />
+          <AllDialogsContainer />
         </PageWrapper>
       </MobxProvider>
     );
