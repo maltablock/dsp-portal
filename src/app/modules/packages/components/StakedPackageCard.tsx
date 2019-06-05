@@ -5,8 +5,9 @@ import StakedPackage from '../state/StakedPackage';
 import PackageCard from './PackageCard';
 import { formatAsset } from 'app/shared/eos';
 import { DialogStore } from 'app/modules/dialogs';
-import { unstakeTransaction } from 'app/shared/eos/transactions';
-import { ContentInfo, HighlightedText, AmountText } from 'app/shared/components/TransactionStyles';
+import { unstakeTransaction } from 'app/modules/transactions/logic/transactions';
+import TransactionUnstakePending from 'app/modules/transactions/components/TransactionUnstakePending';
+import TransactionUnstakeSuccess from 'app/modules/transactions/components/TransactionUnstakeSuccess';
 
 type Props = {
   stakedPackage: StakedPackage
@@ -33,30 +34,8 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     }
 
     dialogStore.openTransactionDialog({
-      contentSuccess: (
-        <React.Fragment>
-          <div>
-            You have <strong>un</strong>staked <AmountText>{stakePayload.quantity} DAPP</AmountText> from
-          </div>
-          <ContentInfo>
-            <HighlightedText>{stakePayload.provider}</HighlightedText>
-            for
-            <HighlightedText>{stakePayload.package}</HighlightedText>
-          </ContentInfo>
-        </React.Fragment>
-      ),
-      contentPending: (
-        <React.Fragment>
-          <div>
-            <strong>Un</strong>Staking <AmountText>{stakePayload.quantity} DAPP</AmountText> from
-          </div>
-          <ContentInfo>
-            <HighlightedText>{stakePayload.provider}</HighlightedText>
-            for
-            <HighlightedText>{stakePayload.package}</HighlightedText>
-          </ContentInfo>
-        </React.Fragment>
-      ),
+      contentSuccess: <TransactionUnstakeSuccess {...stakePayload}/>,
+      contentPending: <TransactionUnstakePending {...stakePayload}/>,
       performTransaction: async () => {
         const result = unstakeTransaction(stakePayload);
         await p.packageStore.rootStore.profileStore.fetchInfo();

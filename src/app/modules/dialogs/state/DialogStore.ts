@@ -1,5 +1,5 @@
 import { observable, action, computed, IObservableArray } from "mobx";
-import { TransactionResult } from "app/shared/eos/transactions";
+import { TransactionResult } from "app/modules/transactions/logic/transactions";
 
 export enum TransactionStatus {
   Pending= 0,
@@ -49,7 +49,6 @@ export class TransactionDialogItem {
     } catch (err) {
       this.transactionStatus = TransactionStatus.Failure;
       this.transactionError = err.message;
-      console.log(`tErr2`, this.transactionError)
       console.error(err.message);
     }
   }

@@ -1,11 +1,11 @@
-import { wallet } from './wallet';
-import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL } from './constants';
+import { wallet } from 'app/shared/eos/wallet';
+import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL } from 'app/shared/eos/constants';
 
 export type TransactionResult = {
   transaction_id: string
 }
 
-type StakePayload = {
+export type StakePayload = {
   provider: string
   service: string 
   package: string
@@ -57,7 +57,7 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
     )
 }
 
-type UnstakePayload = {
+export type UnstakePayload = {
   provider: string
   service: string 
   quantity: string

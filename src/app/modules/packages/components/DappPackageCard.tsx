@@ -4,8 +4,9 @@ import { observer } from 'mobx-react';
 import DappPackage from '../state/DappPackage';
 import PackageCard from './PackageCard';
 import { DialogStore } from 'app/modules/dialogs';
-import { stakeTransaction } from 'app/shared/eos/transactions';
-import { ContentInfo, HighlightedText, AmountText } from 'app/shared/components/TransactionStyles';
+import { stakeTransaction } from 'app/modules/transactions/logic/transactions';
+import TransactionStakeSuccess from 'app/modules/transactions/components/TransactionStakeSuccess';
+import TransactionStakePending from 'app/modules/transactions/components/TransactionStakePending';
 
 type Props = {
   dappPackage: DappPackage;
@@ -26,30 +27,8 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
     }
 
     dialogStore.openTransactionDialog({
-      contentSuccess: (
-        <React.Fragment>
-          <div>
-            You have staked <AmountText>{stakePayload.quantity} DAPP</AmountText> to
-          </div>
-          <ContentInfo>
-            <HighlightedText>{stakePayload.provider}</HighlightedText>
-            for
-            <HighlightedText>{stakePayload.package}</HighlightedText>
-          </ContentInfo>
-        </React.Fragment>
-      ),
-      contentPending: (
-        <React.Fragment>
-          <div>
-            Staking <AmountText>{stakePayload.quantity} DAPP</AmountText> to
-          </div>
-          <ContentInfo>
-            <HighlightedText>{stakePayload.provider}</HighlightedText>
-            for
-            <HighlightedText>{stakePayload.package}</HighlightedText>
-          </ContentInfo>
-        </React.Fragment>
-      ),
+      contentSuccess: <TransactionStakeSuccess {...stakePayload} />,
+      contentPending: <TransactionStakePending {...stakePayload} />,
       performTransaction: async () => {
         const result = stakeTransaction(stakePayload);
         await p.packageStore.rootStore.profileStore.fetchInfo();

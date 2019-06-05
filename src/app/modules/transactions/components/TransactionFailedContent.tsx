@@ -1,5 +1,5 @@
 import React from 'react';
-import { ContentInfo, HighlightedText } from 'app/shared/components/TransactionStyles';
+import { ContentInfo, HighlightedText } from './TransactionStyles';
 
 type Props = {
   transactionError: string;
