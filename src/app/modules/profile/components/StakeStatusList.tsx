@@ -1,10 +1,15 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 
 import { ProfileStore } from 'app/modules/profile';
 import { DAPP_SYMBOL } from 'app/shared/eos/constants';
+import TransactionRefreshPending from 'app/modules/transactions/components/TransactionRefreshPending';
+import TransactionRefreshSuccess from 'app/modules/transactions/components/TransactionRefreshSuccess';
+import TransactionWithdrawPending from 'app/modules/transactions/components/TransactionWithdrawPending';
+import TransactionWithdrawSuccess from 'app/modules/transactions/components/TransactionWithdrawSuccess';
 import StakeStatusCard from './StakeStatusCard';
+import RefreshButton from './RefreshButton'
 
 const MOBILE_WIDTH = 960;
 
@@ -42,13 +47,46 @@ const ToggleExpandButton = styled.div`
 `;
 
 type Props = {
-  profileStore?: ProfileStore
+  profileStore?: ProfileStore;
 };
 
 const StakeStatusList = (props: Props) => {
   const store = props.profileStore!;
 
-  const dappToUsd = dapp => dapp / Math.pow(10, DAPP_SYMBOL.precision) * store.usdPerDapp
+  const dappToUsd = dapp => (dapp / Math.pow(10, DAPP_SYMBOL.precision)) * store.usdPerDapp;
+
+  // some users never received the AirHODL and cannot claim / withdraw
+  const airHodlCard =
+    store.dappHdlClaimed === null
+      ? {
+          text: 'Air-HODLed token',
+          amount: 0,
+          amountUsd: 0,
+          remainingTilDate: store.vestingEndDate,
+        }
+      : {
+          text: 'Air-HODLed token',
+          amount: store.dappHdlBalance,
+          amountUsd: dappToUsd(store.dappHdlBalance),
+          remainingTilDate: store.vestingEndDate,
+          showRefreshButton: store.dappHdlClaimed,
+          refreshButton: <RefreshButton onClick={() =>
+            store.handleRefresh({
+              contentPending: <TransactionRefreshPending />,
+              contentSuccess: <TransactionRefreshSuccess />,
+            })}/>,
+          buttonText: store.dappHdlClaimed ? 'Withdraw' : 'Claim',
+          buttonOnClick: store.dappHdlClaimed
+            ? () => store.handleWithdraw({
+              contentPending: <TransactionWithdrawPending />,
+              contentSuccess: <TransactionWithdrawSuccess />,
+            })
+            : () =>
+                store.handleRefresh({
+                  contentPending: <TransactionRefreshPending isClaimTransaction />,
+                  contentSuccess: <TransactionRefreshSuccess isClaimTransaction />,
+                }),
+        };
 
   return (
     <ListWrapper>
@@ -56,44 +94,33 @@ const StakeStatusList = (props: Props) => {
         {store.isCardsExpanded ? 'CLOSE' : 'EXPAND'}
       </ToggleExpandButton>
 
-      {
-        [
-          {
-            text: 'Total DAPP',
-            amount: store.totalDappAmount,
-            amountUsd: dappToUsd(store.totalDappAmount)
-          },
-          {
-            text: 'Staked DAPP',
-            amount: store.totalStakedDappAmount,
-            amountUsd: dappToUsd(store.totalStakedDappAmount),
-            buttonText: 'Unstake',
-            buttonOnClick: store.handleUnstake
-          },
-          {
-            text: 'Unstaked DAPP',
-            amount: store.unstakedBalance,
-            amountUsd: dappToUsd(store.unstakedBalance)
-          },
-          {
-            text: 'Air-HODLed token',
-            amount: store.dappHdlBalance,
-            amountUsd: dappToUsd(store.dappHdlBalance),
-            remainingTilDate: store.vestingEndDate,
-            buttonText: 'Withdraw',
-            buttonOnClick: store.handleWithdraw
-          },
-        ].map((props, index, arr) =>
-          <StakeStatusCard
-            key={props.text}
-            expanded={store.isCardsExpanded}
-            zIndex={arr.length - index}
-            {...props}
-          />
-        )
-      }
+      {[
+        {
+          text: 'Total DAPP',
+          amount: store.totalDappAmount,
+          amountUsd: dappToUsd(store.totalDappAmount),
+        },
+        {
+          text: 'Staked DAPP',
+          amount: store.totalStakedDappAmount,
+          amountUsd: dappToUsd(store.totalStakedDappAmount),
+        },
+        {
+          text: 'Unstaked DAPP',
+          amount: store.unstakedBalance,
+          amountUsd: dappToUsd(store.unstakedBalance),
+        },
+        airHodlCard,
+      ].map((props, index, arr) => (
+        <StakeStatusCard
+          key={props.text}
+          expanded={store.isCardsExpanded}
+          zIndex={arr.length - index}
+          {...props}
+        />
+      ))}
     </ListWrapper>
-  )
-}
+  );
+};
 
 export default inject('profileStore')(observer(StakeStatusList));

@@ -7,8 +7,9 @@ import {
   DAPP_TOKENS_PER_CYCLE,
 } from 'app/shared/eos/constants';
 
+import RootStore from 'app/root/RootStore';
+import { refreshTransaction, withdrawTransaction } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
-import RootStore from 'app/root/RootStore.js';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -188,8 +189,31 @@ class ProfileStore {
   };
 
 
-  @action handleUnstake = () => {} // TODO
-  @action handleWithdraw = () => {} // TODO
+  @action handleWithdraw = async ({ contentSuccess, contentPending }) => {
+    this.rootStore.dialogStore.openTransactionDialog({
+      contentSuccess,
+      contentPending,
+      performTransaction: async () => {
+        const result = await withdrawTransaction()
+        // TODO: @cmichel21 split fetchInfo into several parallel fetches and only refetch dappHodl part
+        await this.fetchInfo();
+        return result;
+      },
+    })
+  }
+
+  @action handleRefresh = async ({ contentSuccess, contentPending }) => {
+    this.rootStore.dialogStore.openTransactionDialog({
+      contentSuccess,
+      contentPending,
+      performTransaction: async () => {
+        const result = await refreshTransaction()
+        // TODO: @cmichel21 split fetchInfo into several parallel fetches and only refetch dappHodl part
+        await this.fetchInfo();
+        return result;
+      },
+    })
+  }
 
   get vestingEndDate() {
     return "2021-02-26T16:00:00.000";
@@ -215,6 +239,10 @@ class ProfileStore {
 
   @computed get dappHdlBalance() {
     return this.dappHdlInfo ? this.dappHdlInfo.balance : 0;
+  }
+
+  @computed get dappHdlClaimed() {
+    return this.dappHdlInfo ? this.dappHdlInfo.claimed : null;
   }
 }
 

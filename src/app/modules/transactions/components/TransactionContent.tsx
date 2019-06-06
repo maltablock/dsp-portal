@@ -13,12 +13,12 @@ const Content = styled.div`
 `;
 
 type Props = {
-  transactionStatus: TransactionStatus,
-  transactionId?: string,
-  transactionError?: string,
-  contentPending: any,
-  contentSuccess: any,
-}
+  transactionStatus: TransactionStatus;
+  transactionId?: string;
+  transactionError?: string;
+  contentPending: any;
+  contentSuccess: any;
+};
 
 const TransactionContent = (dialog: Props) => {
   const {
@@ -45,7 +45,11 @@ const TransactionContent = (dialog: Props) => {
       );
     }
     case TransactionStatus.Failure: {
-      return <TransactionFailedContent transactionError={transactionError!} />;
+      return (
+        <Content>
+          <TransactionFailedContent transactionError={transactionError!} />
+        </Content>
+      );
     }
   }
 };

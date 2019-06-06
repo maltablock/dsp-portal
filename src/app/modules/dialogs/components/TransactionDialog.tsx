@@ -26,7 +26,8 @@ const DialogCard = styled(BlueGradientCard)`
   margin: 200px auto 0;
   padding: 40px 32px;
   > * {
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
   }
 `;
 
