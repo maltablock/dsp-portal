@@ -1,5 +1,5 @@
 import { wallet } from 'app/shared/eos/wallet';
-import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL } from 'app/shared/eos/constants';
+import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
 
 export type TransactionResult = {
   transaction_id: string
@@ -80,6 +80,60 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
             provider: stake.provider,
             service: stake.service,
             quantity: `${stake.quantity} ${DAPP_SYMBOL.symbolCode}`
+          }
+        }
+      ]
+    },
+    {
+      broadcast: true,
+      blocksBehind: 3,
+      expireSeconds: 60
+    }
+  )
+}
+
+export const refreshTransaction = async (): Promise<TransactionResult> => {
+    return await wallet.eosApi
+    .transact({
+      actions: [
+        {
+          account: DAPPHODL_CONTRACT,
+          name: 'refresh',
+          authorization: [
+            {
+              actor: wallet.auth!.accountName,
+              permission: wallet.auth!.permission
+            }
+          ],
+          data: {
+            owner: wallet.auth!.accountName,
+          }
+        }
+      ]
+    },
+    {
+      broadcast: true,
+      blocksBehind: 3,
+      expireSeconds: 60
+    }
+  )
+}
+
+export const withdrawTransaction = async (): Promise<TransactionResult> => {
+    return await wallet.eosApi
+    .transact({
+      actions: [
+        {
+          account: DAPPHODL_CONTRACT,
+          name: 'withdraw',
+          authorization: [
+            {
+              actor: wallet.auth!.accountName,
+              permission: wallet.auth!.permission
+            }
+          ],
+          data: {
+            owner: wallet.auth!.accountName,
           }
         }
       ]
