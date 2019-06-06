@@ -60,6 +60,8 @@ const Text = styled.div`
 const Amount = styled.div`
   margin-top: 12px;
   font-size: 24px;
+  display: flex;
+  align-items: center;
 `;
 
 const AmountUsd = styled.div`
@@ -104,6 +106,7 @@ type CardProps = {
   zIndex?: number,
   expanded?: boolean,
   remainingTilDate?: string,
+  refreshButton?: any,
   buttonText?: string,
   buttonOnClick?: () => void,
 }
@@ -113,6 +116,7 @@ const StakeStatusCardComponent = observer(({
   amount,
   amountUsd,
   remainingTilDate,
+  refreshButton = null,
   buttonText,
   buttonOnClick,
 }: CardProps) => {
@@ -128,6 +132,7 @@ const StakeStatusCardComponent = observer(({
         <Text>{text}</Text>
         <Amount>
           {formatAsset({ amount, symbol: DAPP_SYMBOL }, { withSymbol: false, separateThousands: true })}
+          {refreshButton}
         </Amount>
         <AmountUsd>${amountUsd.toFixed(2)}</AmountUsd>
       </CardWrapper>

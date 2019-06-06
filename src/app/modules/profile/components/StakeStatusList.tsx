@@ -4,11 +4,12 @@ import { inject, observer } from 'mobx-react';
 
 import { ProfileStore } from 'app/modules/profile';
 import { DAPP_SYMBOL } from 'app/shared/eos/constants';
-import StakeStatusCard from './StakeStatusCard';
 import TransactionRefreshPending from 'app/modules/transactions/components/TransactionRefreshPending';
 import TransactionRefreshSuccess from 'app/modules/transactions/components/TransactionRefreshSuccess';
 import TransactionWithdrawPending from 'app/modules/transactions/components/TransactionWithdrawPending';
 import TransactionWithdrawSuccess from 'app/modules/transactions/components/TransactionWithdrawSuccess';
+import StakeStatusCard from './StakeStatusCard';
+import RefreshButton from './RefreshButton'
 
 const MOBILE_WIDTH = 960;
 
@@ -68,6 +69,12 @@ const StakeStatusList = (props: Props) => {
           amount: store.dappHdlBalance,
           amountUsd: dappToUsd(store.dappHdlBalance),
           remainingTilDate: store.vestingEndDate,
+          showRefreshButton: store.dappHdlClaimed,
+          refreshButton: <RefreshButton onClick={() =>
+            store.handleRefresh({
+              contentPending: <TransactionRefreshPending />,
+              contentSuccess: <TransactionRefreshSuccess />,
+            })}/>,
           buttonText: store.dappHdlClaimed ? 'Withdraw' : 'Claim',
           buttonOnClick: store.dappHdlClaimed
             ? () => store.handleWithdraw({
