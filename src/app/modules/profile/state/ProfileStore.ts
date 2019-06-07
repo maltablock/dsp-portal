@@ -46,7 +46,7 @@ const LOGGED_IN_LS_KEY = 'app__is_logged_in';
 
 class ProfileStore {
   rootStore: RootStore;
-  eosNetwork = localStorage.getItem(EOS_NETWORK_LS_KEY);
+  eosNetwork = localStorage.getItem(EOS_NETWORK_LS_KEY) || 'mainnet';
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
