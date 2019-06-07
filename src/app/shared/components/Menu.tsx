@@ -61,7 +61,7 @@ type Props = {
     text: string
     value?: any
     isActive?: boolean
-    onClick: () => void
+    onClick: (...any) => any
   }>
 }
 
@@ -99,7 +99,7 @@ export const menuFactory = ({
                 options.map(option =>
                   <OptionItem
                     active={option.isActive}
-                    onClick={option.onClick}
+                    onClick={() => option.onClick(option.value)}
                     key={option.value}
                   >
                     {option.text}

@@ -94,9 +94,10 @@ const ProviderWrapper = styled.div`
 
 const ProviderIcon = styled.div<any>`
   background-image: url(${props => props.iconUrl});
-  background-position: top center;
-  background-size: cover;
-  background-color: #171322;
+  background-position: center center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-color: ${props => props.iconBgColor || '#171322'};
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -204,7 +205,7 @@ const PackageCard = ({
       }
 
       <ProviderWrapper>
-        <ProviderIcon iconUrl={p.data.icon} />
+        <ProviderIcon iconUrl={p.iconUrl} iconBgColor={p.iconBgColor} />
         <ProviderName>{p.data.provider}</ProviderName>
       </ProviderWrapper>
 

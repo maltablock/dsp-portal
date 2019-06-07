@@ -5,6 +5,7 @@ import {
   DAPPHODL_CONTRACT,
   DAPPPRICE_CONTRACT,
   DAPP_TOKENS_PER_CYCLE,
+  EOS_NETWORK_LS_KEY,
 } from 'app/shared/eos/constants';
 
 import RootStore from 'app/root/RootStore';
@@ -45,6 +46,7 @@ const LOGGED_IN_LS_KEY = 'app__is_logged_in';
 
 class ProfileStore {
   rootStore: RootStore;
+  eosNetwork = localStorage.getItem(EOS_NETWORK_LS_KEY);
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -61,6 +63,14 @@ class ProfileStore {
     return !!this.accountInfo;
   }
 
+  getLoginStatusFromStorage = () => {
+    return localStorage.getItem(LOGGED_IN_LS_KEY);
+  }
+
+  setLoginStatusToStorage = (isLoggedIn = 'false') => {
+    localStorage.setItem(LOGGED_IN_LS_KEY, isLoggedIn);
+  }
+
   @action login = async () => {
     if (this.isLoggingIn) return;
 
@@ -73,30 +83,43 @@ class ProfileStore {
       // reset all observables to not have stale data from previous account
       this.dappHdlInfo = this.dappInfo = undefined;
       this.fetchInfo();
+      this.setLoginStatusToStorage('true');
     } catch (err) {
       console.error(err.message);
+      this.setLoginStatusToStorage('false');
     }
 
-    localStorage.setItem(LOGGED_IN_LS_KEY, 'true');
     this.isLoggingIn = false;
   };
 
   @action logout = async () => {
+    this.setLoginStatusToStorage('false');
+
     try {
       await wallet.logout();
       this.accountInfo = null;
-      localStorage.removeItem(LOGGED_IN_LS_KEY);
     } catch (err) {
       console.error(err);
     }
   };
 
+
   @action init = () => {
-    if (localStorage.getItem(LOGGED_IN_LS_KEY) === 'true') {
+    if (this.getLoginStatusFromStorage() === 'true') {
       this.login();
     }
     this.fetchDappPrice();
   };
+
+
+  /*
+   * EOS network menu
+   */
+
+  @action setEosNetwork = network => {
+    localStorage.setItem(EOS_NETWORK_LS_KEY, network);
+    window.location.reload();
+  }
 
   /*
    * Converting DAPP to USD
