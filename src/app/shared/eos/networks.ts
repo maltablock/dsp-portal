@@ -31,8 +31,12 @@ const MainNetwork: IEOSNetwork = createNetwork(
   `aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906`,
 );
 
+function getNetworkName() {
+  return localStorage.getItem(EOS_NETWORK_LS_KEY);
+}
+
 function getNetwork() {
-  const eosNetwork = localStorage.getItem(EOS_NETWORK_LS_KEY);
+  const eosNetwork = getNetworkName()
 
   switch (eosNetwork) {
     case `kylin`:
@@ -46,4 +50,4 @@ const network = getNetwork();
 
 const rpc = new JsonRpc(network.nodeEndpoint);
 
-export { getNetwork, rpc };
+export { getNetwork, getNetworkName, rpc };

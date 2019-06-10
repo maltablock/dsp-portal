@@ -39,6 +39,14 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     // so package field is the current active package, pending the selected one
     return this.data.package || this.data.pending_package;
   }
+
+  @computed get stakingBalanceFromSelf() {
+    return this.data.stakingBalanceFromSelf
+  }
+
+  @computed get stakingBalanceFromSelfDappHdl() {
+    return this.data.stakingBalanceFromSelfDappHdl
+  }
 }
 
 export default StakedPackage;

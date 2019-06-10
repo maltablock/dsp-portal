@@ -16,7 +16,7 @@ type Props = {
 
 const formatUnstakePeriod = seconds => {
   const hours = (seconds / 3600).toFixed(2)
-  const postfix = hours == `1.00` ? `Hour` : `Hours`
+  const postfix = hours === `1.00` ? `Hour` : `Hours`
   return `${hours} ${postfix}`
 }
 
@@ -26,18 +26,20 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     const selectedStakedPackage = p.packageStore.selectedStakedPackage;
     if(!selectedStakedPackage) return;
 
-    const stakePayload = {
+    const unstakePayload = {
       provider: selectedStakedPackage.providerLowercased,
       service: selectedStakedPackage.serviceLowercased,
       package: selectedStakedPackage.packageId,
       quantity: p.packageStore.stakeValue,
+      stakingBalanceFromSelf: selectedStakedPackage.stakingBalanceFromSelf,
+      stakingBalanceFromSelfDappHdl: selectedStakedPackage.stakingBalanceFromSelfDappHdl,
     }
 
     dialogStore.openTransactionDialog({
-      contentSuccess: <TransactionUnstakeSuccess {...stakePayload}/>,
-      contentPending: <TransactionUnstakePending {...stakePayload}/>,
+      contentSuccess: <TransactionUnstakeSuccess {...unstakePayload}/>,
+      contentPending: <TransactionUnstakePending {...unstakePayload}/>,
       performTransaction: async () => {
-        const result = unstakeTransaction(stakePayload);
+        const result = await unstakeTransaction(unstakePayload);
         await p.packageStore.rootStore.profileStore.fetchInfo();
         return result;
       },

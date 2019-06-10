@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { observable, action, computed } from 'mobx';
 
 import demoData from '../demo-data.json';

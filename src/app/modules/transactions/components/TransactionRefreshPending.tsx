@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AmountText, ContentInfo, HighlightedText } from './TransactionStyles';
+import { AmountText, ContentInfo } from './TransactionStyles';
 
 type Props = {
   isClaimTransaction?: boolean

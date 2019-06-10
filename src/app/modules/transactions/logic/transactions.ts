@@ -1,147 +1,215 @@
 import { wallet } from 'app/shared/eos/wallet';
-import { DAPPSERVICES_CONTRACT, DAPP_SYMBOL, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
+import {
+  DAPPSERVICES_CONTRACT,
+  DAPP_SYMBOL,
+  DAPPHODL_SYMBOL,
+  DAPPHODL_CONTRACT,
+} from 'app/shared/eos/constants';
+import { Action } from 'eosjs/dist/eosjs-serialize';
+import { decomposeAsset, formatAsset } from 'app/shared/eos';
 
 export type TransactionResult = {
-  transaction_id: string
-}
+  transaction_id: string;
+};
+
+const transactionOptions = {
+  broadcast: true,
+  blocksBehind: 3,
+  expireSeconds: 60,
+};
+
+const createAction = (action: any): Action => {
+  return Object.assign(
+    {
+      account: DAPPSERVICES_CONTRACT,
+      authorization: [
+        {
+          actor: wallet.auth!.accountName,
+          permission: wallet.auth!.permission,
+        },
+      ],
+      data: {},
+    },
+    action,
+  );
+};
 
 export type StakePayload = {
-  provider: string
-  service: string 
-  package: string
-  quantity: string
-}
+  provider: string;
+  service: string;
+  package: string;
+  quantity: string;
+  unstakedDappHdlAmount: number;
+  unstakedDappAmount: number;
+};
 export const stakeTransaction = async (stake: StakePayload): Promise<TransactionResult> => {
-  return await wallet.eosApi
-      .transact({
-        actions: [
-          {
-            account: DAPPSERVICES_CONTRACT,
-            name: 'selectpkg',
-            authorization: [
-              {
-                actor: wallet.auth!.accountName,
-                permission: wallet.auth!.permission
-              }
-            ],
-            data: {
-              owner: wallet.auth!.accountName,
-              provider: stake.provider,
-              service: stake.service,
-              package: stake.package
-            }
-          },
-          {
-            account: DAPPSERVICES_CONTRACT,
-            name: 'stake',
-            authorization: [
-              {
-                actor: wallet.auth!.accountName,
-                permission: wallet.auth!.permission
-              }
-            ],
-            data: {
-              from: wallet.auth!.accountName,
-              provider: stake.provider,
-              service: stake.service,
-              quantity: `${stake.quantity} ${DAPP_SYMBOL.symbolCode}`
-            }
-          }
-        ]
-      },
-      {
-        broadcast: true,
-        blocksBehind: 3,
-        expireSeconds: 60
-      }
-    )
-}
+  const stakeAmount = decomposeAsset(`${stake.quantity} ${DAPP_SYMBOL}`).amount;
 
-export type UnstakePayload = {
-  provider: string
-  service: string 
-  quantity: string
-}
-export const unstakeTransaction = async (stake: UnstakePayload): Promise<TransactionResult> => {
-    return await wallet.eosApi
-    .transact({
+  if (stake.unstakedDappAmount + stake.unstakedDappHdlAmount < stakeAmount) {
+    throw new Error(
+      `You don't have enough funds to stake ${formatAsset({
+        amount: stakeAmount,
+        symbol: DAPP_SYMBOL,
+      })}.\nAvailable: ${formatAsset({
+        amount: stake.unstakedDappAmount,
+        symbol: DAPP_SYMBOL,
+      })}, ${formatAsset({ amount: stake.unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL })}`,
+    );
+  }
+
+  // always stake normal dapp first
+  let stakeActions: Action[] = [];
+
+  if (stake.unstakedDappAmount > 0) {
+    stakeActions.push(
+      createAction({
+        name: 'stake',
+        data: {
+          from: wallet.auth!.accountName,
+          provider: stake.provider,
+          service: stake.service,
+          quantity: formatAsset({
+            amount: Math.min(stakeAmount, stake.unstakedDappAmount),
+            symbol: DAPP_SYMBOL,
+          }),
+        },
+      }),
+    );
+  }
+
+  // stake DAPPHDL if necessary
+  const leftOverAmount = stakeAmount - stake.unstakedDappAmount;
+  if (leftOverAmount > 0) {
+    stakeActions.push(
+      createAction({
+        account: DAPPHODL_CONTRACT,
+        name: 'stake',
+        data: {
+          owner: wallet.auth!.accountName,
+          provider: stake.provider,
+          service: stake.service,
+          quantity: formatAsset({ amount: leftOverAmount, symbol: DAPPHODL_SYMBOL }),
+        },
+      }),
+    );
+  }
+
+  return await wallet.eosApi.transact(
+    {
       actions: [
-        {
-          account: DAPPSERVICES_CONTRACT,
-          name: 'unstake',
-          authorization: [
-            {
-              actor: wallet.auth!.accountName,
-              permission: wallet.auth!.permission
-            }
-          ],
+        createAction({
+          name: 'selectpkg',
           data: {
-            to: wallet.auth!.accountName,
+            owner: wallet.auth!.accountName,
             provider: stake.provider,
             service: stake.service,
-            quantity: `${stake.quantity} ${DAPP_SYMBOL.symbolCode}`
-          }
-        }
-      ]
+            package: stake.package,
+          },
+        }),
+        ...stakeActions,
+      ],
     },
+    transactionOptions,
+  );
+};
+
+export type UnstakePayload = {
+  provider: string;
+  service: string;
+  quantity: string;
+  stakingBalanceFromSelf: number;
+  stakingBalanceFromSelfDappHdl: number;
+};
+export const unstakeTransaction = async (stake: UnstakePayload): Promise<TransactionResult> => {
+  const stakeAmount = decomposeAsset(`${stake.quantity} ${DAPP_SYMBOL}`).amount;
+
+  if (stake.stakingBalanceFromSelf + stake.stakingBalanceFromSelfDappHdl < stakeAmount) {
+    throw new Error(
+      `You do not have enough funds staked to unstake ${formatAsset({
+        amount: stakeAmount,
+        symbol: DAPP_SYMBOL,
+      })}.\nAvailable: ${formatAsset({
+        amount: stake.stakingBalanceFromSelf,
+        symbol: DAPP_SYMBOL,
+      })}, ${formatAsset({ amount: stake.stakingBalanceFromSelfDappHdl, symbol: DAPP_SYMBOL })}`,
+    );
+  }
+
+  // always unstake DAPPHDL first
+  let stakeActions: Action[] = [];
+
+  if (stake.stakingBalanceFromSelfDappHdl > 0) {
+    stakeActions.push(
+      createAction({
+        account: DAPPHODL_CONTRACT,
+        name: 'unstake',
+        data: {
+          owner: wallet.auth!.accountName,
+          provider: stake.provider,
+          service: stake.service,
+          quantity: formatAsset({
+            amount: Math.min(stakeAmount, stake.stakingBalanceFromSelfDappHdl),
+            symbol: DAPP_SYMBOL,
+          }),
+        },
+      }),
+    );
+  }
+
+  // stake DAPPHDL if necessary
+  const leftOverAmount = stakeAmount - stake.stakingBalanceFromSelfDappHdl;
+  if (leftOverAmount > 0) {
+    stakeActions.push(
+      createAction({
+        name: 'unstake',
+        data: {
+          to: wallet.auth!.accountName,
+          provider: stake.provider,
+          service: stake.service,
+          quantity: formatAsset({ amount: leftOverAmount, symbol: DAPPHODL_SYMBOL }),
+        },
+      }),
+    );
+  }
+
+  return await wallet.eosApi.transact(
     {
-      broadcast: true,
-      blocksBehind: 3,
-      expireSeconds: 60
-    }
-  )
-}
+      actions: stakeActions,
+    },
+    transactionOptions,
+  );
+};
 
 export const refreshTransaction = async (): Promise<TransactionResult> => {
-    return await wallet.eosApi
-    .transact({
+  return await wallet.eosApi.transact(
+    {
       actions: [
-        {
+        createAction({
           account: DAPPHODL_CONTRACT,
           name: 'refresh',
-          authorization: [
-            {
-              actor: wallet.auth!.accountName,
-              permission: wallet.auth!.permission
-            }
-          ],
           data: {
             owner: wallet.auth!.accountName,
-          }
-        }
-      ]
+          },
+        }),
+      ],
     },
-    {
-      broadcast: true,
-      blocksBehind: 3,
-      expireSeconds: 60
-    }
-  )
-}
+    transactionOptions,
+  );
+};
 
 export const withdrawTransaction = async (): Promise<TransactionResult> => {
-    return await wallet.eosApi
-    .transact({
+  return await wallet.eosApi.transact(
+    {
       actions: [
-        {
+        createAction({
           account: DAPPHODL_CONTRACT,
           name: 'withdraw',
-          authorization: [
-            {
-              actor: wallet.auth!.accountName,
-              permission: wallet.auth!.permission
-            }
-          ],
           data: {
             owner: wallet.auth!.accountName,
-          }
-        }
-      ]
+          },
+        }),
+      ],
     },
-    {
-      broadcast: true,
-      blocksBehind: 3,
-      expireSeconds: 60
-    }
-  )
-}
+    transactionOptions,
+  );
+};

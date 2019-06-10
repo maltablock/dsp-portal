@@ -24,13 +24,15 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
       service: selectedDappPackage.serviceLowercased,
       package: selectedDappPackage.packageId,
       quantity: p.packageStore.stakeValue,
+      unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.dappHdlUnstakedBalance,
+      unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedBalance,
     }
 
     dialogStore.openTransactionDialog({
       contentSuccess: <TransactionStakeSuccess {...stakePayload} />,
       contentPending: <TransactionStakePending {...stakePayload} />,
       performTransaction: async () => {
-        const result = stakeTransaction(stakePayload);
+        const result = await stakeTransaction(stakePayload);
         await p.packageStore.rootStore.profileStore.fetchInfo();
         return result;
       },
