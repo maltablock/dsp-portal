@@ -101,7 +101,7 @@ const StakeStatusList = (props: Props) => {
           amountUsd: dappToUsd(store.totalDappAmount),
         },
         {
-          text: 'Staked DAPP',
+          text: 'Staked DAPP(HDL)',
           amount: store.totalStakedDappAmount,
           amountUsd: dappToUsd(store.totalStakedDappAmount),
         },

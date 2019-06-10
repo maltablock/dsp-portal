@@ -224,20 +224,22 @@ class ProfileStore {
   }
 
   @computed get totalStakedDappAmount() {
+    // includes DAPP and DAPPHDL
+    // TODO: @MrToph add correct formula
     return this.rootStore.packageStore.stakedPackages.reduce(
       (sum, stake) => sum + stake.data.balance, 0
     );
   }
 
   @computed get totalDappAmount() {
-    return this.totalStakedDappAmount + this.unstakedBalance;
+    return this.totalStakedDappAmount + this.unstakedBalance + this.dappHdlUnstakedBalance;
   }
 
-  @computed get dappHdlAmount() {
-    return this.dappHdlInfo ? this.dappHdlInfo.staked : 0;
+  @computed get dappHdlUnstakedBalance() {
+    return this.dappHdlInfo ? this.dappHdlInfo.balance - this.dappHdlInfo.staked : 0;
   }
 
-  @computed get dappHdlBalance() {
+  @computed get  dappHdlBalance() {
     return this.dappHdlInfo ? this.dappHdlInfo.balance : 0;
   }
 

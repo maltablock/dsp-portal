@@ -7,6 +7,7 @@ import PackageBase from "./PackageBase";
 class StakedPackage extends PackageBase<IStakedPackageData> {
   constructor(data: IStakedPackageData, packageStore: PackageStore) {
     super(data, packageStore);
+    console.log(data)
   }
 
   @computed get dappPackage() {

@@ -13,6 +13,11 @@ export type IDappPackageData = {
   icon?              : string // URL
 }
 
+export type Refund = {
+  amount: number
+  unstake_time: Date
+}
+
 export type IStakedPackageData = {
   account         : string;
   balance         : number;
@@ -28,6 +33,10 @@ export type IStakedPackageData = {
   quota           : number;
   service         : string;
   icon?           : string;
+  stakingBalanceFromSelf: number;
+  stakingBalanceFromSelfDappHdl: number;
+  refundFromSelf?: Refund;
+  refundFromSelfDappHdl?: Refund;
 };
 
 export type IEOSNetwork = {

@@ -3,11 +3,12 @@ import { observable, action, computed } from 'mobx';
 
 import demoData from '../demo-data.json';
 import DappPackage from './DappPackage';
-import RootStore from 'app/root/RootStore.js';
+import RootStore from 'app/root/RootStore';
 import { IDappPackageData } from 'app/shared/typings';
-import { fetchAllRows, getTableBoundsForName, fetchRows, decomposeAsset } from 'app/shared/eos';
-import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT, DAPP_SYMBOL } from 'app/shared/eos/constants';
+import { fetchAllRows, getTableBoundsForName, fetchRows } from 'app/shared/eos';
+import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
 import StakedPackage from './StakedPackage';
+import { aggregateStackedPackagesData, RefundsTableRow, StakingTableRow, AccountExtRow } from '../utils';
 
 class PackageStore {
   rootStore: RootStore;
@@ -108,7 +109,7 @@ class PackageStore {
       lower_bound: `0x${servicePart}${nameBounds.lower_bound}`,
       upper_bound: `0x${servicePart}${nameBounds.upper_bound}`,
     };
-    const accountExtResults = await fetchRows<any>({
+    const accountExtResults = await fetchRows<AccountExtRow>({
       code: DAPPSERVICES_CONTRACT,
       scope: `DAPP`,
       table: `accountext`,
@@ -119,7 +120,7 @@ class PackageStore {
     });
 
     // staked to logged in account through account itself
-    const stakesAccountResults = await fetchRows<any>({
+    const stakesAccountResults = await fetchRows<StakingTableRow>({
       code: DAPPSERVICES_CONTRACT,
       scope: accountInfo.account_name,
       table: `staking`,
@@ -132,7 +133,7 @@ class PackageStore {
       lower_bound: `${nameBounds.lower_bound}${`0`.repeat(16)}${`0`.repeat(32)}`,
       upper_bound: `${nameBounds.upper_bound}${`0`.repeat(16)}${`F`.repeat(32)}`,
     };
-    const stakesDappHodlResults = await fetchRows<any>({
+    const stakesDappHodlResults = await fetchRows<StakingTableRow>({
       code: DAPPSERVICES_CONTRACT,
       scope: DAPPHODL_CONTRACT,
       table: `staking`,
@@ -143,7 +144,7 @@ class PackageStore {
     });
 
     // refunds to logged in account through account itself
-    const refundsAccountResults = await fetchRows<any>({
+    const refundsAccountResults = await fetchRows<RefundsTableRow>({
       code: DAPPSERVICES_CONTRACT,
       scope: accountInfo.account_name,
       table: `refunds`,
@@ -156,7 +157,7 @@ class PackageStore {
       lower_bound: `${nameBounds.lower_bound}${`0`.repeat(48)}`,
       upper_bound: `${nameBounds.upper_bound}${`F`.repeat(48)}`,
     };
-    const refundsDappHodlResults = await fetchRows<any>({
+    const refundsDappHodlResults = await fetchRows<RefundsTableRow>({
       code: DAPPSERVICES_CONTRACT,
       scope: DAPPHODL_CONTRACT,
       table: `refunds`,
@@ -166,24 +167,20 @@ class PackageStore {
       upper_bound: `${apiBounds.upper_bound}`,
     });
     console.log({
+      accountExtResults,
       stakesDappHodlResults,
       stakesAccountResults,
       refundsDappHodlResults,
       refundsAccountResults,
     });
 
-    this.stakedPackages = accountExtResults.map(stake => {
-      const { amount: balance, symbol } = decomposeAsset(stake.balance);
-      const { amount: quota } = decomposeAsset(stake.quota);
-      const data = {
-        ...stake,
-        balance,
-        symbol,
-        quota,
-        icon: '',
-      };
-      return new StakedPackage(data, this);
-    });
+    this.stakedPackages = aggregateStackedPackagesData({
+      accountExtResults,
+      stakesDappHodlResults,
+      stakesAccountResults,
+      refundsDappHodlResults,
+      refundsAccountResults,
+    }).map(data =>  new StakedPackage(data, this))
   };
 }
 
