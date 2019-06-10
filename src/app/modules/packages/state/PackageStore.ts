@@ -6,7 +6,7 @@ import DappPackage from './DappPackage';
 import RootStore from 'app/root/RootStore.js';
 import { IDappPackageData } from 'app/shared/typings';
 import { fetchAllRows, getTableBoundsForName, fetchRows, decomposeAsset } from 'app/shared/eos';
-import { DAPPSERVICES_CONTRACT } from 'app/shared/eos/constants';
+import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT, DAPP_SYMBOL } from 'app/shared/eos/constants';
 import StakedPackage from './StakedPackage';
 
 class PackageStore {
@@ -44,9 +44,8 @@ class PackageStore {
 
   @action handleStakeValueChange = e => {
     this.stakeValue = e.target.value;
-    this.stakeValueValid = /\d+\.\d{4}/.test(this.stakeValue)
+    this.stakeValueValid = /\d+\.\d{4}/.test(this.stakeValue);
   };
-
 
   /**
    * DAPP packages
@@ -87,7 +86,7 @@ class PackageStore {
             localStorage.setItem(dsp.data.package_json_uri, icon);
             this.dappPackages[index].data.icon = icon;
           }
-        } catch (e) { }
+        } catch (e) {}
       }
     });
   }
@@ -100,22 +99,80 @@ class PackageStore {
     const { accountInfo } = this.rootStore.profileStore;
     if (!accountInfo) return;
 
+    const nameBounds = getTableBoundsForName(accountInfo.account_name);
+
     // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service. ALL LITTLE ENDIAN (!)
     // https://github.com/liquidapps-io/zeus-dapp-network/blob/9f0fd5d8cff78d7f429a6284aedeb23f45f21263/dapp-services/contracts/eos/dappservices/dappservices.cpp#L116
-    const nameBounds = getTableBoundsForName(accountInfo.account_name);
     const servicePart = `0`.repeat(16);
-    nameBounds.lower_bound = `0x${servicePart}${nameBounds.lower_bound}`;
-    nameBounds.upper_bound = `0x${servicePart}${nameBounds.upper_bound}`;
-    const stakesResult = await fetchRows<any>({
+    let apiBounds = {
+      lower_bound: `0x${servicePart}${nameBounds.lower_bound}`,
+      upper_bound: `0x${servicePart}${nameBounds.upper_bound}`,
+    };
+    const accountExtResults = await fetchRows<any>({
       code: DAPPSERVICES_CONTRACT,
       scope: `DAPP`,
       table: `accountext`,
       index_position: `3`, // &accountext::by_account_service
       key_type: `i128`,
-      lower_bound: `${nameBounds.lower_bound}`,
-      upper_bound: `${nameBounds.upper_bound}`,
+      lower_bound: `${apiBounds.lower_bound}`,
+      upper_bound: `${apiBounds.upper_bound}`,
     });
-    this.stakedPackages = stakesResult.map(stake => {
+
+    // staked to logged in account through account itself
+    const stakesAccountResults = await fetchRows<any>({
+      code: DAPPSERVICES_CONTRACT,
+      scope: accountInfo.account_name,
+      table: `staking`,
+    });
+
+    // staked to logged in account through DAPPHDL contract
+    // bounds for checksum256 are split into two 16 bytes little-endians
+    // https://eosio.stackexchange.com/a/4344/118
+    apiBounds = {
+      lower_bound: `${nameBounds.lower_bound}${`0`.repeat(16)}${`0`.repeat(32)}`,
+      upper_bound: `${nameBounds.upper_bound}${`0`.repeat(16)}${`F`.repeat(32)}`,
+    };
+    const stakesDappHodlResults = await fetchRows<any>({
+      code: DAPPSERVICES_CONTRACT,
+      scope: DAPPHODL_CONTRACT,
+      table: `staking`,
+      index_position: `2`, // &staking::_by_account_service_provider
+      key_type: `sha256`,
+      lower_bound: `${apiBounds.lower_bound}`,
+      upper_bound: `${apiBounds.upper_bound}`,
+    });
+
+    // refunds to logged in account through account itself
+    const refundsAccountResults = await fetchRows<any>({
+      code: DAPPSERVICES_CONTRACT,
+      scope: accountInfo.account_name,
+      table: `refunds`,
+    });
+
+    // refunds to logged in account through DAPPHDL contract
+    // bounds for checksum256 are split into two 16 bytes little-endians
+    // https://eosio.stackexchange.com/a/4344/118
+    apiBounds = {
+      lower_bound: `${nameBounds.lower_bound}${`0`.repeat(48)}`,
+      upper_bound: `${nameBounds.upper_bound}${`F`.repeat(48)}`,
+    };
+    const refundsDappHodlResults = await fetchRows<any>({
+      code: DAPPSERVICES_CONTRACT,
+      scope: DAPPHODL_CONTRACT,
+      table: `refunds`,
+      index_position: `2`, // &refundreq::by_symbol_service_provider
+      key_type: `sha256`,
+      lower_bound: `${apiBounds.lower_bound}`,
+      upper_bound: `${apiBounds.upper_bound}`,
+    });
+    console.log({
+      stakesDappHodlResults,
+      stakesAccountResults,
+      refundsDappHodlResults,
+      refundsAccountResults,
+    });
+
+    this.stakedPackages = accountExtResults.map(stake => {
       const { amount: balance, symbol } = decomposeAsset(stake.balance);
       const { amount: quota } = decomposeAsset(stake.quota);
       const data = {
@@ -127,7 +184,7 @@ class PackageStore {
       };
       return new StakedPackage(data, this);
     });
-  }
+  };
 }
 
 export default PackageStore;
