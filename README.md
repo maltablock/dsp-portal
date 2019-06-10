@@ -12,8 +12,6 @@ Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 Use `REACT_APP_USE_DEMO_DATA=true npm start` if you want to use demo data for packages list
 (without any request to the real APIs).
 
-Also you can use `npm run start:kylin` to run DSP portal on kylin testnet.
-
 ### `npm test`
 
 Launches the test runner in the interactive watch mode.

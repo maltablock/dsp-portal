@@ -66,10 +66,7 @@ class SearchStore {
   ]
 
   @computed get sortByText() {
-    return (
-      'Sort by ' +
-      (this.sortBy === 'default' ? '' : this.sortOptions.find(o => o.value === this.sortBy)!.text)
-    );
+    return 'Sort by ' + this.sortOptions.find(o => o.value === this.sortBy)!.text;
   }
 
   @action handleSortByChange = value => {

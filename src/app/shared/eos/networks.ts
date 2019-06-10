@@ -1,5 +1,6 @@
 import { IEOSNetwork } from '../typings';
 import { JsonRpc } from 'eosjs';
+import { EOS_NETWORK_LS_KEY } from './constants';
 
 const createNetwork = (nodeEndpoint: string, chainId: string): IEOSNetwork => {
   const matches = /^(https?):\/\/(.+):(\d+)\D*$/.exec(nodeEndpoint);
@@ -31,7 +32,9 @@ const MainNetwork: IEOSNetwork = createNetwork(
 );
 
 function getNetwork() {
-  switch (process.env.REACT_APP_EOS_NETWORK) {
+  const eosNetwork = localStorage.getItem(EOS_NETWORK_LS_KEY);
+
+  switch (eosNetwork) {
     case `kylin`:
       return KylinNetwork;
     default:

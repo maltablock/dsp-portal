@@ -31,6 +31,17 @@ const Logo = styled.img`
   width: auto;
 `;
 
+const LoginControlsWrapper = styled.div`
+  display: flex;
+  & > :not(:last-child) {
+    margin-right: 16px;
+  }
+`;
+
+const MenuWrapper = styled.div`
+  width: 150px;
+`;
+
 const LoginButton = styled(Button)`
   background: linear-gradient(0deg, #5460ff 0%, #414eff 100%);
 `;
@@ -55,13 +66,33 @@ const TopBar = ({ profileStore }: Props) => {
                 { text: "Logout", value: "logout", onClick: profileStore!.logout}
               ]}
             />
-          : <LoginButton
-              type="button"
-              onClick={profileStore!.login}
-              disabled={profileStore!.isLoggingIn}
-            >
-              {profileStore!.isLoggingIn ? 'Logging in...' : 'Login'}
-            </LoginButton>
+          : <LoginControlsWrapper>
+              <MenuWrapper>
+                <MenuSimple
+                  text={profileStore!.eosNetwork === 'kylin' ? 'Kylin Testnet' : 'Mainnet'}
+                  options={
+                    [
+                      { text: 'Mainnet', value: 'mainnet'},
+                      { text: 'Kylin Testnet', value: 'kylin' }
+                    ].map(
+                      ({ text, value }) => ({
+                        text,
+                        value,
+                        isActive: profileStore!.eosNetwork === value,
+                        onClick: profileStore!.setEosNetwork,
+                      })
+                    )
+                  }
+                />
+              </MenuWrapper>
+              <LoginButton
+                type="button"
+                onClick={profileStore!.login}
+                disabled={profileStore!.isLoggingIn}
+              >
+                {profileStore!.isLoggingIn ? 'Logging in...' : 'Login'}
+              </LoginButton>
+            </LoginControlsWrapper>
         }
       </RightBlock>
     </Wrapper>
