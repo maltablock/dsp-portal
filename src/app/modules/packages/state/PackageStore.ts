@@ -9,9 +9,11 @@ import { fetchAllRows, getTableBoundsForName, fetchRows } from 'app/shared/eos';
 import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
 import StakedPackage from './StakedPackage';
 import { aggregateStackedPackagesData, RefundsTableRow, StakingTableRow, AccountExtRow } from '../utils';
+import IconStore from './IconStore';
 
 class PackageStore {
   rootStore: RootStore;
+  iconStore = new IconStore();
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -67,29 +69,8 @@ class PackageStore {
     }
 
     const packages = data.rows.map(row => ({ ...row, icon: '' }));
-
     this.dappPackages = packages.map(packageData => new DappPackage(packageData, this));
-
-    this.dappPackages.forEach(async (dsp, index) => {
-      const cachedIcon = localStorage.getItem(dsp.data.package_json_uri);
-
-      if (cachedIcon) {
-        this.dappPackages[index].data.icon = cachedIcon;
-      } else {
-        try {
-          const res = await axios.get(dsp.data.package_json_uri, {
-            // @ts-ignore
-            crossdomain: true,
-          });
-          const icon = res && res.data && res.data.logo && res.data.logo.logo_256;
-
-          if (icon) {
-            localStorage.setItem(dsp.data.package_json_uri, icon);
-            this.dappPackages[index].data.icon = icon;
-          }
-        } catch (e) {}
-      }
-    });
+    this.iconStore.fetchIcons(this.dappPackages);
   }
 
   /** Staked packages */

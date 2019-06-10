@@ -8,3 +8,6 @@ export const DAPP_SYMBOL: AssetSymbol = {
   symbolCode: `DAPP`,
   precision: 4,
 };
+
+// LocalStorage key
+export const EOS_NETWORK_LS_KEY = 'eos_network';

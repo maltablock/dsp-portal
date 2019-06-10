@@ -20,6 +20,15 @@ class PackageBase<T extends IStakedPackageData | IDappPackageData> {
     return this.data.service.toLowerCase();
   }
 
+  @computed get iconUrl() {
+    return this.packageStore.iconStore.iconUrlByProvider.get(this.data.provider);
+  }
+
+  @computed get iconBgColor() {
+    // List all the providers which have transparent dark icon in array below
+    return ['eosnationdsp'].includes(this.data.provider) ? '#fff' : null;
+  }
+
   @computed get isSelected() {
     return this.packageStore.selectedPackageId === this.data.id;
   }
