@@ -10,6 +10,7 @@ const MenuInput = styled(_MenuInput)`
   width: auto;
   padding: 16px 8px;
   padding-right: 32px;
+  text-align: right;
 `;
 
 const Icon = styled(_Icon)`

@@ -38,7 +38,9 @@ export const sortFn = <P extends Package>(packages: P[], sortBy: string): P[] =>
     case 'default':
       return packages.sort((a, b) => (
         // By default, MaltaBlock packages go first
-        a.providerLowercased === MALTABLOCK && b.providerLowercased !== MALTABLOCK ? -1 : 1
+        a.providerLowercased === MALTABLOCK && b.providerLowercased !== MALTABLOCK
+        ? -1
+        : a.providerLowercased.localeCompare(b.providerLowercased)
       ));
     default:
       return packages;
