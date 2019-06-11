@@ -17,26 +17,28 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
   const p = dappPackage;
   const onClick = () => {
     const selectedDappPackage = p.packageStore.selectedDappPackage;
-    if(!selectedDappPackage) return;
+    if (!selectedDappPackage) return;
 
     const stakePayload = {
       provider: selectedDappPackage.providerLowercased,
       service: selectedDappPackage.serviceLowercased,
       package: selectedDappPackage.packageId,
       quantity: p.packageStore.stakeValue,
-    }
+      unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.dappHdlUnstakedBalance,
+      unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedBalance,
+    };
 
     dialogStore.openTransactionDialog({
       contentSuccess: <TransactionStakeSuccess {...stakePayload} />,
       contentPending: <TransactionStakePending {...stakePayload} />,
       performTransaction: async () => {
-        const result = stakeTransaction(stakePayload);
-        await p.packageStore.rootStore.profileStore.fetchInfo();
+        const result = await stakeTransaction(stakePayload);
+        await p.packageStore.rootStore.profileStore.fetchInfo()
         return result;
       },
       onClose: () => {
-        p.packageStore.selectPackage(null)
-      }
+        p.packageStore.selectPackage(null);
+      },
     });
   };
 
@@ -44,9 +46,11 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
     <PackageCard
       package={dappPackage}
       details={[
-        { label: 'Quota', value: p.data.quota },
-        { label: 'Min Stake', value: p.data.min_stake_quantity },
-        { label: 'Unstake time', value: p.unstakeTimeText },
+        [
+          { label: 'Quota', value: p.data.quota },
+          { label: 'Min Stake', value: p.data.min_stake_quantity },
+          { label: 'Unstake time', value: p.unstakeTimeText },
+        ],
       ]}
       input={{
         placeholder: `Stake Amount ${p.data.min_stake_quantity.split(` `)[0]}`,

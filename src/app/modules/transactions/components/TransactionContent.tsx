@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { TransactionStatus } from 'app/modules/dialogs/state/TransactionDialogItem';
 import { Info, HighlightedText2 } from './TransactionStyles';
 import TransactionFailedContent from './TransactionFailedContent';
+import { getBlockExplorerUrl } from '../utils';
 
 const Content = styled.div`
   margin-top: 22px;
@@ -40,7 +41,9 @@ const TransactionContent = (dialog: Props) => {
 
           <Info>See Transaction</Info>
 
-          <HighlightedText2>{transactionId}</HighlightedText2>
+          <a href={getBlockExplorerUrl(transactionId)} target="_blank" rel="noopener noreferrer">
+            <HighlightedText2>{transactionId}</HighlightedText2>
+          </a>
         </React.Fragment>
       );
     }

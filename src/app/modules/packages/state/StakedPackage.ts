@@ -38,6 +38,31 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     // so package field is the current active package, pending the selected one
     return this.data.package || this.data.pending_package;
   }
+
+  @computed get stakingBalanceFromSelf() {
+    return this.data.stakingBalanceFromSelf
+  }
+
+  @computed get stakingBalanceFromSelfDappHdl() {
+    return this.data.stakingBalanceFromSelfDappHdl
+  }
+
+  @computed get refundFromSelf() {
+    return this.data.refundFromSelf
+  }
+
+  @computed get refundFromSelfAmount() {
+    return this.data.refundFromSelf ? this.data.refundFromSelf.amount : 0
+  }
+
+  @computed get refundFromSelfDappHdl() {
+    return this.data.refundFromSelfDappHdl
+  }
+  
+  @computed get refundFromSelfDappHdlAmount() {
+    return this.data.refundFromSelfDappHdl ? this.data.refundFromSelfDappHdl.amount : 0
+  }
 }
+
 
 export default StakedPackage;

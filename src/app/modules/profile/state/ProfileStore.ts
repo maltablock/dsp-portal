@@ -9,7 +9,10 @@ import {
 } from 'app/shared/eos/constants';
 
 import RootStore from 'app/root/RootStore';
-import { refreshTransaction, withdrawTransaction } from 'app/modules/transactions/logic/transactions';
+import {
+  refreshTransaction,
+  withdrawTransaction,
+} from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
 
@@ -66,11 +69,11 @@ class ProfileStore {
 
   getLoginStatusFromStorage = () => {
     return localStorage.getItem(LOGGED_IN_LS_KEY);
-  }
+  };
 
   setLoginStatusToStorage = (isLoggedIn = 'false') => {
     localStorage.setItem(LOGGED_IN_LS_KEY, isLoggedIn);
-  }
+  };
 
   @action login = async () => {
     if (this.isLoggingIn) return;
@@ -104,14 +107,12 @@ class ProfileStore {
     }
   };
 
-
   @action init = () => {
     if (this.getLoginStatusFromStorage() === 'true') {
       this.login();
     }
     this.fetchDappPrice();
   };
-
 
   /*
    * EOS network menu
@@ -120,7 +121,7 @@ class ProfileStore {
   @action setEosNetwork = network => {
     localStorage.setItem(EOS_NETWORK_LS_KEY, network);
     window.location.reload();
-  }
+  };
 
   /*
    * Converting DAPP to USD
@@ -180,38 +181,41 @@ class ProfileStore {
     }
 
     try {
-      const dappInfoResult = await fetchRows<AccountBalanceRow>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: this.accountInfo.account_name,
-        table: `accounts`,
-      });
-      if (dappInfoResult[0]) {
-        this.dappInfo = {
-          unstakedBalance: decomposeAsset(dappInfoResult[0].balance).amount,
-        };
-      }
+      await Promise.all([
+        fetchRows<AccountBalanceRow>({
+          code: DAPPSERVICES_CONTRACT,
+          scope: this.accountInfo.account_name,
+          table: `accounts`,
+        }).then(dappInfoResult => {
+          if (dappInfoResult[0]) {
+            this.dappInfo = {
+              unstakedBalance: decomposeAsset(dappInfoResult[0].balance).amount,
+            };
+          }
+        }),
 
-      await this.rootStore.packageStore.fetchStakedPackages();
+        this.rootStore.packageStore.fetchStakedPackages(),
 
-      const dappHodlResult = await fetchRows<AccountHodlRow>({
-        code: DAPPHODL_CONTRACT,
-        scope: this.accountInfo.account_name,
-        table: `accounts`,
-      });
-      // some accounts will not have received the airHODL
-      if (dappHodlResult[0]) {
-        this.dappHdlInfo = {
-          balance: decomposeAsset(dappHodlResult[0].balance).amount,
-          allocation: decomposeAsset(dappHodlResult[0].allocation).amount,
-          staked: decomposeAsset(dappHodlResult[0].staked).amount,
-          claimed: Boolean(dappHodlResult[0].claimed),
-        };
-      }
+        fetchRows<AccountHodlRow>({
+          code: DAPPHODL_CONTRACT,
+          scope: this.accountInfo.account_name,
+          table: `accounts`,
+        }).then(dappHodlResult => {
+          // some accounts will not have received the airHODL
+          if (dappHodlResult[0]) {
+            this.dappHdlInfo = {
+              balance: decomposeAsset(dappHodlResult[0].balance).amount,
+              allocation: decomposeAsset(dappHodlResult[0].allocation).amount,
+              staked: decomposeAsset(dappHodlResult[0].staked).amount,
+              claimed: Boolean(dappHodlResult[0].claimed),
+            };
+          }
+        }),
+      ]);
     } catch (error) {
       console.error(error.message);
     }
   };
-
 
   @action handleWithdraw = async ({ contentSuccess, contentPending }) => {
     const { canceled } = await this.rootStore.dialogStore.openDialog(
@@ -225,29 +229,29 @@ class ProfileStore {
       contentSuccess,
       contentPending,
       performTransaction: async () => {
-        const result = await withdrawTransaction()
+        const result = await withdrawTransaction();
         // TODO: @cmichel21 split fetchInfo into several parallel fetches and only refetch dappHodl part
         await this.fetchInfo();
         return result;
       },
-    })
-  }
+    });
+  };
 
   @action handleRefresh = async ({ contentSuccess, contentPending }) => {
     this.rootStore.dialogStore.openTransactionDialog({
       contentSuccess,
       contentPending,
       performTransaction: async () => {
-        const result = await refreshTransaction()
+        const result = await refreshTransaction();
         // TODO: @cmichel21 split fetchInfo into several parallel fetches and only refetch dappHodl part
         await this.fetchInfo();
         return result;
       },
-    })
-  }
+    });
+  };
 
   get vestingEndDate() {
-    return "2021-02-26T16:00:00.000";
+    return '2021-02-26T16:00:00.000';
   }
 
   @computed get unstakedBalance() {
@@ -255,21 +259,36 @@ class ProfileStore {
   }
 
   @computed get totalStakedDappAmount() {
+    // includes DAPP and DAPPHDL
     return this.rootStore.packageStore.stakedPackages.reduce(
-      (sum, stake) => sum + stake.data.balance, 0
+      (sum, stake) => sum + stake.stakingBalanceFromSelf + stake.stakingBalanceFromSelfDappHdl,
+      0,
+    );
+  }
+
+  @computed get activeRefundAmount() {
+    // includes DAPP and DAPPHDL
+    return this.rootStore.packageStore.stakedPackages.reduce(
+      (sum, stake) => sum + stake.refundFromSelfAmount + stake.refundFromSelfDappHdlAmount,
+      0,
     );
   }
 
   @computed get totalDappAmount() {
-    return this.totalStakedDappAmount + this.unstakedBalance;
+    return (
+      this.totalStakedDappAmount +
+      this.activeRefundAmount +
+      this.unstakedBalance +
+      this.dappHdlUnstakedBalance
+    );
   }
 
-  @computed get dappHdlAmount() {
-    return this.dappHdlInfo ? this.dappHdlInfo.staked : 0;
+  @computed get dappHdlUnstakedBalance() {
+    return this.dappHdlInfo ? this.dappHdlInfo.balance : 0;
   }
 
   @computed get dappHdlBalance() {
-    return this.dappHdlInfo ? this.dappHdlInfo.balance : 0;
+    return this.dappHdlInfo ? this.dappHdlInfo.balance + this.dappHdlInfo.staked : 0;
   }
 
   @computed get dappHdlClaimed() {

@@ -70,6 +70,10 @@ const DetailsWrapper = styled.div`
   min-height: 64px;
 `;
 
+const DetailsBlock = styled.div`
+  margin-bottom: 16px;
+`;
+
 const DetailsRow = styled.div`
   display: flex;
   margin-bottom: 2px;
@@ -137,7 +141,7 @@ type Props = {
   details: {
     label: string,
     value: string
-  }[],
+  }[][],
   input: {
     placeholder: string,
   },
@@ -182,12 +186,16 @@ const PackageCard = ({
 
       <DetailsWrapper>
         {
-          details.map(({ label, value }) =>
+          details.map(detailBlock => <DetailsBlock>
+
+          {detailBlock.map(({ label, value }) =>
             <DetailsRow key={label}>
               <DetailsLabel>{label}</DetailsLabel>
               <DetailsValue color={serviceColor}>{value}</DetailsValue>
             </DetailsRow>
-          )
+          )}
+
+          </DetailsBlock>)
         }
       </DetailsWrapper>
 
