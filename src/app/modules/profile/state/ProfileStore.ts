@@ -248,14 +248,20 @@ class ProfileStore {
 
   @computed get totalStakedDappAmount() {
     // includes DAPP and DAPPHDL
-    // TODO: @MrToph add correct formula
     return this.rootStore.packageStore.stakedPackages.reduce(
       (sum, stake) => sum + stake.stakingBalanceFromSelf + stake.stakingBalanceFromSelfDappHdl, 0
+      );
+    }
+    
+    @computed get activeRefundAmount() {
+    // includes DAPP and DAPPHDL
+    return this.rootStore.packageStore.stakedPackages.reduce(
+      (sum, stake) => sum + stake.refundFromSelfAmount + stake.refundFromSelfDappHdlAmount, 0
     );
   }
 
   @computed get totalDappAmount() {
-    return this.totalStakedDappAmount + this.unstakedBalance + this.dappHdlUnstakedBalance;
+    return this.totalStakedDappAmount + this.activeRefundAmount + this.unstakedBalance + this.dappHdlUnstakedBalance;
   }
 
   @computed get dappHdlUnstakedBalance() {

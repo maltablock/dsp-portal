@@ -97,7 +97,10 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
       contentPending: <TransactionUnstakePending {...unstakePayload} />,
       performTransaction: async () => {
         const result = await unstakeTransaction(unstakePayload);
-        await p.packageStore.rootStore.profileStore.fetchInfo();
+        await Promise.all([
+          p.packageStore.rootStore.profileStore.fetchInfo(),
+          p.packageStore.fetchStakedPackages(),
+        ]);
         return result;
       },
       onClose: () => {
