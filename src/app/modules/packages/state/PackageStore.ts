@@ -51,7 +51,7 @@ class PackageStore {
 
   @action handleStakeValueChange = e => {
     this.stakeValue = e.target.value;
-    this.stakeValueValid = /\d+\.\d{4}/.test(this.stakeValue);
+    this.stakeValueValid = /^\d+\.\d{4}$/.test(this.stakeValue);
   };
 
   /**
