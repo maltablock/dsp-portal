@@ -33,10 +33,7 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
       contentPending: <TransactionStakePending {...stakePayload} />,
       performTransaction: async () => {
         const result = await stakeTransaction(stakePayload);
-        await Promise.all([
-          p.packageStore.rootStore.profileStore.fetchInfo(),
-          p.packageStore.fetchStakedPackages(),
-        ]);
+        await p.packageStore.rootStore.profileStore.fetchInfo()
         return result;
       },
       onClose: () => {
