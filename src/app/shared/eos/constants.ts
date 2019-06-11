@@ -12,6 +12,10 @@ export const DAPPHODL_SYMBOL: AssetSymbol = {
   symbolCode: `DAPPHDL`,
   precision: 4,
 };
+export const QUOTA_SYMBOL: AssetSymbol = {
+  symbolCode: `QUOTA`,
+  precision: 4,
+};
 
 // LocalStorage key
 export const EOS_NETWORK_LS_KEY = 'eos_network';

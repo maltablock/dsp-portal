@@ -149,14 +149,14 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
           service: stake.service,
           quantity: formatAsset({
             amount: Math.min(stakeAmount, stake.stakingBalanceFromSelfDappHdl),
-            symbol: DAPP_SYMBOL,
+            symbol: DAPPHODL_SYMBOL,
           }),
         },
       }),
     );
   }
 
-  // stake DAPPHDL if necessary
+  // unstake DAPP if necessary
   const leftOverAmount = stakeAmount - stake.stakingBalanceFromSelfDappHdl;
   if (leftOverAmount > 0) {
     stakeActions.push(
@@ -166,7 +166,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
           to: wallet.auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: formatAsset({ amount: leftOverAmount, symbol: DAPPHODL_SYMBOL }),
+          quantity: formatAsset({ amount: leftOverAmount, symbol: DAPP_SYMBOL }),
         },
       }),
     );

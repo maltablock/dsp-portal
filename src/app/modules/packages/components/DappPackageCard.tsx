@@ -45,11 +45,11 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
   return (
     <PackageCard
       package={dappPackage}
-      details={[
+      details={[[
         { label: 'Quota', value: p.data.quota },
         { label: 'Min Stake', value: p.data.min_stake_quantity },
         { label: 'Unstake time', value: p.unstakeTimeText },
-      ]}
+      ]]}
       input={{
         placeholder: `Stake Amount ${p.data.min_stake_quantity.split(` `)[0]}`,
       }}

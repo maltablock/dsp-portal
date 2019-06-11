@@ -47,6 +47,23 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
   @computed get stakingBalanceFromSelfDappHdl() {
     return this.data.stakingBalanceFromSelfDappHdl
   }
+
+  @computed get refundFromSelf() {
+    return this.data.refundFromSelf
+  }
+
+  @computed get refundFromSelfAmount() {
+    return this.data.refundFromSelf ? this.data.refundFromSelf.amount : 0
+  }
+
+  @computed get refundFromSelfDappHdl() {
+    return this.data.refundFromSelfDappHdl
+  }
+  
+  @computed get refundFromSelfDappHdlAmount() {
+    return this.data.refundFromSelfDappHdl ? this.data.refundFromSelfDappHdl.amount : 0
+  }
 }
+
 
 export default StakedPackage;

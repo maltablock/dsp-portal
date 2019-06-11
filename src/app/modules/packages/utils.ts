@@ -47,7 +47,7 @@ const transformRefundObject = (refund?: RefundsTableRow) => {
   if (refund) {
     return {
       amount: decomposeAsset(refund.amount).amount,
-      unstake_time: new Date(Number.parseInt(refund.unstake_time) / 1000),
+      unstake_time: new Date(Number.parseInt(refund.unstake_time)),
     };
   }
   return undefined;
