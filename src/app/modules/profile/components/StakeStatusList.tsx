@@ -66,8 +66,8 @@ const StakeStatusList = (props: Props) => {
         }
       : {
           text: 'Air-HODLed token',
-          amount: store.dappHdlBalance,
-          amountUsd: dappToUsd(store.dappHdlBalance),
+          amount: store.dappHdlUnstakedBalance,
+          amountUsd: dappToUsd(store.dappHdlUnstakedBalance),
           remainingTilDate: store.vestingEndDate,
           showRefreshButton: store.dappHdlClaimed,
           refreshButton: <RefreshButton onClick={() =>
