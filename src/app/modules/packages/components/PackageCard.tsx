@@ -12,6 +12,7 @@ import Button from 'app/shared/components/Button';
 import DappPackage from '../state/DappPackage';
 import StakedPackage from '../state/StakedPackage';
 import { observer } from 'mobx-react';
+import StakingIcon from 'app/shared/components/StakingIcon';
 
 const MOBILE_WIDTH = 671;
 
@@ -39,6 +40,8 @@ const CardWrapper = styled.div<any>`
 
 const TitleAndCheckboxWrapper = styled.div<any>`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 12px;
   cursor: pointer;
 `;
@@ -46,10 +49,6 @@ const TitleAndCheckboxWrapper = styled.div<any>`
 const Title = styled.div`
   font-size: 18px;
   font-weight: 600;
-`;
-
-const Checkbox = styled.img`
-  margin-left: auto;
 `;
 
 const ServiceIconAndNameWrapper = styled.div`
@@ -149,6 +148,7 @@ type Props = {
     text: string,
     onClick: (...any) => any,
   },
+  showStakingIcon?: boolean
 }
 
 const PackageCard = ({
@@ -156,6 +156,7 @@ const PackageCard = ({
   details,
   input,
   button,
+  showStakingIcon = false,
 }: Props) => {
   const serviceIcon = iconByService[p.data.service] || iconByService.default;
   const serviceColor = colorByService[p.data.service] || colorByService.default;
@@ -173,8 +174,8 @@ const PackageCard = ({
         <Title>
           {p.packageId.toUpperCase()}
         </Title>
-
-        <Checkbox src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
+        {showStakingIcon && <StakingIcon />}
+        <img src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
       </TitleAndCheckboxWrapper>
 
       <ServiceIconAndNameWrapper>

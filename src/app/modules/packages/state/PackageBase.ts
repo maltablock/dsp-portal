@@ -3,7 +3,7 @@ import { observable, computed, action } from "mobx";
 import PackageStore from "./PackageStore";
 import { IStakedPackageData, IDappPackageData } from "app/shared/typings";
 
-class PackageBase<T extends IStakedPackageData | IDappPackageData> {
+abstract class PackageBase<T extends IStakedPackageData | IDappPackageData> {
   packageStore: PackageStore;
   @observable data: T;
 
@@ -11,6 +11,8 @@ class PackageBase<T extends IStakedPackageData | IDappPackageData> {
     this.data = data;
     this.packageStore = packageStore;
   }
+
+  abstract get packageId() : string;
 
   @computed get providerLowercased() {
     return this.data.provider.toLowerCase();
@@ -37,6 +39,12 @@ class PackageBase<T extends IStakedPackageData | IDappPackageData> {
     return this.packageStore.selectedPackageId !== null && !this.isSelected;
   }
 
+  @computed get isStakedToByUser() {
+    if(!this.packageStore.rootStore.profileStore.isLoggedIn) return false
+  
+    return this.packageStore.stakedPackages.some(p => this.isEqual(p));
+  }
+
   @action handleSelect = () => {
     if (!this.isSelected) this.packageStore.selectPackage(this.data.id);
   }
@@ -46,6 +54,10 @@ class PackageBase<T extends IStakedPackageData | IDappPackageData> {
       evt.stopPropagation();
       this.packageStore.selectPackage(null);
     }
+  }
+
+  isEqual(p: PackageBase<any>) {
+    return this.packageId === p.packageId && this.providerLowercased === p.providerLowercased && this.serviceLowercased === p.serviceLowercased
   }
 }
 

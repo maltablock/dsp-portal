@@ -45,6 +45,7 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
   return (
     <PackageCard
       package={dappPackage}
+      showStakingIcon={dappPackage.isStakedToByUser}
       details={[
         [
           { label: 'Quota', value: p.data.quota },
