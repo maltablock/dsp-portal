@@ -2,6 +2,8 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 import DialogStore from '../state/DialogStore';
 import TransactionDialog from './TransactionDialog';
+import { DialogTypes } from '../constants';
+import WithdrawWarningDialog from 'app/modules/profile/components/WithdrawWarningDialog';
 
 type Props = {
   dialogStore?: DialogStore;
@@ -14,6 +16,17 @@ const AllDialogs = ({ dialogStore }: Props) => {
         dialogStore!.transactionDialogs.map(dialog =>
           <TransactionDialog dialog={dialog} key={dialog.title} />
         )
+      }
+
+      {
+        dialogStore!.dialogs.map(dialog => {
+          switch (dialog.type) {
+            case DialogTypes.WITHDRAW_WARNING:
+              return <WithdrawWarningDialog dialog={dialog} />;
+            default:
+              return null;
+          }
+        })
       }
     </div>
   )
