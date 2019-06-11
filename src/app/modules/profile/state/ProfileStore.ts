@@ -101,7 +101,7 @@ class ProfileStore {
       this.setLoginStatusToStorage('true');
       this.setWalletToStorage(walletName)
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
       this.setLoginStatusToStorage('false');
     }
 
