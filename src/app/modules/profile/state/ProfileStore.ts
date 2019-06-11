@@ -82,9 +82,7 @@ class ProfileStore {
   }
 
   setWalletToStorage = (walletName: WALLETS) => {
-    console.log('walletName:', walletName);
-    console.log('String(walletName):', String(walletName));
-    localStorage.setItem(WALLET_LS_KEY, String(walletName))
+    localStorage.setItem(WALLET_LS_KEY, walletName)
   }
 
   @action login = async (walletName: WALLETS) => {
