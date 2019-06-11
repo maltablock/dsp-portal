@@ -1,11 +1,12 @@
 import { observable, action, computed } from 'mobx';
-import { wallet, fetchRows, decomposeAsset } from 'app/shared/eos';
+import { getWallet, fetchRows, decomposeAsset, selectWalletProvider } from 'app/shared/eos';
 import {
   DAPPSERVICES_CONTRACT,
   DAPPHODL_CONTRACT,
   DAPPPRICE_CONTRACT,
   DAPP_TOKENS_PER_CYCLE,
   EOS_NETWORK_LS_KEY,
+  WALLETS,
 } from 'app/shared/eos/constants';
 
 import RootStore from 'app/root/RootStore';
@@ -47,6 +48,7 @@ type CycleRow = {
 };
 
 const LOGGED_IN_LS_KEY = 'app__is_logged_in';
+const WALLET_LS_KEY = 'app__wallet';
 
 class ProfileStore {
   rootStore: RootStore;
@@ -75,19 +77,31 @@ class ProfileStore {
     localStorage.setItem(LOGGED_IN_LS_KEY, isLoggedIn);
   };
 
-  @action login = async () => {
+  getWalletFromStorage = () => {
+    return localStorage.getItem(WALLET_LS_KEY);
+  }
+
+  setWalletToStorage = (walletName: WALLETS) => {
+    console.log('walletName:', walletName);
+    console.log('String(walletName):', String(walletName));
+    localStorage.setItem(WALLET_LS_KEY, String(walletName))
+  }
+
+  @action login = async (walletName: WALLETS) => {
     if (this.isLoggingIn) return;
 
     this.isLoggingIn = true;
 
     try {
-      await wallet.connect();
-      const accountInfo = (await wallet.login()) as unknown;
+      selectWalletProvider(walletName);
+      await getWallet().connect();
+      const accountInfo = (await getWallet().login()) as unknown;
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
       this.dappHdlInfo = this.dappInfo = undefined;
       this.fetchInfo();
       this.setLoginStatusToStorage('true');
+      this.setWalletToStorage(walletName)
     } catch (err) {
       console.error(err.message);
       this.setLoginStatusToStorage('false');
@@ -100,7 +114,7 @@ class ProfileStore {
     this.setLoginStatusToStorage('false');
 
     try {
-      await wallet.logout();
+      await getWallet().logout();
       this.accountInfo = null;
     } catch (err) {
       console.error(err);
@@ -108,9 +122,10 @@ class ProfileStore {
   };
 
   @action init = () => {
-    if (this.getLoginStatusFromStorage() === 'true') {
-      this.login();
-    }
+    const wasLoggedIn = this.getLoginStatusFromStorage() === 'true';
+    const walletName = this.getWalletFromStorage() as WALLETS;
+
+    if (wasLoggedIn && walletName) this.login(walletName);
     this.fetchDappPrice();
   };
 
