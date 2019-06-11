@@ -14,6 +14,7 @@ import {
   withdrawTransaction,
 } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
+import { DialogTypes } from 'app/modules/dialogs';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -217,6 +218,13 @@ class ProfileStore {
   };
 
   @action handleWithdraw = async ({ contentSuccess, contentPending }) => {
+    const { canceled } = await this.rootStore.dialogStore.openDialog(
+      DialogTypes.WITHDRAW_WARNING,
+      { balance: this.dappHdlBalance, isWithdrawDisabled: !this.dappHdlBalance }
+    );
+
+    if (canceled) return;
+
     this.rootStore.dialogStore.openTransactionDialog({
       contentSuccess,
       contentPending,

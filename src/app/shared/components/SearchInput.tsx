@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import searchIcon from 'app/shared/icons/search_icon.svg'
-import closeIcon from 'app/shared/icons/close_icon.svg'
+import { ReactComponent as CloseIconSvg } from 'app/shared/icons/close_icon.svg'
 
 const InputWrapper = styled.div`
   position: relative;
@@ -31,13 +31,17 @@ const SearchIcon = styled.img`
   left: 20px;
 `;
 
-const CloseIcon = styled.img`
+const CloseIcon = styled.div`
   position: absolute;
   top: 18px;
   right: 20px;
   width: 14px;
   height: 14px;
   cursor: pointer;
+
+  svg > * {
+    fill: #8ca0c2;
+  }
 `;
 
 const SearchInput = ({
@@ -59,7 +63,7 @@ const SearchInput = ({
 
       {
         isClearSearchVisible &&
-        <CloseIcon src={closeIcon} onClick={onClear} />
+        <CloseIcon onClick={onClear}><CloseIconSvg/></CloseIcon>
       }
     </InputWrapper>
   )
