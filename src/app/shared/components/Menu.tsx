@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { observable, action } from 'mobx';
+import React from 'react';
 import { observer } from 'mobx-react';
 import styled, { css } from 'styled-components';
 import onClickOutside from 'react-onclickoutside';
