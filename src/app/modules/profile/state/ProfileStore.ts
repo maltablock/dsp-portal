@@ -98,9 +98,16 @@ class ProfileStore {
       let loginParams: string[] = [];
 
       if (walletName === WALLETS.ledger) {
-        const discoveryData: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
+        const discoveryDataRaw: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
           ? demoData.discoveryData
-          : await getWallet().discover({ pathIndexList: [0,1,2,3,4,5] });
+          : await getWallet().discover({ pathIndexList: new Array(300).fill(0).map((_, idx) => idx) });
+
+        const sortedKeyToAccountMap = discoveryDataRaw.keyToAccountMap.sort((a, b) => a.index - b.index);
+
+        const discoveryData: DiscoveryData = {
+          keys: discoveryDataRaw.keys,
+          keyToAccountMap: sortedKeyToAccountMap,
+        };
 
         const { data: { account, authorization } } = await this.rootStore.dialogStore.openDialog(
           DialogTypes.LEDGER_ACCOUNT, { discoveryData }

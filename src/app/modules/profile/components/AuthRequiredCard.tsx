@@ -19,6 +19,7 @@ const CardWrapper = styled(BlueGradientCard)`
 const Title = styled.div`
   font-size: 23px;
   font-weight: 600;
+  text-align: center;
   margin: 0 auto;
 `;
 
@@ -26,8 +27,8 @@ const Message = styled.div`
   font-size: 16px;
   font-weight: 500;
   line-height: 1.5;
-  max-width: 400px;
-  margin: 8px auto 0;
+  max-width: 540px;
+  margin: 16px auto 0;
   text-align: center;
 `;
 
@@ -46,10 +47,10 @@ const AuthRequiredCard = ({ profileStore }: Props) => {
   return (
     <CardWrapper>
       <Title>
-        The DSP Portal
+        The Malta Block DSP Portal
       </Title>
       <Message>
-        dApp Service Providers (DSPs) provide the tools that help developers work more effectively.
+      This portal allow developers to use dApp Service Providers (DSPs) to work more effectively. Select a service to stake DAPP to use.
       </Message>
       <CtaButton onClick={() => {
         const loginMenu = document.querySelector('#login-menu');

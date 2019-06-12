@@ -94,9 +94,9 @@ class LedgerAccountDialog extends React.Component<Props> {
 
           <Label>Select Key</Label>
           <MenuSimple
-            text={keyObj ? keyObj.key : 'Select key...'}
+            text={keyObj ? String(keyObj.index) : 'Select key...'}
             options={discoveryData.keyToAccountMap.map((k, idx) => ({
-              content: k.key,
+              content: k.index,
               isActive: k.key === keyObj.key,
               onClick: () => this.selectKeyIndex(idx)
             }))}

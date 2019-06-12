@@ -24,6 +24,8 @@ const Icon = styled(_Icon)`
 
 const OptionsList = styled(_OptionsList)`
   margin-top: -2px;
+  max-height: 300px;
+  overflow-y: scroll;
 `;
 
 const OptionItem = styled(_OptionItem)`
