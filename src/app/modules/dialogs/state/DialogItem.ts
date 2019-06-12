@@ -2,10 +2,10 @@ import { observable } from "mobx";
 import DialogStore from "./DialogStore";
 import { DialogTypes } from "../constants";
 
-class DialogItem {
+class DialogItem<T = any> {
   dialogStore: DialogStore
   type: DialogTypes
-  @observable data: any;
+  @observable data: T;
   resolvePromise: (...any) => any;
 
   constructor(

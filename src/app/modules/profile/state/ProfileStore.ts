@@ -16,6 +16,7 @@ import {
 } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
+import { DiscoveryData } from 'eos-transit/lib';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -93,7 +94,22 @@ class ProfileStore {
     try {
       selectWalletProvider(walletName);
       await getWallet().connect();
-      const accountInfo = (await getWallet().login()) as unknown;
+
+      let loginParams: string[] = [];
+
+      if (walletName === WALLETS.ledger) {
+        const discoveryData: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
+          ? demoData.discoveryData
+          : await getWallet().discover({ pathIndexList: [0,1,2,3,4,5] });
+
+        const { data: { account, authorization } } = await this.rootStore.dialogStore.openDialog(
+          DialogTypes.LEDGER_ACCOUNT, { discoveryData }
+        );
+
+        loginParams = [account, authorization];
+      }
+
+      const accountInfo = (await getWallet().login(...loginParams)) as unknown;
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
       this.dappHdlInfo = this.dappInfo = undefined;
