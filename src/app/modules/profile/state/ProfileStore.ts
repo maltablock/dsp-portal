@@ -220,7 +220,7 @@ class ProfileStore {
   @action handleWithdraw = async ({ contentSuccess, contentPending }) => {
     const { canceled } = await this.rootStore.dialogStore.openDialog(
       DialogTypes.WITHDRAW_WARNING,
-      { balance: this.dappHdlBalance, isWithdrawDisabled: !this.dappHdlBalance }
+      { balance: this.totalDappHdlAmount, isWithdrawDisabled: !this.totalDappHdlAmount }
     );
 
     if (canceled) return;
@@ -254,41 +254,47 @@ class ProfileStore {
     return '2021-02-26T16:00:00.000';
   }
 
-  @computed get unstakedBalance() {
+  @computed get unstakedDappAmount() {
     return this.dappInfo ? this.dappInfo.unstakedBalance : 0;
   }
 
-  @computed get totalStakedDappAmount() {
+  @computed get stakedDappAmount() {
     // includes DAPP and DAPPHDL
     return this.rootStore.packageStore.stakedPackages.reduce(
-      (sum, stake) => sum + stake.stakingBalanceFromSelf + stake.stakingBalanceFromSelfDappHdl,
+      (sum, stake) => sum + stake.stakingBalanceFromSelf,
       0,
     );
   }
 
-  @computed get activeRefundAmount() {
-    // includes DAPP and DAPPHDL
+  @computed get refundingDappAmount() {
     return this.rootStore.packageStore.stakedPackages.reduce(
-      (sum, stake) => sum + stake.refundFromSelfAmount + stake.refundFromSelfDappHdlAmount,
+      (sum, stake) => sum + stake.refundFromSelfAmount,
       0,
     );
   }
 
   @computed get totalDappAmount() {
     return (
-      this.totalStakedDappAmount +
-      this.activeRefundAmount +
-      this.unstakedBalance +
-      this.dappHdlUnstakedBalance
+      this.stakedDappAmount +
+      this.unstakedDappAmount +
+      this.refundingDappAmount
     );
   }
 
-  @computed get dappHdlUnstakedBalance() {
+  @computed get unstakedDappHdlAmount() {
     return this.dappHdlInfo ? this.dappHdlInfo.balance : 0;
   }
 
-  @computed get dappHdlBalance() {
-    return this.dappHdlInfo ? this.dappHdlInfo.balance + this.dappHdlInfo.staked : 0;
+  @computed get stakedDappHdlAmount() {
+    return this.dappHdlInfo ? this.dappHdlInfo.staked : 0;
+  }
+
+  @computed get allocatedDappHdlAmount() {
+    return this.dappHdlInfo ? this.dappHdlInfo.allocation : 0;
+  }
+
+  @computed get totalDappHdlAmount() {
+    return this.unstakedDappHdlAmount + this.stakedDappHdlAmount
   }
 
   @computed get dappHdlClaimed() {

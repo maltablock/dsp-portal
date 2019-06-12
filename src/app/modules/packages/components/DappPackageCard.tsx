@@ -24,8 +24,8 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
       service: selectedDappPackage.serviceLowercased,
       package: selectedDappPackage.packageId,
       quantity: p.packageStore.stakeValue,
-      unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.dappHdlUnstakedBalance,
-      unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedBalance,
+      unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.unstakedDappHdlAmount,
+      unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedDappAmount,
     };
 
     dialogStore.openTransactionDialog({
