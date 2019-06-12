@@ -117,6 +117,7 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
         text: 'UnStake',
         onClick,
       }}
+      deprecated={p.isDeprecated}
     />
   );
 };

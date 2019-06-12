@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
+import onClickOutside from 'react-onclickoutside';
 import checkboxChecked from 'app/shared/icons/checkbox_checked.svg';
 import checkboxUnchecked from 'app/shared/icons/checkbox_unchecked.svg';
 import cronIcon from 'app/shared/icons/cron.svg';
@@ -24,12 +25,12 @@ const CardWrapper = styled.div<any>`
   padding: 24px 16px;
   margin: 16px;
   border-radius: 8px;
-  background: linear-gradient(320deg, rgba(24,24,36,1) 0%, rgba(40,46,61,1) 100%);
-  cursor: ${props => props.isSelected ? 'default' : 'pointer'};
+  background: linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%);
+  cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
 
-  opacity: ${props => props.isHidden ? 0.1 : 1};
-  margin-bottom: ${props => props.isSelected ? -120 : 16}px;
-  z-index: ${props => props.isSelected ? 1 : 'auto'};
+  opacity: ${props => (props.isHidden ? 0.1 : 1)};
+  margin-bottom: ${props => (props.isSelected ? -120 : 16)}px;
+  z-index: ${props => (props.isSelected ? 1 : 'auto')};
 
   transition: opacity 0.2s ease;
 
@@ -118,7 +119,19 @@ const StakeButtonWrapper = styled.div`
 
 const StakeButton = styled(Button)`
   width: 100%;
-  background: linear-gradient(0deg, rgb(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 100%), #5826FF;
+  background: linear-gradient(0deg, rgb(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 100%),
+    #5826ff;
+`;
+
+const DeprecationWarning = styled.div`
+  border-radius: 0 0 8px 8px;
+  color: #0b1422;
+  background-color: #fc4a71;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 30px;
+  margin: 16px -16px -16px -16px;
 `;
 
 const iconByService = {
@@ -136,102 +149,110 @@ const colorByService = {
 };
 
 type Props = {
-  package: DappPackage | StakedPackage
+  package: DappPackage | StakedPackage;
   details: {
-    label: string,
-    value: string
-  }[][],
+    label: string;
+    value: string;
+  }[][];
   input: {
-    placeholder: string,
-  },
+    placeholder: string;
+  };
   button: {
-    text: string,
-    onClick: (...any) => any,
-  },
-  showStakingIcon?: boolean
-}
+    text: string;
+    onClick: (...any) => any;
+  };
+  showStakingIcon?: boolean;
+  deprecated?: boolean;
+};
 
-const PackageCard = ({
-  package: p,
-  details,
-  input,
-  button,
-  showStakingIcon = false,
-}: Props) => {
-  const serviceIcon = iconByService[p.data.service] || iconByService.default;
-  const serviceColor = colorByService[p.data.service] || colorByService.default;
+class PackageCard extends React.Component<Props> {
+  handleClickOutside = (evt) => {
+    const { package: p } = this.props
+    if(p.isSelected) {
+      p.handleDeselect(evt)
+    }
+  }
 
-  return (
-    <CardWrapper
-      onClick={p.handleSelect}
-      isSelected={p.isSelected}
-      isHidden={p.isHidden}
-    >
-      <TitleAndCheckboxWrapper
+  render() {
+    const {
+      package: p,
+      details,
+      input,
+      button,
+      showStakingIcon = false,
+      deprecated = false,
+    } = this.props;
+
+    const serviceIcon = iconByService[p.data.service] || iconByService.default;
+    const serviceColor = colorByService[p.data.service] || colorByService.default;
+
+    return (
+      <CardWrapper
+        onClick={p.handleSelect}
         isSelected={p.isSelected}
-        onClick={p.handleDeselect}
+        isHidden={p.isHidden}
       >
-        <Title>
-          {p.packageId.toUpperCase()}
-        </Title>
-        {showStakingIcon && <StakingIcon />}
-        <img src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
-      </TitleAndCheckboxWrapper>
+        <TitleAndCheckboxWrapper isSelected={p.isSelected} onClick={p.handleDeselect}>
+          <Title>{p.packageId.toUpperCase()}</Title>
+          {showStakingIcon && <StakingIcon />}
+          <img src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
+        </TitleAndCheckboxWrapper>
 
-      <ServiceIconAndNameWrapper>
-        <ServiceIcon src={serviceIcon} />
-        <ServiceName color={serviceColor}>
-          {p.data.service}
-        </ServiceName>
-      </ServiceIconAndNameWrapper>
+        <ServiceIconAndNameWrapper>
+          <ServiceIcon src={serviceIcon} />
+          <ServiceName color={serviceColor}>{p.data.service}</ServiceName>
+        </ServiceIconAndNameWrapper>
 
-      <DetailsWrapper>
-        {
-          details.map(detailBlock => <DetailsBlock>
+        <DetailsWrapper>
+          {details.map(detailBlock => (
+            <DetailsBlock>
+              {detailBlock.map(({ label, value }) => (
+                <DetailsRow key={label}>
+                  <DetailsLabel>{label}</DetailsLabel>
+                  <DetailsValue color={serviceColor}>{value}</DetailsValue>
+                </DetailsRow>
+              ))}
+            </DetailsBlock>
+          ))}
+        </DetailsWrapper>
 
-          {detailBlock.map(({ label, value }) =>
-            <DetailsRow key={label}>
-              <DetailsLabel>{label}</DetailsLabel>
-              <DetailsValue color={serviceColor}>{value}</DetailsValue>
-            </DetailsRow>
-          )}
+        {p.isSelected && (
+          <AmountInputWrapper>
+            <Input
+              value={p.packageStore.stakeValue}
+              onChange={p.packageStore.handleStakeValueChange}
+              placeholder={input.placeholder}
+              label="DAPP"
+              autoFocus
+            />
+          </AmountInputWrapper>
+        )}
 
-          </DetailsBlock>)
-        }
-      </DetailsWrapper>
+        <ProviderWrapper>
+          <ProviderIcon iconUrl={p.iconUrl} iconBgColor={p.iconBgColor} />
+          <ProviderName>{p.data.provider}</ProviderName>
+        </ProviderWrapper>
 
-      {
-        p.isSelected &&
-        <AmountInputWrapper>
-          <Input
-            value={p.packageStore.stakeValue}
-            onChange={p.packageStore.handleStakeValueChange}
-            placeholder={input.placeholder}
-            label="DAPP"
-            autoFocus
-          />
-        </AmountInputWrapper>
-      }
+        {p.isSelected && (
+          <StakeButtonWrapper>
+            <StakeButton
+              disabled={!p.packageStore.stakeValueValid}
+              color={serviceColor}
+              onClick={button.onClick}
+            >
+              {button.text}
+            </StakeButton>
+          </StakeButtonWrapper>
+        )}
 
-      <ProviderWrapper>
-        <ProviderIcon iconUrl={p.iconUrl} iconBgColor={p.iconBgColor} />
-        <ProviderName>{p.data.provider}</ProviderName>
-      </ProviderWrapper>
-
-      {
-        p.isSelected &&
-        <StakeButtonWrapper>
-          <StakeButton
-            disabled={!p.packageStore.stakeValueValid}
-            color={serviceColor}
-            onClick={button.onClick}
-          >
-            {button.text}
-          </StakeButton>
-        </StakeButtonWrapper>
-      }
-    </CardWrapper>
-  )
+        {deprecated && (
+          <DeprecationWarning>
+            Package is ending and deprecated, please consider selecting another one instead
+          </DeprecationWarning>
+        )}
+      </CardWrapper>
+    );
+  }
 }
 
-export default observer(PackageCard);
+export default onClickOutside(observer(PackageCard));

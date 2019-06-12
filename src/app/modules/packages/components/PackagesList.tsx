@@ -8,7 +8,7 @@ import DappPackageCard from './DappPackageCard';
 import StakedPackageCard from './StakedPackageCard';
 
 const Wrapper = styled.div`
-  margin: 0 auto;
+  margin: 0 auto 16px;
   width: ${976 + 16 * 2}px;
 
   @media (min-width: 672px) and (max-width: 1008px) {
