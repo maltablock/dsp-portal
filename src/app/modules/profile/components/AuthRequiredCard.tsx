@@ -51,10 +51,14 @@ const AuthRequiredCard = ({ profileStore }: Props) => {
       <Message>
         dApp Service Providers (DSPs) provide the tools that help developers work more effectively.
       </Message>
-      <CtaButton onClick={profileStore!.login}>
+      <CtaButton onClick={() => {
+        const loginMenu = document.querySelector('#login-menu');
+        // @ts-ignore
+        if (loginMenu) loginMenu.click()
+      }}>
         {
           profileStore!.isLoggingIn
-          ? 'Logging in with Scatter...'
+          ? 'Logging in...'
           : 'Login to Get Started'
         }
       </CtaButton>

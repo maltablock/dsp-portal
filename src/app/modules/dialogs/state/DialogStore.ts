@@ -15,7 +15,7 @@ export default class DialogStore {
   @observable dialogs = observable.array<DialogItem>([]);
   @observable transactionDialogs = observable.array<TransactionDialogItem>([]);
 
-  @action openDialog = async (type: DialogTypes, dialogData: any): Promise<any> => {
+  @action openDialog = async (type: DialogTypes, dialogData?: any): Promise<any> => {
     return new Promise(resolve => {
       this.dialogs.push(new DialogItem(this, type, dialogData, resolve));
     });

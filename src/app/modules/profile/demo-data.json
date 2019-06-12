@@ -17,5 +17,31 @@
             "package_end": "1559320122500",
             "symbol": { "precision": 4, "symbolCode": "DAPP" }
         }
-    ]
+    ],
+    "discoveryData": {
+        "keyToAccountMap": [
+            {
+                "index": 0,
+                "key": "key123key123key123key123key123key123key123key123key123key123key123key123key123key123key123key123",
+                "accounts": [
+                    { "account": "First account", "authorization": "abcd" },
+                    { "account": "Second account", "authorization": "abcd" }
+                ]
+            },
+            {
+                "index": 1,
+                "key": "key456",
+                "accounts": [
+                    { "account": "Another account", "authorization": "abcd" },
+                    { "account": "Yet another account", "authorization": "abcd" },
+                    { "account": "Third account", "authorization": "abcd" }
+                ]
+            },
+            {
+                "index": 2,
+                "key": "key789",
+                "accounts": []
+            }
+        ]
+    }
 }

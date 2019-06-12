@@ -45,7 +45,9 @@ export class TransactionDialogItem {
   @action startTransaction = async () => {
     try {
       if(!this.dialogStore.rootStore.profileStore.isLoggedIn) {
-        await this.dialogStore.rootStore.profileStore.login()
+        // await this.dialogStore.rootStore.profileStore.login();
+        // TODO: show dialog asking to login
+        return;
       }
       const result = await this.performTransaction();
       this.transactionId = result.transaction_id;

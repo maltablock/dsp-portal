@@ -19,3 +19,19 @@ export const QUOTA_SYMBOL: AssetSymbol = {
 
 // LocalStorage key
 export const EOS_NETWORK_LS_KEY = 'eos_network';
+
+export enum WALLETS {
+  scatter = 'scatter',
+  ledger = 'ledger',
+  lynx = 'lynx',
+  meetone = 'meetone',
+  tokenpocket = 'tokenpocket',
+}
+
+export const walletIdByName = {
+  scatter: 'scatter',
+  ledger: 'ledger',
+  lynx: 'EOS Lynx',
+  meetone: 'meetone_provider',
+  tokenpocket: 'TokenPocket'
+}

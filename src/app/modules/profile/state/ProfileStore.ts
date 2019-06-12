@@ -1,11 +1,12 @@
 import { observable, action, computed } from 'mobx';
-import { wallet, fetchRows, decomposeAsset } from 'app/shared/eos';
+import { getWallet, fetchRows, decomposeAsset, selectWalletProvider } from 'app/shared/eos';
 import {
   DAPPSERVICES_CONTRACT,
   DAPPHODL_CONTRACT,
   DAPPPRICE_CONTRACT,
   DAPP_TOKENS_PER_CYCLE,
   EOS_NETWORK_LS_KEY,
+  WALLETS,
 } from 'app/shared/eos/constants';
 
 import RootStore from 'app/root/RootStore';
@@ -15,6 +16,7 @@ import {
 } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
+import { DiscoveryData } from 'eos-transit/lib';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -47,6 +49,7 @@ type CycleRow = {
 };
 
 const LOGGED_IN_LS_KEY = 'app__is_logged_in';
+const WALLET_LS_KEY = 'app__wallet';
 
 class ProfileStore {
   rootStore: RootStore;
@@ -75,21 +78,46 @@ class ProfileStore {
     localStorage.setItem(LOGGED_IN_LS_KEY, isLoggedIn);
   };
 
-  @action login = async () => {
+  getWalletFromStorage = () => {
+    return localStorage.getItem(WALLET_LS_KEY);
+  }
+
+  setWalletToStorage = (walletName: WALLETS) => {
+    localStorage.setItem(WALLET_LS_KEY, walletName)
+  }
+
+  @action login = async (walletName: WALLETS) => {
     if (this.isLoggingIn) return;
 
     this.isLoggingIn = true;
 
     try {
-      await wallet.connect();
-      const accountInfo = (await wallet.login()) as unknown;
+      selectWalletProvider(walletName);
+      await getWallet().connect();
+
+      let loginParams: string[] = [];
+
+      if (walletName === WALLETS.ledger) {
+        const discoveryData: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
+          ? demoData.discoveryData
+          : await getWallet().discover({ pathIndexList: [0,1,2,3,4,5] });
+
+        const { data: { account, authorization } } = await this.rootStore.dialogStore.openDialog(
+          DialogTypes.LEDGER_ACCOUNT, { discoveryData }
+        );
+
+        loginParams = [account, authorization];
+      }
+
+      const accountInfo = (await getWallet().login(...loginParams)) as unknown;
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
       this.dappHdlInfo = this.dappInfo = undefined;
       this.fetchInfo();
       this.setLoginStatusToStorage('true');
+      this.setWalletToStorage(walletName)
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
       this.setLoginStatusToStorage('false');
     }
 
@@ -100,7 +128,7 @@ class ProfileStore {
     this.setLoginStatusToStorage('false');
 
     try {
-      await wallet.logout();
+      await getWallet().logout();
       this.accountInfo = null;
     } catch (err) {
       console.error(err);
@@ -108,9 +136,10 @@ class ProfileStore {
   };
 
   @action init = () => {
-    if (this.getLoginStatusFromStorage() === 'true') {
-      this.login();
-    }
+    const wasLoggedIn = this.getLoginStatusFromStorage() === 'true';
+    const walletName = this.getWalletFromStorage() as WALLETS;
+
+    if (wasLoggedIn && walletName) this.login(walletName);
     this.fetchDappPrice();
   };
 

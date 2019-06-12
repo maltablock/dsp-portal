@@ -55,9 +55,10 @@ export const _OptionItem = styled.div<any>`
 `;
 
 type Props = {
+  id?: string,
   text: string
   options: Array<{
-    text: string
+    content: React.ReactNode,
     value?: any
     isActive?: boolean
     onClick: (...any) => any
@@ -82,10 +83,10 @@ export const menuFactory = ({
     }
 
     render() {
-      const { text, options } = this.props;
+      const { id, text, options } = this.props;
 
       return (
-        <MenuWrapper onClick={this.toggleIsOpen}>
+        <MenuWrapper id={id} onClick={this.toggleIsOpen}>
           <MenuInput>
             {text}
             <Icon src={iconSrc} />
@@ -101,7 +102,7 @@ export const menuFactory = ({
                     onClick={() => option.onClick(option.value)}
                     key={option.value}
                   >
-                    {option.text}
+                    {option.content}
                   </OptionItem>
                 )
               }

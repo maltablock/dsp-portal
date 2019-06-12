@@ -1,4 +1,4 @@
-import { wallet } from 'app/shared/eos/wallet';
+import { getWallet } from 'app/shared/eos/wallet';
 import {
   DAPPSERVICES_CONTRACT,
   DAPP_SYMBOL,
@@ -24,8 +24,8 @@ const createAction = (action: any): Action => {
       account: DAPPSERVICES_CONTRACT,
       authorization: [
         {
-          actor: wallet.auth!.accountName,
-          permission: wallet.auth!.permission,
+          actor: getWallet().auth!.accountName,
+          permission: getWallet().auth!.permission,
         },
       ],
       data: {},
@@ -65,7 +65,7 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
       createAction({
         name: 'stake',
         data: {
-          from: wallet.auth!.accountName,
+          from: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
           quantity: formatAsset({
@@ -85,7 +85,7 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
         account: DAPPHODL_CONTRACT,
         name: 'stake',
         data: {
-          owner: wallet.auth!.accountName,
+          owner: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
           quantity: formatAsset({ amount: leftOverAmount, symbol: DAPPHODL_SYMBOL }),
@@ -94,13 +94,13 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
     );
   }
 
-  return await wallet.eosApi.transact(
+  return await getWallet().eosApi.transact(
     {
       actions: [
         createAction({
           name: 'selectpkg',
           data: {
-            owner: wallet.auth!.accountName,
+            owner: getWallet().auth!.accountName,
             provider: stake.provider,
             service: stake.service,
             package: stake.package,
@@ -144,7 +144,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
         account: DAPPHODL_CONTRACT,
         name: 'unstake',
         data: {
-          owner: wallet.auth!.accountName,
+          owner: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
           quantity: formatAsset({
@@ -163,7 +163,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
       createAction({
         name: 'unstake',
         data: {
-          to: wallet.auth!.accountName,
+          to: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
           quantity: formatAsset({ amount: leftOverAmount, symbol: DAPP_SYMBOL }),
@@ -172,7 +172,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
     );
   }
 
-  return await wallet.eosApi.transact(
+  return await getWallet().eosApi.transact(
     {
       actions: stakeActions,
     },
@@ -181,14 +181,14 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
 };
 
 export const refreshTransaction = async (): Promise<TransactionResult> => {
-  return await wallet.eosApi.transact(
+  return await getWallet().eosApi.transact(
     {
       actions: [
         createAction({
           account: DAPPHODL_CONTRACT,
           name: 'refresh',
           data: {
-            owner: wallet.auth!.accountName,
+            owner: getWallet().auth!.accountName,
           },
         }),
       ],
@@ -198,14 +198,14 @@ export const refreshTransaction = async (): Promise<TransactionResult> => {
 };
 
 export const withdrawTransaction = async (): Promise<TransactionResult> => {
-  return await wallet.eosApi.transact(
+  return await getWallet().eosApi.transact(
     {
       actions: [
         createAction({
           account: DAPPHODL_CONTRACT,
           name: 'withdraw',
           data: {
-            owner: wallet.auth!.accountName,
+            owner: getWallet().auth!.accountName,
           },
         }),
       ],

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
+import Button from 'app/shared/components/Button';
 
 export const DialogContainer = styled.div`
   position: fixed;
@@ -33,4 +34,10 @@ export const Title = styled.div`
 
 export const ButtonsWrapper = styled.div`
   margin-top: 40px;
+`;
+
+export const SubmitButton = styled(Button)`
+  background: #0b1422;
+  padding: 11px 36px;
+  font-size: 14px;
 `;

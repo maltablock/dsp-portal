@@ -83,6 +83,7 @@ const SearchBar = ({ searchStore }: Props) => {
             options={
               filterOptions.map(option => ({
                 ...option,
+                content: option.text,
                 isActive: option.value === filterBy,
                 onClick: () => handleFilterByChange(option.value)
               }))
@@ -96,6 +97,7 @@ const SearchBar = ({ searchStore }: Props) => {
             options={
               sortOptions.map(option => ({
                 ...option,
+                content: option.text,
                 isActive: option.value === sortBy,
                 onClick: () => handleSortByChange(option.value)
               }))
