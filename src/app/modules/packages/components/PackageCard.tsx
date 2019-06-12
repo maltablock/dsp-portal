@@ -121,6 +121,17 @@ const StakeButton = styled(Button)`
   background: linear-gradient(0deg, rgb(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 100%), #5826FF;
 `;
 
+const DeprecationWarning = styled.div`
+  border-radius: 0 0 8px 8px;
+  color: #0B1422;
+  background-color: #FC4A71;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 30px;
+  margin: 16px -16px -16px -16px;
+`;
+
 const iconByService = {
   cronservices: cronIcon,
   oracleservic: oracleIcon,
@@ -149,6 +160,7 @@ type Props = {
     onClick: (...any) => any,
   },
   showStakingIcon?: boolean
+  deprecated?: boolean
 }
 
 const PackageCard = ({
@@ -157,6 +169,7 @@ const PackageCard = ({
   input,
   button,
   showStakingIcon = false,
+  deprecated = false,
 }: Props) => {
   const serviceIcon = iconByService[p.data.service] || iconByService.default;
   const serviceColor = colorByService[p.data.service] || colorByService.default;
@@ -230,6 +243,10 @@ const PackageCard = ({
           </StakeButton>
         </StakeButtonWrapper>
       }
+
+      {deprecated && <DeprecationWarning>
+        Package is ending and deprecated, please consider selecting another one instead
+      </DeprecationWarning>}
     </CardWrapper>
   )
 }

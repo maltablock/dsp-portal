@@ -65,6 +65,12 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
   @computed get refundFromSelfDappHdlAmount() {
     return this.data.refundFromSelfDappHdl ? this.data.refundFromSelfDappHdl.amount : 0
   }
+
+  @computed get isDeprecated() {
+    if(!this.dappPackage) return false
+
+    return !this.dappPackage.data.enabled
+  }
 }
 
 
