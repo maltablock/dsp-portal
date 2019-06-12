@@ -7,6 +7,7 @@ import { PackagesList } from 'app/modules/packages';
 import { AllDialogsContainer } from 'app/modules/dialogs';
 import { ProfileStatusContainer, TopBar } from 'app/modules/profile';
 import { SearchBar, PackagesTabs } from 'app/modules/search';
+import Footer from './components/Footer';
 
 const rootStore = new RootStore();
 
@@ -29,6 +30,7 @@ class App extends React.Component {
           <SearchBar />
           <PackagesList />
           <AllDialogsContainer />
+          <Footer />
         </PageWrapper>
       </MobxProvider>
     );
