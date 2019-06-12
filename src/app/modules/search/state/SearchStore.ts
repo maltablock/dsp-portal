@@ -89,7 +89,7 @@ class SearchStore {
    */
 
   @computed get foundDappPackages() {
-    return searchFn(this.rootStore.packageStore.dappPackages, this.searchText);
+    return searchFn(this.rootStore.packageStore.activePackages, this.searchText);
   }
 
   @computed get filteredDappPackages() {

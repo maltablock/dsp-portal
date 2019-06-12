@@ -9,7 +9,7 @@ import TransactionRefreshSuccess from 'app/modules/transactions/components/Trans
 import TransactionWithdrawPending from 'app/modules/transactions/components/TransactionWithdrawPending';
 import TransactionWithdrawSuccess from 'app/modules/transactions/components/TransactionWithdrawSuccess';
 import StakeStatusCard from './StakeStatusCard';
-import RefreshButton from './RefreshButton'
+import RefreshButton from './RefreshButton';
 
 const MOBILE_WIDTH = 960;
 
@@ -59,28 +59,36 @@ const StakeStatusList = (props: Props) => {
   const airHodlCard =
     store.dappHdlClaimed === null
       ? {
-          text: 'Air-HODLed token',
-          amount: 0,
-          amountUsd: 0,
+          details: [{ text: 'DAPPHDL tokens', amount: 0 }, { text: 'Allocation', amount: 0 }],
           remainingTilDate: store.vestingEndDate,
         }
       : {
-          text: 'Air-HODLed token',
-          amount: store.dappHdlUnstakedBalance,
-          amountUsd: dappToUsd(store.dappHdlUnstakedBalance),
+          details: [
+            {
+              text: 'DAPPHDL tokens',
+              amount: store.totalDappHdlAmount,
+              amountUsd: dappToUsd(store.totalDappHdlAmount),
+              refreshButton: store.dappHdlClaimed ? (
+                <RefreshButton
+                  onClick={() =>
+                    store.handleRefresh({
+                      contentPending: <TransactionRefreshPending />,
+                      contentSuccess: <TransactionRefreshSuccess />,
+                    })
+                  }
+                />
+              ) : null,
+            },
+            { text: 'Allocation', amount: store.allocatedDappHdlAmount },
+          ],
           remainingTilDate: store.vestingEndDate,
-          showRefreshButton: store.dappHdlClaimed,
-          refreshButton: <RefreshButton onClick={() =>
-            store.handleRefresh({
-              contentPending: <TransactionRefreshPending />,
-              contentSuccess: <TransactionRefreshSuccess />,
-            })}/>,
           buttonText: store.dappHdlClaimed ? 'Withdraw' : 'Claim',
           buttonOnClick: store.dappHdlClaimed
-            ? () => store.handleWithdraw({
-              contentPending: <TransactionWithdrawPending />,
-              contentSuccess: <TransactionWithdrawSuccess />,
-            })
+            ? () =>
+                store.handleWithdraw({
+                  contentPending: <TransactionWithdrawPending />,
+                  contentSuccess: <TransactionWithdrawSuccess />,
+                })
             : () =>
                 store.handleRefresh({
                   contentPending: <TransactionRefreshPending isClaimTransaction />,
@@ -96,24 +104,44 @@ const StakeStatusList = (props: Props) => {
 
       {[
         {
-          text: 'Total DAPP',
-          amount: store.totalDappAmount,
-          amountUsd: dappToUsd(store.totalDappAmount),
+          details: [
+            {
+              text: 'Total DAPP',
+              amount: store.totalDappAmount,
+              amountUsd: dappToUsd(store.totalDappAmount),
+            },
+          ],
         },
         {
-          text: 'Staked DAPP(HDL)',
-          amount: store.totalStakedDappAmount,
-          amountUsd: dappToUsd(store.totalStakedDappAmount),
+          details: [
+            {
+              text: 'Staked DAPP',
+              amount: store.stakedDappAmount,
+            },
+            {
+              text: 'Unstaked DAPP',
+              amount: store.unstakedDappAmount,
+            },
+          ],
+          showStakingIcon: true,
         },
         {
-          text: 'Unstaked DAPP',
-          amount: store.unstakedBalance,
-          amountUsd: dappToUsd(store.unstakedBalance),
+          details: [
+            {
+              text: 'Staked DAPPHDL',
+              amount: store.stakedDappHdlAmount,
+            },
+            {
+              text: 'Unstaked DAPPHDL',
+              amount: store.unstakedDappHdlAmount,
+            },
+          ],
+          showStakingIcon: true,
         },
         airHodlCard,
       ].map((props, index, arr) => (
         <StakeStatusCard
-          key={props.text}
+          key={index}
           expanded={store.isCardsExpanded}
           zIndex={arr.length - index}
           {...props}

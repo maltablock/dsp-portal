@@ -9,11 +9,21 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     super(data, packageStore);
   }
 
+  @computed get packageId() {
+    // `selectpkg` action sets pending_package
+    // if enough staked through `stake` action, package is set to pending_package
+    // so package field is the current active package, pending the selected one
+    return this.data.package || this.data.pending_package;
+  }
+
+  @computed get isStakedToByUser() {
+    // if this package exists, it means it is staked to by the user
+    return true;
+  }
+
   @computed get dappPackage() {
     const dappPackage = this.packageStore.dappPackages.find(dappPackage => {
-      return dappPackage.providerLowercased === this.providerLowercased
-        && dappPackage.serviceLowercased === this.serviceLowercased
-        && dappPackage.packageId === this.packageId
+      return this.isEqual(dappPackage)
     })
     return dappPackage
   }
@@ -30,13 +40,6 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
   @computed get minUnstakePeriod() {
     if(!this.dappPackage) return 0
     return this.dappPackage.minUnstakePeriod
-  }
-
-  @computed get packageId() {
-    // `selectpkg` action sets pending_package
-    // if enough staked through `stake` action, package is set to pending_package
-    // so package field is the current active package, pending the selected one
-    return this.data.package || this.data.pending_package;
   }
 
   @computed get stakingBalanceFromSelf() {
