@@ -1,4 +1,5 @@
 import { observable, action, computed } from 'mobx';
+import flatten from 'lodash/flatten';
 import { getWallet, fetchRows, decomposeAsset, selectWalletProvider } from 'app/shared/eos';
 import {
   DAPPSERVICES_CONTRACT,
@@ -11,8 +12,8 @@ import {
 
 import RootStore from 'app/root/RootStore';
 import {
-  refreshTransaction,
   withdrawTransaction,
+  refreshAndCleanupTransaction,
 } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
@@ -80,11 +81,11 @@ class ProfileStore {
 
   getWalletFromStorage = () => {
     return localStorage.getItem(WALLET_LS_KEY);
-  }
+  };
 
   setWalletToStorage = (walletName: WALLETS) => {
-    localStorage.setItem(WALLET_LS_KEY, walletName)
-  }
+    localStorage.setItem(WALLET_LS_KEY, walletName);
+  };
 
   @action login = async (walletName: WALLETS) => {
     if (this.isLoggingIn) return;
@@ -100,18 +101,24 @@ class ProfileStore {
       if (walletName === WALLETS.ledger) {
         const discoveryDataRaw: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
           ? demoData.discoveryData
-          : await getWallet().discover({ pathIndexList: new Array(300).fill(0).map((_, idx) => idx) });
+          : await getWallet().discover({
+              pathIndexList: new Array(300).fill(0).map((_, idx) => idx),
+            });
 
-        const sortedKeyToAccountMap = discoveryDataRaw.keyToAccountMap.sort((a, b) => a.index - b.index);
+        const sortedKeyToAccountMap = discoveryDataRaw.keyToAccountMap.sort(
+          (a, b) => a.index - b.index,
+        );
 
         const discoveryData: DiscoveryData = {
           keys: discoveryDataRaw.keys,
           keyToAccountMap: sortedKeyToAccountMap,
         };
 
-        const { data: { account, authorization } } = await this.rootStore.dialogStore.openDialog(
-          DialogTypes.LEDGER_ACCOUNT, { discoveryData }
-        );
+        const {
+          data: { account, authorization },
+        } = await this.rootStore.dialogStore.openDialog(DialogTypes.LEDGER_ACCOUNT, {
+          discoveryData,
+        });
 
         loginParams = [account, authorization];
       }
@@ -122,7 +129,7 @@ class ProfileStore {
       this.dappHdlInfo = this.dappInfo = undefined;
       this.fetchInfo();
       this.setLoginStatusToStorage('true');
-      this.setWalletToStorage(walletName)
+      this.setWalletToStorage(walletName);
     } catch (err) {
       console.error(err);
       this.setLoginStatusToStorage('false');
@@ -254,10 +261,10 @@ class ProfileStore {
   };
 
   @action handleWithdraw = async ({ contentSuccess, contentPending }) => {
-    const { canceled } = await this.rootStore.dialogStore.openDialog(
-      DialogTypes.WITHDRAW_WARNING,
-      { balance: this.totalDappHdlAmount, isWithdrawDisabled: !this.totalDappHdlAmount }
-    );
+    const { canceled } = await this.rootStore.dialogStore.openDialog(DialogTypes.WITHDRAW_WARNING, {
+      balance: this.totalDappHdlAmount,
+      isWithdrawDisabled: !this.totalDappHdlAmount,
+    });
 
     if (canceled) return;
 
@@ -266,7 +273,6 @@ class ProfileStore {
       contentPending,
       performTransaction: async () => {
         const result = await withdrawTransaction();
-        // TODO: @cmichel21 split fetchInfo into several parallel fetches and only refetch dappHodl part
         await this.fetchInfo();
         return result;
       },
@@ -278,8 +284,12 @@ class ProfileStore {
       contentSuccess,
       contentPending,
       performTransaction: async () => {
-        const result = await refreshTransaction();
-        // TODO: @cmichel21 split fetchInfo into several parallel fetches and only refetch dappHodl part
+        const hasDappHdl = Boolean(this.dappHdlInfo)
+        // perform a refund of any "stuck" unstakes
+        const refundPayloads = flatten(
+          this.rootStore.packageStore.stakedPackages.map(p => p.availableRefundsPayloads),
+        );
+        const result = await refreshAndCleanupTransaction(hasDappHdl, refundPayloads);
         await this.fetchInfo();
         return result;
       },
@@ -310,11 +320,7 @@ class ProfileStore {
   }
 
   @computed get totalDappAmount() {
-    return (
-      this.stakedDappAmount +
-      this.unstakedDappAmount +
-      this.refundingDappAmount
-    );
+    return this.stakedDappAmount + this.unstakedDappAmount + this.refundingDappAmount;
   }
 
   @computed get unstakedDappHdlAmount() {
@@ -330,7 +336,7 @@ class ProfileStore {
   }
 
   @computed get totalDappHdlAmount() {
-    return this.unstakedDappHdlAmount + this.stakedDappHdlAmount
+    return this.unstakedDappHdlAmount + this.stakedDappHdlAmount;
   }
 
   @computed get dappHdlClaimed() {
