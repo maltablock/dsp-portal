@@ -23,7 +23,8 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
       provider: selectedDappPackage.providerLowercased,
       service: selectedDappPackage.serviceLowercased,
       package: selectedDappPackage.packageId,
-      quantity: p.packageStore.stakeValue,
+      quantityDapp: p.packageStore.stakeValueDapp,
+      quantityDappHdl: p.packageStore.stakeValueDappHdl,
       unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.unstakedDappHdlAmount,
       unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedDappAmount,
     };
@@ -60,6 +61,8 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
         text: 'Stake',
         onClick,
       }}
+      stakedDappAmount={p.stakingBalanceFromSelf}
+      stakedDappHdlAmount={p.stakingBalanceFromSelfDappHdl}
     />
   );
 };

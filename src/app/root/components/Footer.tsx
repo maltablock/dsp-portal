@@ -122,11 +122,11 @@ const Footer = () => {
           <Facebook />
         </SocialBar>
         <PolicyBar>
-          <a href="#">
+          <a href={process.env.PUBLIC_URL + '/Terms_of_Service.pdf'}>
             Terms of Service
           </a>
           <span>{`   |   `}</span>
-          <a href="#">
+          <a href={process.env.PUBLIC_URL + '/Privacy_Policy.pdf'}>
             Privacy Policy
           </a>
         </PolicyBar>

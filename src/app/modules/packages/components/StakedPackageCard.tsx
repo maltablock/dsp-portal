@@ -43,13 +43,17 @@ const getCardDetails = (p: StakedPackage) => {
       label: 'Amount Staked:',
       value: formatAsset({ amount: p.data.balance, symbol: DAPP_SYMBOL }),
     },
+    {
+      label: 'Min Stake:',
+      value: formatAsset({ amount: p.minStakeNumber, symbol: DAPP_SYMBOL }),
+    },
   ]];
 
   const canUnstakeMore = p.refundFromSelfAmount + p.refundFromSelfDappHdlAmount < p.stakingBalanceFromSelf + p.stakingBalanceFromSelfDappHdl
   if(canUnstakeMore) {
     details[0].push(
       {
-        label: 'Unstake Time:',
+        label: 'Min Unstake Time:',
         value: formatMinUnstakePeriod(p.minUnstakePeriod),
       })
   }
@@ -87,7 +91,8 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
       provider: selectedStakedPackage.providerLowercased,
       service: selectedStakedPackage.serviceLowercased,
       package: selectedStakedPackage.packageId,
-      quantity: p.packageStore.stakeValue,
+      quantityDapp: p.packageStore.stakeValueDapp,
+      quantityDappHdl: p.packageStore.stakeValueDappHdl,
       stakingBalanceFromSelf: selectedStakedPackage.stakingBalanceFromSelf,
       stakingBalanceFromSelfDappHdl: selectedStakedPackage.stakingBalanceFromSelfDappHdl,
     };
@@ -118,6 +123,8 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
         onClick,
       }}
       deprecated={p.isDeprecated}
+      stakedDappAmount={p.stakingBalanceFromSelf}
+      stakedDappHdlAmount={p.stakingBalanceFromSelfDappHdl}
     />
   );
 };

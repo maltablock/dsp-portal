@@ -8,7 +8,7 @@ type Props = {
 const TransactionRefreshPending = ({ isClaimTransaction = false }: Props) => {
   return (
       <ContentInfo>
-        {isClaimTransaction ? `Claiming` : `Refreshing`} <AmountText>Air-HODLed DAPP</AmountText> tokens
+        {isClaimTransaction ? `Claiming` : `Refreshing`} <AmountText>DAPPHDL</AmountText> (Air-HODLed DAPP) tokens
       </ContentInfo>
   )
 };

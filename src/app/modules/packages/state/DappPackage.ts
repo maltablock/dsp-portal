@@ -33,6 +33,21 @@ class DappPackage extends PackageBase<IDappPackageData> {
       ? distanceInWordsStrict(0, this.data.min_unstake_period * 1000)
       : 'Automatic';
   }
+
+  @computed get stakedPackage() {
+    const stakedPackage = this.packageStore.stakedPackages.find(stakedPackage => {
+      return this.isEqual(stakedPackage)
+    })
+    return stakedPackage
+  }
+
+  @computed get stakingBalanceFromSelf() {
+    return this.stakedPackage ? this.stakedPackage.stakingBalanceFromSelf : 0
+  }
+  
+  @computed get stakingBalanceFromSelfDappHdl() {
+    return this.stakedPackage ? this.stakedPackage.stakingBalanceFromSelfDappHdl : 0
+  }
 }
 
 export default DappPackage;

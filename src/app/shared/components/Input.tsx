@@ -37,6 +37,7 @@ const Input = ({
   placeholder = '',
   autoFocus = false,
   label = '',
+  ...inputProps
 }) => {
   return (
     <InputWrapper>
@@ -45,6 +46,7 @@ const Input = ({
         onChange={onChange}
         placeholder={placeholder}
         autoFocus={autoFocus}
+        {...inputProps}
       />
       <InputRightLabel>{label}</InputRightLabel>
     </InputWrapper>

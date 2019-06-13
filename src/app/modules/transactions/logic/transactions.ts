@@ -38,19 +38,20 @@ export type StakePayload = {
   provider: string;
   service: string;
   package: string;
-  quantity: string;
+  quantityDapp: string;
+  quantityDappHdl: string;
   unstakedDappHdlAmount: number;
   unstakedDappAmount: number;
 };
 export const stakeTransaction = async (stake: StakePayload): Promise<TransactionResult> => {
-  const stakeAmount = decomposeAsset(`${stake.quantity} ${DAPP_SYMBOL}`).amount;
+  const stakeAmountDappFormatted = `${stake.quantityDapp || `0.0000`} ${DAPP_SYMBOL.symbolCode}`
+  const stakeAmountDapp = decomposeAsset(stakeAmountDappFormatted).amount;
+  const stakeAmountDappHdlFormatted = `${stake.quantityDappHdl || `0.0000`} ${DAPPHODL_SYMBOL.symbolCode}`
+  const stakeAmountDappHdl = decomposeAsset(stakeAmountDappHdlFormatted).amount;
 
-  if (stake.unstakedDappAmount + stake.unstakedDappHdlAmount < stakeAmount) {
+  if (stakeAmountDapp > stake.unstakedDappAmount || stakeAmountDappHdl > stake.unstakedDappHdlAmount) {
     throw new Error(
-      `You don't have enough funds to stake ${formatAsset({
-        amount: stakeAmount,
-        symbol: DAPP_SYMBOL,
-      })}.\nAvailable: ${formatAsset({
+      `You don't have enough funds to stake ${stakeAmountDappFormatted} and ${stakeAmountDappHdlFormatted}.\nAvailable: ${formatAsset({
         amount: stake.unstakedDappAmount,
         symbol: DAPP_SYMBOL,
       })}, ${formatAsset({ amount: stake.unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL })}`,
@@ -60,7 +61,7 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
   // always stake normal dapp first
   let stakeActions: Action[] = [];
 
-  if (stake.unstakedDappAmount > 0) {
+  if (stakeAmountDapp > 0) {
     stakeActions.push(
       createAction({
         name: 'stake',
@@ -68,18 +69,13 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
           from: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: formatAsset({
-            amount: Math.min(stakeAmount, stake.unstakedDappAmount),
-            symbol: DAPP_SYMBOL,
-          }),
+          quantity: stakeAmountDappFormatted
         },
       }),
     );
   }
 
-  // stake DAPPHDL if necessary
-  const leftOverAmount = stakeAmount - stake.unstakedDappAmount;
-  if (leftOverAmount > 0) {
+  if (stakeAmountDappHdl > 0) {
     stakeActions.push(
       createAction({
         account: DAPPHODL_CONTRACT,
@@ -88,7 +84,7 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
           owner: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: formatAsset({ amount: leftOverAmount, symbol: DAPPHODL_SYMBOL }),
+          quantity: stakeAmountDappHdlFormatted,
         },
       }),
     );
@@ -116,29 +112,43 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
 export type UnstakePayload = {
   provider: string;
   service: string;
-  quantity: string;
+  quantityDapp: string;
+  quantityDappHdl: string;
   stakingBalanceFromSelf: number;
   stakingBalanceFromSelfDappHdl: number;
 };
 export const unstakeTransaction = async (stake: UnstakePayload): Promise<TransactionResult> => {
-  const stakeAmount = decomposeAsset(`${stake.quantity} ${DAPP_SYMBOL}`).amount;
+  const stakeAmountDappFormatted = `${stake.quantityDapp || `0.0000`} ${DAPP_SYMBOL.symbolCode}`
+  const stakeAmountDapp = decomposeAsset(stakeAmountDappFormatted).amount;
+  const stakeAmountDappHdlFormatted = `${stake.quantityDappHdl || `0.0000`} ${DAPPHODL_SYMBOL.symbolCode}`
+  const stakeAmountDappHdl = decomposeAsset(stakeAmountDappHdlFormatted).amount;
 
-  if (stake.stakingBalanceFromSelf + stake.stakingBalanceFromSelfDappHdl < stakeAmount) {
+  if (stakeAmountDapp > stake.stakingBalanceFromSelf || stakeAmountDappHdl > stake.stakingBalanceFromSelfDappHdl) {
     throw new Error(
-      `You do not have enough funds staked to unstake ${formatAsset({
-        amount: stakeAmount,
-        symbol: DAPP_SYMBOL,
-      })}.\nAvailable: ${formatAsset({
+      `You don't have enough funds staked to this package to unstake ${stakeAmountDappFormatted} and ${stakeAmountDappHdlFormatted}.\nAvailable: ${formatAsset({
         amount: stake.stakingBalanceFromSelf,
         symbol: DAPP_SYMBOL,
-      })}, ${formatAsset({ amount: stake.stakingBalanceFromSelfDappHdl, symbol: DAPP_SYMBOL })}`,
+      })}, ${formatAsset({ amount: stake.stakingBalanceFromSelfDappHdl, symbol: DAPPHODL_SYMBOL })}`,
     );
   }
 
-  // always unstake DAPPHDL first
   let stakeActions: Action[] = [];
 
-  if (stake.stakingBalanceFromSelfDappHdl > 0) {
+  if (stakeAmountDapp > 0) {
+    stakeActions.push(
+      createAction({
+        name: 'unstake',
+        data: {
+          to: getWallet().auth!.accountName,
+          provider: stake.provider,
+          service: stake.service,
+          quantity: stakeAmountDappFormatted
+        },
+      }),
+    );
+  }
+
+  if (stakeAmountDappHdl > 0) {
     stakeActions.push(
       createAction({
         account: DAPPHODL_CONTRACT,
@@ -147,26 +157,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
           owner: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: formatAsset({
-            amount: Math.min(stakeAmount, stake.stakingBalanceFromSelfDappHdl),
-            symbol: DAPPHODL_SYMBOL,
-          }),
-        },
-      }),
-    );
-  }
-
-  // unstake DAPP if necessary
-  const leftOverAmount = stakeAmount - stake.stakingBalanceFromSelfDappHdl;
-  if (leftOverAmount > 0) {
-    stakeActions.push(
-      createAction({
-        name: 'unstake',
-        data: {
-          to: getWallet().auth!.accountName,
-          provider: stake.provider,
-          service: stake.service,
-          quantity: formatAsset({ amount: leftOverAmount, symbol: DAPP_SYMBOL }),
+          quantity: stakeAmountDappHdlFormatted
         },
       }),
     );
