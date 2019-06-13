@@ -15,6 +15,8 @@ import {
 } from '../utils';
 import IconStore from './IconStore';
 
+const stakeValueRegex = /^(\d+\.\d{4}){0,1}$/;
+
 class PackageStore {
   rootStore: RootStore;
   iconStore = new IconStore();
@@ -38,7 +40,8 @@ class PackageStore {
   }
 
   @action selectPackage(id: number | null) {
-    this.stakeValue = '';
+    this.stakeValueDapp = '';
+    this.stakeValueDappHdl = '';
     this.selectedPackageId = id;
   }
 
@@ -46,12 +49,22 @@ class PackageStore {
    * Stacking packages
    */
 
-  @observable stakeValue = '';
-  @observable stakeValueValid = false;
+  @observable stakeValueDapp = '';
+  @observable stakeValueDappHdl = '';
+  @observable stakeValuesValid = false;
 
   @action handleStakeValueChange = e => {
-    this.stakeValue = e.target.value;
-    this.stakeValueValid = /^\d+\.\d{4}$/.test(this.stakeValue);
+    if (e.target.name === `dapp`) {
+      this.stakeValueDapp = e.target.value;
+    } else {
+      this.stakeValueDappHdl = e.target.value;
+    }
+
+    // one of them can be empty but not both
+    this.stakeValuesValid =
+      (Boolean(this.stakeValueDapp || this.stakeValueDappHdl)) &&
+      stakeValueRegex.test(this.stakeValueDapp) &&
+      stakeValueRegex.test(this.stakeValueDappHdl);
   };
 
   /**
@@ -78,7 +91,9 @@ class PackageStore {
   }
 
   @computed get activePackages() {
-    return this.dappPackages.filter(p => p.data.enabled && p.data.api_endpoint && p.data.api_endpoint !== `null`)
+    return this.dappPackages.filter(
+      p => p.data.enabled && p.data.api_endpoint && p.data.api_endpoint !== `null`,
+    );
   }
 
   /** Staked packages */
@@ -118,56 +133,60 @@ class PackageStore {
       stakesDappHodlResults,
       refundsAccountResults,
       refundsDappHodlResults,
-    ] = await Promise.all<any>([
-      fetchRows<AccountExtRow>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: `DAPP`,
-        table: `accountext`,
-        index_position: `3`, // &accountext::by_account_service
-        key_type: `i128`,
-        lower_bound: `${accountExtBounds.lower_bound}`,
-        upper_bound: `${accountExtBounds.upper_bound}`,
-      }),
+    ] = await Promise.all<any>(
+      [
+        fetchRows<AccountExtRow>({
+          code: DAPPSERVICES_CONTRACT,
+          scope: `DAPP`,
+          table: `accountext`,
+          index_position: `3`, // &accountext::by_account_service
+          key_type: `i128`,
+          lower_bound: `${accountExtBounds.lower_bound}`,
+          upper_bound: `${accountExtBounds.upper_bound}`,
+        }),
 
-      // staked to logged in account through account itself
-      fetchRows<StakingTableRow>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: accountInfo.account_name,
-        table: `staking`,
-      }),
+        // staked to logged in account through account itself
+        fetchRows<StakingTableRow>({
+          code: DAPPSERVICES_CONTRACT,
+          scope: accountInfo.account_name,
+          table: `staking`,
+        }),
 
-      // staked to logged in account through DAPPHDL contract
-      fetchRows<StakingTableRow>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: DAPPHODL_CONTRACT,
-        table: `staking`,
-        index_position: `2`, // &staking::_by_account_service_provider
-        key_type: `sha256`,
-        lower_bound: `${stakesDappHodlBounds.lower_bound}`,
-        upper_bound: `${stakesDappHodlBounds.upper_bound}`,
-      }),
+        // staked to logged in account through DAPPHDL contract
+        fetchRows<StakingTableRow>({
+          code: DAPPSERVICES_CONTRACT,
+          scope: DAPPHODL_CONTRACT,
+          table: `staking`,
+          index_position: `2`, // &staking::_by_account_service_provider
+          key_type: `sha256`,
+          lower_bound: `${stakesDappHodlBounds.lower_bound}`,
+          upper_bound: `${stakesDappHodlBounds.upper_bound}`,
+        }),
 
-      // refunds to logged in account through account itself
-      fetchRows<RefundsTableRow>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: accountInfo.account_name,
-        table: `refunds`,
-      }),
+        // refunds to logged in account through account itself
+        fetchRows<RefundsTableRow>({
+          code: DAPPSERVICES_CONTRACT,
+          scope: accountInfo.account_name,
+          table: `refunds`,
+        }),
 
-      // refunds to logged in account through DAPPHDL contract
-      fetchRows<RefundsTableRow>({
-        code: DAPPSERVICES_CONTRACT,
-        scope: DAPPHODL_CONTRACT,
-        table: `refunds`,
-        index_position: `2`, // &refundreq::by_symbol_service_provider
-        key_type: `sha256`,
-        lower_bound: `${refundsDappHodlBounds.lower_bound}`,
-        upper_bound: `${refundsDappHodlBounds.upper_bound}`,
-      }),
-    ].map(p => p.catch(err => {
-      console.error(`fetchStakedPackages`, err.message)
-      return []
-    })))
+        // refunds to logged in account through DAPPHDL contract
+        fetchRows<RefundsTableRow>({
+          code: DAPPSERVICES_CONTRACT,
+          scope: DAPPHODL_CONTRACT,
+          table: `refunds`,
+          index_position: `2`, // &refundreq::by_symbol_service_provider
+          key_type: `sha256`,
+          lower_bound: `${refundsDappHodlBounds.lower_bound}`,
+          upper_bound: `${refundsDappHodlBounds.upper_bound}`,
+        }),
+      ].map(p =>
+        p.catch(err => {
+          console.error(`fetchStakedPackages`, err.message);
+          return [];
+        }),
+      ),
+    );
 
     this.stakedPackages = aggregateStackedPackagesData({
       accountExtResults,

@@ -1,13 +1,14 @@
 import React from 'react';
 
-import { AmountText, ContentInfo, HighlightedText } from './TransactionStyles';
+import { ContentInfo, HighlightedText } from './TransactionStyles';
 import { UnstakePayload } from '../logic/transactions';
+import AssetFormatter from './AssetFormatter';
 
 const TransactionUnstakePending = (payload: UnstakePayload) => {
   return (
     <React.Fragment>
       <div>
-        <strong>Un</strong>Staking <AmountText>{payload.quantity} DAPP</AmountText> from
+        <strong>Un</strong>Staking <AssetFormatter {...payload} /> from
       </div>
       <ContentInfo>
         <HighlightedText>{payload.provider}</HighlightedText>

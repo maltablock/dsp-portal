@@ -59,6 +59,10 @@ abstract class PackageBase<T extends IStakedPackageData | IDappPackageData> {
   isEqual(p: PackageBase<any>) {
     return this.packageId === p.packageId && this.providerLowercased === p.providerLowercased && this.serviceLowercased === p.serviceLowercased
   }
+
+  abstract get stakingBalanceFromSelf();
+
+  abstract get stakingBalanceFromSelfDappHdl();
 }
 
 export default PackageBase;

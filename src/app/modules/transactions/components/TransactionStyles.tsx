@@ -16,6 +16,7 @@ const HighlightedText = styled.div`
   color: #404efe;
   border-radius: 4px;
   margin: 0 8px;
+  white-space: pre-wrap;
 `;
 
 const HighlightedText2 = styled(HighlightedText)`

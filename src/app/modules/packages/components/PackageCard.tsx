@@ -14,6 +14,8 @@ import DappPackage from '../state/DappPackage';
 import StakedPackage from '../state/StakedPackage';
 import { observer } from 'mobx-react';
 import StakingIcon from 'app/shared/components/StakingIcon';
+import { formatAsset } from 'app/shared/eos';
+import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
 
 const MOBILE_WIDTH = 671;
 
@@ -87,7 +89,18 @@ const DetailsValue = styled.div`
 `;
 
 const AmountInputWrapper = styled.div`
-  margin: 24px 0 4px;
+  margin: 9px 0 4px;
+`;
+
+const InputLabelWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 14px;
+`;
+
+const InputLabelStake = styled.div`
+  color: #404efe;
 `;
 
 const ProviderWrapper = styled.div`
@@ -131,7 +144,7 @@ const DeprecationWarning = styled.div`
   font-weight: 600;
   text-align: center;
   padding: 6px 30px;
-  margin: 16px -16px -16px -16px;
+  margin: 16px -16px -24px -16px;
 `;
 
 const iconByService = {
@@ -161,17 +174,19 @@ type Props = {
     text: string;
     onClick: (...any) => any;
   };
+  stakedDappAmount: number;
+  stakedDappHdlAmount: number;
   showStakingIcon?: boolean;
   deprecated?: boolean;
 };
 
 class PackageCard extends React.Component<Props> {
-  handleClickOutside = (evt) => {
-    const { package: p } = this.props
-    if(p.isSelected) {
-      p.handleDeselect(evt)
+  handleClickOutside = evt => {
+    const { package: p } = this.props;
+    if (p.isSelected) {
+      p.handleDeselect(evt);
     }
-  }
+  };
 
   render() {
     const {
@@ -181,17 +196,15 @@ class PackageCard extends React.Component<Props> {
       button,
       showStakingIcon = false,
       deprecated = false,
+      stakedDappAmount,
+      stakedDappHdlAmount
     } = this.props;
 
     const serviceIcon = iconByService[p.data.service] || iconByService.default;
     const serviceColor = colorByService[p.data.service] || colorByService.default;
 
     return (
-      <CardWrapper
-        onClick={p.handleSelect}
-        isSelected={p.isSelected}
-        isHidden={p.isHidden}
-      >
+      <CardWrapper onClick={p.handleSelect} isSelected={p.isSelected} isHidden={p.isHidden}>
         <TitleAndCheckboxWrapper isSelected={p.isSelected} onClick={p.handleDeselect}>
           <Title>{p.packageId.toUpperCase()}</Title>
           {showStakingIcon && <StakingIcon />}
@@ -217,15 +230,35 @@ class PackageCard extends React.Component<Props> {
         </DetailsWrapper>
 
         {p.isSelected && (
-          <AmountInputWrapper>
-            <Input
-              value={p.packageStore.stakeValue}
-              onChange={p.packageStore.handleStakeValueChange}
-              placeholder={input.placeholder}
-              label="DAPP"
-              autoFocus
-            />
-          </AmountInputWrapper>
+          <React.Fragment>
+            <AmountInputWrapper>
+              <InputLabelWrapper>
+                <div>{button.text} DAPP</div>
+                {<InputLabelStake>{formatAsset({ amount: stakedDappAmount, symbol: DAPP_SYMBOL }, { withSymbol: false, separateThousands: true })}</InputLabelStake>}
+              </InputLabelWrapper>
+              <Input
+                name="dapp"
+                value={p.packageStore.stakeValueDapp}
+                onChange={p.packageStore.handleStakeValueChange}
+                placeholder={input.placeholder}
+                label="DAPP"
+                autoFocus
+              />
+            </AmountInputWrapper>
+            <AmountInputWrapper>
+              <InputLabelWrapper>
+                <div>{button.text} DAPPHDL</div>
+                {<InputLabelStake>{formatAsset({ amount: stakedDappHdlAmount, symbol: DAPPHODL_SYMBOL }, { withSymbol: false, separateThousands: true })}</InputLabelStake>}
+              </InputLabelWrapper>
+              <Input
+                name="dappHdl"
+                value={p.packageStore.stakeValueDappHdl}
+                onChange={p.packageStore.handleStakeValueChange}
+                placeholder={input.placeholder}
+                label="DAPPHDL"
+              />
+            </AmountInputWrapper>
+          </React.Fragment>
         )}
 
         <ProviderWrapper>
@@ -236,7 +269,7 @@ class PackageCard extends React.Component<Props> {
         {p.isSelected && (
           <StakeButtonWrapper>
             <StakeButton
-              disabled={!p.packageStore.stakeValueValid}
+              disabled={!p.packageStore.stakeValuesValid}
               color={serviceColor}
               onClick={button.onClick}
             >
