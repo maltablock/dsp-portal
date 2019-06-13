@@ -3,6 +3,9 @@ import { computed } from "mobx";
 import { IStakedPackageData } from "app/shared/typings";
 import PackageStore from "./PackageStore";
 import PackageBase from "./PackageBase";
+import { RefundPayload } from "app/modules/transactions/logic/transactions";
+import { isAfter } from "date-fns";
+import { DAPPHODL_CONTRACT, DAPPSERVICES_CONTRACT } from "app/shared/eos/constants";
 
 class StakedPackage extends PackageBase<IStakedPackageData> {
   constructor(data: IStakedPackageData, packageStore: PackageStore) {
@@ -70,6 +73,32 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     if(!this.dappPackage) return false
 
     return !this.dappPackage.data.enabled
+  }
+
+  @computed get availableRefundsPayloads() {
+    let refunds:RefundPayload[] = []
+
+    if(this.refundFromSelf) {
+      if(isAfter(new Date(), this.refundFromSelf.unstake_time)) {
+        refunds.push({
+          toContract: DAPPSERVICES_CONTRACT,
+          provider: this.providerLowercased,
+          service: this.serviceLowercased,
+        })
+      }
+    }
+
+    if(this.refundFromSelfDappHdl) {
+      if(isAfter(new Date(), this.refundFromSelfDappHdl.unstake_time)) {
+        refunds.push({
+          toContract: DAPPHODL_CONTRACT,
+          provider: this.providerLowercased,
+          service: this.serviceLowercased,
+        })
+      }
+    }
+
+    return refunds
   }
 }
 

@@ -56,10 +56,20 @@ const StakeStatusList = (props: Props) => {
   const dappToUsd = dapp => (dapp / Math.pow(10, DAPP_SYMBOL.precision)) * store.usdPerDapp;
 
   // some users never received the AirHODL and cannot claim / withdraw
+  const refreshButton = (
+    <RefreshButton
+      onClick={() =>
+        store.handleRefresh({
+          contentPending: <TransactionRefreshPending />,
+          contentSuccess: <TransactionRefreshSuccess />,
+        })
+      }
+    />
+  );
   const airHodlCard =
     store.dappHdlClaimed === null
       ? {
-          details: [{ text: 'DAPPHDL tokens', amount: 0 }, { text: 'Allocation', amount: 0 }],
+          details: [{ text: 'DAPPHDL tokens', amount: 0, refreshButton }, { text: 'Allocation', amount: 0 }],
           remainingTilDate: store.vestingEndDate,
         }
       : {
@@ -68,16 +78,8 @@ const StakeStatusList = (props: Props) => {
               text: 'DAPPHDL tokens',
               amount: store.totalDappHdlAmount,
               amountUsd: dappToUsd(store.totalDappHdlAmount),
-              refreshButton: store.dappHdlClaimed ? (
-                <RefreshButton
-                  onClick={() =>
-                    store.handleRefresh({
-                      contentPending: <TransactionRefreshPending />,
-                      contentSuccess: <TransactionRefreshSuccess />,
-                    })
-                  }
-                />
-              ) : null,
+              // always show refresh button as it also does a cleanup of stuck refunds
+              refreshButton,
             },
             { text: 'Allocation', amount: store.allocatedDappHdlAmount },
           ],

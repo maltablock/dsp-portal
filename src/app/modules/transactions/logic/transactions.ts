@@ -4,6 +4,7 @@ import {
   DAPP_SYMBOL,
   DAPPHODL_SYMBOL,
   DAPPHODL_CONTRACT,
+  DappContractTypes,
 } from 'app/shared/eos/constants';
 import { Action } from 'eosjs/dist/eosjs-serialize';
 import { decomposeAsset, formatAsset } from 'app/shared/eos';
@@ -200,6 +201,72 @@ export const withdrawTransaction = async (): Promise<TransactionResult> => {
           },
         }),
       ],
+    },
+    transactionOptions,
+  );
+};
+
+export type RefundPayload = {
+  toContract: DappContractTypes;
+  provider: string;
+  service: string;
+};
+export const refreshAndCleanupTransaction = async (
+  hasDappHdl,
+  refundsPayloads: RefundPayload[],
+): Promise<TransactionResult> => {
+  let actions: Action[] = [];
+
+  if (hasDappHdl) {
+    actions.push(
+      createAction({
+        account: DAPPHODL_CONTRACT,
+        name: 'refresh',
+        data: {
+          owner: getWallet().auth!.accountName,
+        },
+      }),
+    );
+  }
+
+  actions.push(
+    ...refundsPayloads.map(refund => {
+      switch (refund.toContract) {
+        case DAPPHODL_CONTRACT:
+          return createAction({
+            account: DAPPHODL_CONTRACT,
+            name: 'refund',
+            data: {
+              owner: getWallet().auth!.accountName,
+              provider: refund.provider,
+              service: refund.service,
+            },
+          });
+        case DAPPSERVICES_CONTRACT:
+          return createAction({
+            name: 'refund',
+            data: {
+              to: getWallet().auth!.accountName,
+              provider: refund.provider,
+              service: refund.service,
+              symcode: DAPP_SYMBOL.symbolCode,
+            },
+          });
+        default:
+          throw new Error(
+            `Invalid contract account in refreshAndCleanupTransaction: "${refund.toContract}"`,
+          );
+      }
+    }),
+  );
+
+  if (actions.length === 0) {
+    throw new Error(`You do not own any DAPPHDL tokens and there is no expired refund.`);
+  }
+
+  return await getWallet().eosApi.transact(
+    {
+      actions,
     },
     transactionOptions,
   );
