@@ -40,22 +40,19 @@ const TableHeader = styled.div`
 
 const TableHeading = styled.div`
   font-weight: 600;
-  font-size: 18px;
+  font-size: 12px;
   text-align: center;
-
-  @media (max-width: ${MOBILE_WIDTH}px) {
-    font-size: 15px;
-  }
+  text-transform: uppercase;
 `;
 
 const TableContent = styled.ol`
   list-style: none;
-  padding-left: 0;
+  padding: 0;
 `;
 
 const TableRow = styled(TableHeader)`
   margin: 0;
-  padding: 8px 0;
+  padding: 16px 0;
   text-indent: 0;
   list-style-type: 0;
 
@@ -69,7 +66,7 @@ const TableRow = styled(TableHeader)`
 `;
 
 const TableColumn = styled.div`
-  font-size: 16px;
+  font-size: 14px;
   text-align: center;
 
   @media (max-width: ${MOBILE_WIDTH}px) {
