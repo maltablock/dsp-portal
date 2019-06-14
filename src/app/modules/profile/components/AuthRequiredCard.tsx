@@ -1,13 +1,14 @@
-import React from 'react'
+import React from 'react';
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import styled from 'styled-components';
+import { ReactComponent as Logo } from 'app/shared/assets/logo-maltablock.svg';
 import ProfileStore from '../state/ProfileStore';
 import { inject, observer } from 'mobx-react';
 
 const CardWrapper = styled(BlueGradientCard)`
   width: 640px;
   height: auto;
-  padding: 32px 16px;
+  padding: 16px;
   margin: 74px auto 97px;
 
   @media (max-width: 672px) {
@@ -21,6 +22,13 @@ const Title = styled.div`
   font-weight: 600;
   text-align: center;
   margin: 0 auto;
+`;
+
+const LogoWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 8px;
 `;
 
 const Message = styled.div`
@@ -41,30 +49,30 @@ const CtaButton = styled.div`
 
 type Props = {
   profileStore?: ProfileStore;
-}
+};
 
 const AuthRequiredCard = ({ profileStore }: Props) => {
   return (
     <CardWrapper>
-      <Title>
-        The Malta Block DSP Portal
-      </Title>
+      <LogoWrapper>
+        <Logo width={60} height={60} />
+      </LogoWrapper>
+      <Title>Malta Block DSP Portal</Title>
       <Message>
-      This portal allow developers to use dApp Service Providers (DSPs) to work more effectively. Select a service to stake DAPP to use.
+        This portal allow developers to use dApp Service Providers (DSPs) to work more effectively.
+        Select a service to stake DAPP to use.
       </Message>
-      <CtaButton onClick={() => {
-        const loginMenu = document.querySelector('#login-menu');
-        // @ts-ignore
-        if (loginMenu) loginMenu.click()
-      }}>
-        {
-          profileStore!.isLoggingIn
-          ? 'Logging in...'
-          : 'Login to Get Started'
-        }
+      <CtaButton
+        onClick={() => {
+          const loginMenu = document.querySelector('#login-menu');
+          // @ts-ignore
+          if (loginMenu) loginMenu.click();
+        }}
+      >
+        {profileStore!.isLoggingIn ? 'Logging in...' : 'Login to Get Started'}
       </CtaButton>
     </CardWrapper>
-  )
-}
+  );
+};
 
 export default inject('profileStore')(observer(AuthRequiredCard));
