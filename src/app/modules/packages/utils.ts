@@ -1,39 +1,10 @@
 import { decomposeAsset } from 'app/shared/eos';
+import { AccountExtRow, StakingTableRow, RefundsTableRow } from 'app/shared/typings';
 import groupBy from 'lodash/groupBy';
 import get from 'lodash/get';
 
-export type AccountExtRow = {
-  id: number;
-  account: string;
-  balance: string;
-  symbol: string;
-  last_reward: string;
-  last_usage: string;
-  package: string;
-  package_end: string;
-  package_started: string;
-  pending_package: string;
-  provider: string;
-  quota: string;
-  service: string;
-};
 
-export type StakingTableRow = {
-  id: number;
-  account: string;
-  balance: string;
-  provider: string;
-  service: string;
-};
 
-export type RefundsTableRow = {
-  id: number;
-  account: string;
-  amount: string;
-  provider: string;
-  service: string;
-  unstake_time: string;
-};
 
 type StakedPackagesFetchResults = {
   accountExtResults: AccountExtRow[];

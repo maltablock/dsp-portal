@@ -1,15 +1,21 @@
-import { Asset } from "app/shared/typings";
+import { Asset, AssetSymbol } from "app/shared/typings";
+import BigNumber from "bignumber.js";
 
 type FormatOptions = {
   withSymbol?: boolean;
   separateThousands?: boolean;
 };
 
+
+export type FormattableAsset = {
+  amount: number | BigNumber;
+  symbol: AssetSymbol;
+};
 /**
  * Example:
  * { amount: 1230000, symbol: { symbolCode: 'DAPP', precision: 4 }} => '123.0000 DAPP'
  */
-export function formatAsset({ amount, symbol }: Asset, formatOptions?: FormatOptions): string {
+export function formatAsset({ amount, symbol }: FormattableAsset, formatOptions?: FormatOptions): string {
   const options: FormatOptions = Object.assign(
     {
       withSymbol: true,
@@ -18,7 +24,7 @@ export function formatAsset({ amount, symbol }: Asset, formatOptions?: FormatOpt
     formatOptions || {},
   );
   const { precision, symbolCode } = symbol;
-  let s = String(amount);
+  let s = String(amount).split(`.`)[0];
   while (s.length < precision + 1) {
     s = `0${s}`;
   }

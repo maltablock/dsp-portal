@@ -1,19 +1,15 @@
 import { observable, action, computed } from 'mobx';
 
-import demoData from '../demo-data.json';
-import DappPackage from './DappPackage';
 import RootStore from 'app/root/RootStore';
 import { IDappPackageData } from 'app/shared/typings';
 import { fetchAllRows, getTableBoundsForName, fetchRows } from 'app/shared/eos';
 import { DAPPSERVICES_CONTRACT, DAPPHODL_CONTRACT } from 'app/shared/eos/constants';
+import { RefundsTableRow, StakingTableRow, AccountExtRow } from 'app/shared/typings';
 import StakedPackage from './StakedPackage';
-import {
-  aggregateStackedPackagesData,
-  RefundsTableRow,
-  StakingTableRow,
-  AccountExtRow,
-} from '../utils';
+import { aggregateStackedPackagesData } from '../utils';
 import IconStore from './IconStore';
+import demoData from '../demo-data.json';
+import DappPackage from './DappPackage';
 
 const stakeValueRegex = /^(\d+\.\d{4}){0,1}$/;
 
@@ -62,7 +58,7 @@ class PackageStore {
 
     // one of them can be empty but not both
     this.stakeValuesValid =
-      (Boolean(this.stakeValueDapp || this.stakeValueDappHdl)) &&
+      Boolean(this.stakeValueDapp || this.stakeValueDappHdl) &&
       stakeValueRegex.test(this.stakeValueDapp) &&
       stakeValueRegex.test(this.stakeValueDappHdl);
   };

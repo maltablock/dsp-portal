@@ -2,12 +2,14 @@ import { PackageStore } from 'app/modules/packages';
 import { SearchStore } from 'app/modules/search';
 import { ProfileStore } from 'app/modules/profile';
 import { DialogStore } from 'app/modules/dialogs';
+import { DspStore } from 'app/modules/dsp';
 
 class RootStore {
   packageStore = new PackageStore(this);
   searchStore = new SearchStore(this);
   profileStore = new ProfileStore(this);
   dialogStore = new DialogStore(this);
+  dspStore = new DspStore(this);
 
   init() {
     this.packageStore.fetchDappPackages();

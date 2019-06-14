@@ -3,10 +3,10 @@ import { Provider as MobxProvider, observer } from 'mobx-react';
 
 import RootStore from './RootStore';
 import PageWrapper from './components/PageWrapper';
-import { PackagesList } from 'app/modules/packages';
 import { AllDialogsContainer } from 'app/modules/dialogs';
 import { ProfileStatusContainer, TopBar } from 'app/modules/profile';
 import { SearchBar, PackagesTabs } from 'app/modules/search';
+import Content from './components/Content';
 import Footer from './components/Footer';
 
 const rootStore = new RootStore();
@@ -28,7 +28,7 @@ class App extends React.Component {
           <ProfileStatusContainer />
           <PackagesTabs />
           <SearchBar />
-          <PackagesList />
+          <Content />
           <AllDialogsContainer />
           <Footer />
         </PageWrapper>
