@@ -5,6 +5,8 @@ import DspStore from '../state/DspStore';
 import { formatAsset } from 'app/shared/eos';
 import { DAPP_SYMBOL } from 'app/shared/eos/constants';
 
+const MOBILE_WIDTH = 671;
+
 const DspWrapper = styled.div`
   background: linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%);
   padding: 16px;
@@ -13,10 +15,10 @@ const DspWrapper = styled.div`
 
 const BigHeading = styled.div`
   color: #ffffff;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   text-align: center;
-  margin-bottom: 40px;
+  margin: 20px 0 40px 0;
 `;
 
 const TableHeader = styled.div`
@@ -28,10 +30,10 @@ const TableHeader = styled.div`
     flex: none;
   }
   & > * {
-    width: calc(95% / 5);
+    width: calc(90% / 4);
   }
 
-  & > *:nth-child(1) {
+  & > *:nth-child(1), & > *:nth-child(5) {
     width: 5%;
   }
 `;
@@ -40,6 +42,10 @@ const TableHeading = styled.div`
   font-weight: 600;
   font-size: 18px;
   text-align: center;
+
+  @media (max-width: ${MOBILE_WIDTH}px) {
+    font-size: 15px;
+  }
 `;
 
 const TableContent = styled.ol`
@@ -65,6 +71,10 @@ const TableRow = styled(TableHeader)`
 const TableColumn = styled.div`
   font-size: 16px;
   text-align: center;
+
+  @media (max-width: ${MOBILE_WIDTH}px) {
+    font-size: 12px;
+  }
 `;
 
 type Props = {
