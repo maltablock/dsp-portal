@@ -9,7 +9,6 @@ import { TabsWrapper, Tab } from 'app/shared/components/Tabs';
 const Wrapper = styled.div`
   display: flex;
   margin: 0 auto 16px;
-  width: 300px;
 `;
 
 type Props = {
@@ -21,13 +20,13 @@ const PackagesTabs = (props: Props) => {
   const { selectedTab, handleSelectTab } = props.searchStore!;
   const { isLoggedIn } = props.profileStore!;
 
-  if (!isLoggedIn) return null;
+  const tabs = ['Packages', isLoggedIn && 'Staked', 'DSPs'].filter(Boolean)
 
   return (
     <Wrapper>
       <TabsWrapper>
         {
-          ['Packages', 'Staked'].map(tabName =>
+          tabs.map(tabName =>
             <Tab active={selectedTab === tabName} onClick={() => handleSelectTab(tabName)}>
               {tabName}
             </Tab>

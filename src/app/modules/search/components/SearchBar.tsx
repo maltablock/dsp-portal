@@ -70,6 +70,8 @@ const SearchBar = ({ searchStore }: Props) => {
     handleSortByChange,
   } = searchStore!;
 
+  if(!['Packages', 'Staked'].includes(searchStore!.selectedTab)) return null
+
   return (
     <Wrapper>
       <ControlsWrapper>

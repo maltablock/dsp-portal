@@ -10,7 +10,7 @@ import TransactionUnstakePending from 'app/modules/transactions/components/Trans
 import TransactionUnstakeSuccess from 'app/modules/transactions/components/TransactionUnstakeSuccess';
 import { DAPP_SYMBOL, DAPPHODL_SYMBOL, QUOTA_SYMBOL } from 'app/shared/eos/constants';
 import { secondsToTimeObject } from 'app/shared/utils/time';
-import { format, differenceInSeconds, addSeconds } from 'date-fns';
+import { differenceInSeconds } from 'date-fns';
 
 type Props = {
   stakedPackage: StakedPackage;
