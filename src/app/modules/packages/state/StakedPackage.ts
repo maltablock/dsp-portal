@@ -72,7 +72,7 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
   @computed get isDeprecated() {
     if(!this.dappPackage) return false
 
-    return !this.dappPackage.data.enabled
+    return this.dappPackage.isDeprecated
   }
 
   @computed get availableRefundsPayloads() {
