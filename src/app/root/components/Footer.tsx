@@ -115,11 +115,11 @@ const Footer = () => {
         <SectionHeading>DSP Portal</SectionHeading>
         <BigHeading>MaltaBlock.org</BigHeading>
         <SocialBar>
-          <Mail />
-          <Twitter />
-          <Telegram />
-          <Medium />
-          <Facebook />
+          <a href="https://airdropsdac.com/contact/"><Mail /></a>
+          <a href="https://twitter.com/airdropsdac"><Twitter /></a>
+          <a href="https://t.me/airdropsdac"><Telegram /></a>
+          <a href="https://medium.com/@airdropsdac"><Medium /></a>
+          <a href="https://www.facebook.com/airdropsdac/"><Facebook /></a>
         </SocialBar>
         <PolicyBar>
           <a href={process.env.PUBLIC_URL + '/Terms_of_Service.pdf'}>
