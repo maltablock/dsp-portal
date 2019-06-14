@@ -10,6 +10,7 @@ const MOBILE_WIDTH = 671;
 const DspWrapper = styled.div`
   background: linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%);
   padding: 16px;
+  margin-top: 16px;
   border-radius: 8px;
 `;
 
