@@ -48,6 +48,12 @@ class DappPackage extends PackageBase<IDappPackageData> {
   @computed get stakingBalanceFromSelfDappHdl() {
     return this.stakedPackage ? this.stakedPackage.stakingBalanceFromSelfDappHdl : 0
   }
+
+  @computed get isDeprecated() {
+    // handle special case until enablepkg action is implemented in contract
+    if(this.providerLowercased === `airdropsdac1` && (this.packageId === `ora1` || this.packageId === `cron1`)) return false
+    return !(Boolean(this.data.enabled) && this.data.api_endpoint && this.data.api_endpoint !== `null`)
+  }
 }
 
 export default DappPackage;

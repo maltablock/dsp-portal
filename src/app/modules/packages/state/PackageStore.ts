@@ -88,7 +88,7 @@ class PackageStore {
 
   @computed get activePackages() {
     return this.dappPackages.filter(
-      p => p.data.enabled && p.data.api_endpoint && p.data.api_endpoint !== `null`,
+      p => !p.isDeprecated,
     );
   }
 

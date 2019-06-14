@@ -6,6 +6,7 @@ import { ReactComponent as Medium } from 'app/shared/assets/logo-medium.svg';
 import { ReactComponent as Twitter } from 'app/shared/assets/logo-twitter.svg';
 import { ReactComponent as Mail } from 'app/shared/assets/contact.svg';
 import { ReactComponent as LiquidAppsLogo } from 'app/shared/assets/logo-liquidapps.svg';
+import { ReactComponent as MaltaBlockLogo } from 'app/shared/assets/logo-maltablock.svg';
 
 const MOBILE_WIDTH = 671;
 
@@ -15,7 +16,7 @@ const FooterWrapper = styled.section`
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 60px 0;
+  padding: 34px 0 75px 0;
   margin-top: 40px;
 
   @media only screen and (max-width: ${MOBILE_WIDTH}px) {
@@ -54,6 +55,11 @@ const SectionHeading = styled.div`
   line-height: 18px;
   text-align: center;
   margin-bottom: 18px;
+`;
+
+const SectionLogo = styled.div`
+  text-align: center;
+  margin-bottom: 10px;
 `;
 
 const StyledLink = styled.a`
@@ -112,14 +118,14 @@ const Footer = () => {
         </StyledLink>
       </AirHodlSection>
       <MaltaBlockSection>
-        <SectionHeading>DSP Portal</SectionHeading>
+        <SectionLogo><MaltaBlockLogo /></SectionLogo>
         <BigHeading>MaltaBlock.org</BigHeading>
         <SocialBar>
-          <Mail />
-          <Twitter />
-          <Telegram />
-          <Medium />
-          <Facebook />
+          <a href="https://airdropsdac.com/contact/"><Mail /></a>
+          <a href="https://twitter.com/airdropsdac"><Twitter /></a>
+          <a href="https://t.me/airdropsdac"><Telegram /></a>
+          <a href="https://medium.com/@airdropsdac"><Medium /></a>
+          <a href="https://www.facebook.com/airdropsdac/"><Facebook /></a>
         </SocialBar>
         <PolicyBar>
           <a href={process.env.PUBLIC_URL + '/Terms_of_Service.pdf'}>

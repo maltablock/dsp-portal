@@ -1,10 +1,9 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
 import { observer, inject } from 'mobx-react';
 
 import { ProfileStore } from 'app/modules/profile';
-import maltablockIcon from 'app/shared/icons/malta_block_icon.png';
-import Button from 'app/shared/components/Button';
+import { ReactComponent as Logo } from 'app/shared/assets/logo-maltablock.svg';
 import MenuSimple from 'app/shared/components/MenuSimple';
 import { LoginMenu, LoginOptionContent } from './LoginMenu';
 
@@ -14,7 +13,6 @@ import lynxIcon from 'app/shared/icons/lynx_icon.jpg';
 import meetOneIcon from 'app/shared/icons/meet_one_icon.jpg';
 import tokenPocketIcon from 'app/shared/icons/token_pocket_icon.jpg';
 import { WALLETS } from 'app/shared/eos/constants';
-
 
 const Wrapper = styled.div`
   display: flex;
@@ -28,16 +26,14 @@ const Wrapper = styled.div`
   }
 `;
 
-const LeftBlock = styled.div``;
+const LeftBlock = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
 
 const RightBlock = styled.div`
   margin-left: auto;
-`;
-
-const Logo = styled.img`
-  width: 48px;
-  height: 48px;
-  width: auto;
 `;
 
 const LoginControlsWrapper = styled.div`
@@ -53,13 +49,16 @@ const MenuWrapper = styled.div`
   width: 150px;
 `;
 
-const LoginButton = styled(Button)`
-  background: linear-gradient(0deg, #5460ff 0%, #414eff 100%);
+const LogoText = styled.div`
+  color: #ffffff;
+  font-size: 19px;
+  font-weight: bold;
+  margin-left: 12px;
 `;
 
 type Props = {
-  profileStore?: ProfileStore
-}
+  profileStore?: ProfileStore;
+};
 
 const TopBar = ({ profileStore }: Props) => {
   const { login } = profileStore!;
@@ -67,76 +66,71 @@ const TopBar = ({ profileStore }: Props) => {
   return (
     <Wrapper>
       <LeftBlock>
-        <Logo src={maltablockIcon} />
+        <Logo width={48} height={48} />
+        <LogoText>Malta Block</LogoText>
       </LeftBlock>
 
       <RightBlock>
-        {
-          profileStore!.isLoggedIn
-          ? <MenuSimple
-              text={profileStore!.accountInfo!.account_name}
-              options={[
-                { content: "Logout", value: "logout", onClick: profileStore!.logout}
-              ]}
-            />
-          : <LoginControlsWrapper>
-              <MenuWrapper>
-                <MenuSimple
-                  text={profileStore!.eosNetwork === 'kylin' ? 'Kylin Testnet' : 'Mainnet'}
-                  options={
-                    [
-                      { content: 'Mainnet', value: 'mainnet'},
-                      { content: 'Kylin Testnet', value: 'kylin' }
-                    ].map(
-                      ({ content, value }) => ({
-                        content,
-                        value,
-                        isActive: profileStore!.eosNetwork === value,
-                        onClick: profileStore!.setEosNetwork,
-                      })
-                    )
-                  }
-                />
-              </MenuWrapper>
-              <LoginMenu
-                id="login-menu"
-                text={profileStore!.isLoggingIn ? 'Logging in...' : 'Login'}
+        {profileStore!.isLoggedIn ? (
+          <MenuSimple
+            text={profileStore!.accountInfo!.account_name}
+            options={[{ content: 'Logout', value: 'logout', onClick: profileStore!.logout }]}
+          />
+        ) : (
+          <LoginControlsWrapper>
+            <MenuWrapper>
+              <MenuSimple
+                text={profileStore!.eosNetwork === 'kylin' ? 'Kylin Testnet' : 'Mainnet'}
                 options={[
-                  {
-                    text: 'Scatter',
-                    icon: scatterIcon,
-                    wallet: WALLETS.scatter
-                  },
-                  {
-                    text: 'Ledger',
-                    icon: ledgerIcon,
-                    wallet: WALLETS.ledger
-                  },
-                  {
-                    text: 'Lynx',
-                    icon: lynxIcon,
-                    wallet: WALLETS.lynx
-                  },
-                  {
-                    text: 'Meet.One',
-                    icon: meetOneIcon,
-                    wallet: WALLETS.meetone
-                  },
-                  {
-                    text: 'TokenPocket',
-                    icon: tokenPocketIcon,
-                    wallet: WALLETS.tokenpocket
-                  }
-                ].map(({ text, icon, wallet }) => ({
-                  content: <LoginOptionContent text={text} icon={icon} />,
-                  onClick: () => login(wallet)
+                  { content: 'Mainnet', value: 'mainnet' },
+                  { content: 'Kylin Testnet', value: 'kylin' },
+                ].map(({ content, value }) => ({
+                  content,
+                  value,
+                  isActive: profileStore!.eosNetwork === value,
+                  onClick: profileStore!.setEosNetwork,
                 }))}
               />
-            </LoginControlsWrapper>
-        }
+            </MenuWrapper>
+            <LoginMenu
+              id="login-menu"
+              text={profileStore!.isLoggingIn ? 'Logging in...' : 'Login'}
+              options={[
+                {
+                  text: 'Scatter',
+                  icon: scatterIcon,
+                  wallet: WALLETS.scatter,
+                },
+                {
+                  text: 'Ledger',
+                  icon: ledgerIcon,
+                  wallet: WALLETS.ledger,
+                },
+                {
+                  text: 'Lynx',
+                  icon: lynxIcon,
+                  wallet: WALLETS.lynx,
+                },
+                {
+                  text: 'Meet.One',
+                  icon: meetOneIcon,
+                  wallet: WALLETS.meetone,
+                },
+                {
+                  text: 'TokenPocket',
+                  icon: tokenPocketIcon,
+                  wallet: WALLETS.tokenpocket,
+                },
+              ].map(({ text, icon, wallet }) => ({
+                content: <LoginOptionContent text={text} icon={icon} />,
+                onClick: () => login(wallet),
+              }))}
+            />
+          </LoginControlsWrapper>
+        )}
       </RightBlock>
     </Wrapper>
-  )
-}
+  );
+};
 
 export default inject('profileStore')(observer(TopBar));
