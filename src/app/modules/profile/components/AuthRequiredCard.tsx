@@ -8,7 +8,7 @@ import { inject, observer } from 'mobx-react';
 const CardWrapper = styled(BlueGradientCard)`
   width: 640px;
   height: auto;
-  padding: 16px;
+  padding: 16px 16px 25px 16px;
   margin: 74px auto 97px;
 
   @media (max-width: 672px) {
@@ -59,7 +59,7 @@ const AuthRequiredCard = ({ profileStore }: Props) => {
       </LogoWrapper>
       <Title>Malta Block DSP Portal</Title>
       <Message>
-        This portal allow developers to use dApp Service Providers (DSPs) to work more effectively.
+        This portal allows developers to use dApp Service Providers (DSPs) to work more effectively.
         Select a service to stake DAPP to use.
       </Message>
       <CtaButton
