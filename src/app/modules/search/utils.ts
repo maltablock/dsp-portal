@@ -21,7 +21,15 @@ export const filterFn = <P extends Package>(packages: P[], filterBy: string): P[
 
 const MALTABLOCK = 'airdropsdac1';
 
-export const sortFn = <P extends Package>(packages: P[], sortBy: string): P[] => {
+export const sortFn = <P extends Package>(_packages: P[], sortBy: string): P[] => {
+  /*
+   * Array.sort() method doesn't return a new array and mobx assumes it didn't change.
+   * So for making it work with mobx.computed we have to create a shallow copy of this array.
+   * https://github.com/mobxjs/mobx/issues/883
+   */
+
+  const packages = _packages.slice();
+
   switch (sortBy) {
     case 'quota':
       return packages.sort((a, b) => a.quotaNumber - b.quotaNumber);
