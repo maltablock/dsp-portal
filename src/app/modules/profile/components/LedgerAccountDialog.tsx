@@ -2,11 +2,15 @@ import React from 'react';
 import styled from 'styled-components';
 import { observable, action, computed } from 'mobx';
 import { inject, observer } from 'mobx-react';
-import { DiscoveryData } from 'eos-transit/lib';
+import { DiscoveryData, DiscoveryAccount } from 'eos-transit/lib';
+
+import { getWallet } from 'app/shared/eos';
+import { fetchAccountsForKeyMock } from '../mock-api';
 
 import DialogItem from 'app/modules/dialogs/state/DialogItem';
 import ProfileStore from '../state/ProfileStore';
 import MenuSimple from 'app/shared/components/MenuSimple';
+import { InputElement } from 'app/shared/components/Input';
 
 import {
   DialogContainer,
@@ -38,7 +42,17 @@ const Label = styled.div`
   margin: 16px 0 8px;
 `;
 
-const ButtonsWrapper = styled.div`
+const KeyIndexInput = styled(InputElement)`
+  color: #fff;
+  background-color: #111520;
+  padding: 16px 8px;
+`;
+
+const FormButtonsWrapper = styled.div`
+  margin: 20px auto 0;
+`;
+
+const SubmitButtonsWrapper = styled.div`
   margin: 40px auto 0;
 `;
 
@@ -47,79 +61,106 @@ type Props = {
   dialog: DialogItem<{ discoveryData: DiscoveryData }>,
 }
 
+type Account = {
+  account: string,
+  authorization: string,
+}
+
 
 @observer
 class LedgerAccountDialog extends React.Component<Props> {
-  @observable keyIndex = 0;
-  @observable accountIndex = 0;
+  @observable keyIndex: string = '';
+  @observable selectedAccount: Account | null = null;
+  @observable isFetching = false;
+  @observable accounts: Account[] = [];
 
-  @action selectKeyIndex = idx => {
-    // reset account index when keyIndex is changed
-    this.accountIndex = 0;
-    this.keyIndex = idx;
+  @computed get isFormValid() {
+    return Boolean(this.keyIndex && this.selectedAccount);
   }
 
-  @action selectAccountIndex = idx => {
-    this.accountIndex = idx;
+  @action handleKeyIndexChange = evt => {
+    this.keyIndex = evt.target.value;
   }
 
-  @computed get selectedKey() {
-    return this.props.dialog.data.discoveryData.keyToAccountMap[this.keyIndex];
+  @action handleSelectAccount = (account: Account) => {
+    this.selectedAccount = account;
   }
 
-  @computed get selectedAccount() {
-    return this.selectedKey.accounts[this.accountIndex];
-  }
+  @action fetchAccountsForKey = async () => {
+    this.isFetching = true;
+    this.accounts = [];
+    const keyIndex = Number(this.keyIndex);
 
-  @computed get isValid() {
-    return Boolean(this.selectedKey && this.selectedAccount);
+    try {
+      const data: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
+        ? await fetchAccountsForKeyMock(keyIndex)
+        : await getWallet().discover({ pathIndexList: [keyIndex] });
+
+      const accountsMap = data.keyToAccountMap.find(({ index }) => index === keyIndex);
+      if (!accountsMap) throw new Error(`Accounts Map not found for key index: ${keyIndex}`);
+      this.accounts = accountsMap.accounts;
+    } catch (err) {
+      console.error(err);
+    }
+
+    this.isFetching = false;
   }
 
   @action handleSubmit = () => {
+    if (!this.selectedAccount) return;
     const { account, authorization } = this.selectedAccount;
     this.props.dialog.submit({ account, authorization })
   }
 
   render() {
-    const { dialog } = this.props;
-    const { discoveryData } = dialog.data;
-
-    const keyObj = discoveryData.keyToAccountMap[this.keyIndex];
-    const accountObj = keyObj.accounts[this.accountIndex]
-
     return (
       <DialogContainer>
         <DialogCard>
           <Title>Select Ledger account</Title>
 
-          <Label>Select Key</Label>
-          <MenuSimple
-            text={keyObj ? String(keyObj.index) : 'Select key...'}
-            options={discoveryData.keyToAccountMap.map((k, idx) => ({
-              content: k.index,
-              isActive: k.key === keyObj.key,
-              onClick: () => this.selectKeyIndex(idx)
-            }))}
+          <Label>Enter Key Index</Label>
+          <KeyIndexInput
+            autoFocus
+            value={this.keyIndex}
+            onChange={this.handleKeyIndexChange}
+            disabled={this.isFetching}
+            type="number"
           />
+
+          <FormButtonsWrapper>
+            <SubmitButton
+              onClick={this.fetchAccountsForKey}
+              disabled={this.isFetching || !this.keyIndex}
+            >
+              {this.isFetching ? 'Fetching Accounts...' : 'Fetch Accounts'}
+            </SubmitButton>
+          </FormButtonsWrapper>
 
           <Label>Select Account</Label>
           <MenuSimple
-            text={accountObj ? accountObj.account : 'No accounts found for this key'}
-            options={keyObj.accounts.map((a, idx) => ({
+            disabled={this.isFetching || !this.accounts.length}
+            text={
+              this.selectedAccount
+              ? this.selectedAccount.account
+              : this.accounts.length
+                ? 'Select Account...'
+                : 'No accounts found'
+              }
+            options={this.accounts.map((a, idx) => ({
               content: a.account,
-              isActive: idx === this.accountIndex,
-              onClick: () => this.selectAccountIndex(idx)
+              isActive: a === this.selectedAccount,
+              onClick: () => this.handleSelectAccount(a)
             }))}
           />
 
-          <ButtonsWrapper>
+          <SubmitButtonsWrapper>
             <SubmitButton
               onClick={this.handleSubmit}
-              disabled={!this.isValid}
+              disabled={!this.isFormValid}
             >
               Continue
             </SubmitButton>
-          </ButtonsWrapper>
+          </SubmitButtonsWrapper>
         </DialogCard>
       </DialogContainer>
     )

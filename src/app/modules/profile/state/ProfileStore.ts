@@ -51,6 +51,7 @@ type CycleRow = {
 
 const LOGGED_IN_LS_KEY = 'app__is_logged_in';
 const WALLET_LS_KEY = 'app__wallet';
+const LOGIN_PARAMS_LS_KEY = 'app__login_params';
 
 class ProfileStore {
   rootStore: RootStore;
@@ -87,6 +88,14 @@ class ProfileStore {
     localStorage.setItem(WALLET_LS_KEY, walletName);
   };
 
+  getLoginParamsFromStorage = () => {
+    return JSON.parse(localStorage.getItem(LOGIN_PARAMS_LS_KEY) || 'null');
+  }
+
+  setLoginParamsToStorage = loginParams => {
+    localStorage.setItem(LOGIN_PARAMS_LS_KEY, JSON.stringify(loginParams));
+  }
+
   @action login = async (walletName: WALLETS) => {
     if (this.isLoggingIn) return;
 
@@ -99,28 +108,17 @@ class ProfileStore {
       let loginParams: string[] = [];
 
       if (walletName === WALLETS.ledger) {
-        const discoveryDataRaw: DiscoveryData = process.env.REACT_APP_USE_DEMO_DATA
-          ? demoData.discoveryData
-          : await getWallet().discover({
-              pathIndexList: new Array(300).fill(0).map((_, idx) => idx),
-            });
+        const loginParamsCache = this.getLoginParamsFromStorage();
 
-        const sortedKeyToAccountMap = discoveryDataRaw.keyToAccountMap.sort(
-          (a, b) => a.index - b.index,
-        );
-
-        const discoveryData: DiscoveryData = {
-          keys: discoveryDataRaw.keys,
-          keyToAccountMap: sortedKeyToAccountMap,
-        };
-
-        const {
-          data: { account, authorization },
-        } = await this.rootStore.dialogStore.openDialog(DialogTypes.LEDGER_ACCOUNT, {
-          discoveryData,
-        });
-
-        loginParams = [account, authorization];
+        if (loginParamsCache) {
+          loginParams = loginParamsCache;
+        } else {
+          const {
+            data: { account, authorization },
+          } = await this.rootStore.dialogStore.openDialog(DialogTypes.LEDGER_ACCOUNT);
+          loginParams = [account, authorization];
+          this.setLoginParamsToStorage(loginParams);
+        }
       }
 
       const accountInfo = (await getWallet().login(...loginParams)) as unknown;
@@ -133,6 +131,7 @@ class ProfileStore {
     } catch (err) {
       console.error(err);
       this.setLoginStatusToStorage('false');
+      this.setLoginParamsToStorage(null);
     }
 
     this.isLoggingIn = false;
