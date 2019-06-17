@@ -5,7 +5,7 @@ const InputWrapper = styled.div`
   position: relative;
 `;
 
-const InputElement = styled.input`
+export const InputElement = styled.input`
   background-color: #fff;
   border-radius: 4px;
   border: none;

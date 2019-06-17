@@ -5,9 +5,10 @@ import onClickOutside from 'react-onclickoutside';
 
 import sixDotsIcon from 'app/shared/icons/six_dots_icon.svg';
 
-export const _MenuWrapper = styled.div`
+export const _MenuWrapper = styled.div<any>`
   position: relative;
   cursor: pointer;
+  opacity: ${props => props.disabled ? 0.4 : 1};
 `;
 
 export const _MenuInput = styled.div`
@@ -56,7 +57,8 @@ export const _OptionItem = styled.div<any>`
 
 type Props = {
   id?: string,
-  text: string
+  text: string,
+  disabled?: boolean,
   options: Array<{
     content: React.ReactNode,
     value?: any
@@ -83,10 +85,10 @@ export const menuFactory = ({
     }
 
     render() {
-      const { id, text, options } = this.props;
+      const { id, text, options, disabled } = this.props;
 
       return (
-        <MenuWrapper id={id} onClick={this.toggleIsOpen}>
+        <MenuWrapper id={id} onClick={this.toggleIsOpen} disabled={disabled}>
           <MenuInput>
             {text}
             <Icon src={iconSrc} />
