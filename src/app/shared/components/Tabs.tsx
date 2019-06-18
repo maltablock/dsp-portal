@@ -16,4 +16,8 @@ export const Tab = styled.div<any>`
   cursor: pointer;
   color: ${props => props.active ? '#fff' : '#67768E'};
   background-color: ${props => props.active ? '#414DFF' : '#263040'};
+
+  &:not(:last-child) {
+    border-right: 1px solid #10131f;
+  }
 `;
