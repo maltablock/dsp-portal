@@ -47,7 +47,15 @@ class PackageStore {
 
   @observable stakeValueDapp = '';
   @observable stakeValueDappHdl = '';
-  @observable stakeValuesValid = false;
+
+  @computed get stakeValuesValid() {
+    // one of them can be empty but not both
+    return (
+      Boolean(this.stakeValueDapp || this.stakeValueDappHdl) &&
+      stakeValueRegex.test(this.stakeValueDapp) &&
+      stakeValueRegex.test(this.stakeValueDappHdl)
+    );
+  }
 
   @action handleStakeValueChange = e => {
     if (e.target.name === `dapp`) {
@@ -55,12 +63,6 @@ class PackageStore {
     } else {
       this.stakeValueDappHdl = e.target.value;
     }
-
-    // one of them can be empty but not both
-    this.stakeValuesValid =
-      Boolean(this.stakeValueDapp || this.stakeValueDappHdl) &&
-      stakeValueRegex.test(this.stakeValueDapp) &&
-      stakeValueRegex.test(this.stakeValueDappHdl);
   };
 
   /**

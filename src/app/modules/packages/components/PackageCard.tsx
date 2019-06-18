@@ -101,6 +101,7 @@ const InputLabelWrapper = styled.div`
 
 const InputLabelStake = styled.div`
   color: #404efe;
+  cursor: pointer;
 `;
 
 const ProviderWrapper = styled.div`
@@ -178,6 +179,14 @@ type Props = {
   stakedDappHdlAmount: number;
   showStakingIcon?: boolean;
   deprecated?: boolean;
+  dappLabelButton: {
+    text: string;
+    onClick: (...any) => any;
+  },
+  dappHdlLabelButton: {
+    text: string;
+    onClick: (...any) => any;
+  }
 };
 
 class PackageCard extends React.Component<Props> {
@@ -197,7 +206,9 @@ class PackageCard extends React.Component<Props> {
       showStakingIcon = false,
       deprecated = false,
       stakedDappAmount,
-      stakedDappHdlAmount
+      stakedDappHdlAmount,
+      dappLabelButton,
+      dappHdlLabelButton,
     } = this.props;
 
     const serviceIcon = iconByService[p.data.service] || iconByService.default;
@@ -234,7 +245,9 @@ class PackageCard extends React.Component<Props> {
             <AmountInputWrapper>
               <InputLabelWrapper>
                 <div>{button.text} DAPP</div>
-                {<InputLabelStake>{formatAsset({ amount: stakedDappAmount, symbol: DAPP_SYMBOL }, { withSymbol: false, separateThousands: true })}</InputLabelStake>}
+                <InputLabelStake onClick={dappLabelButton.onClick}>
+                  {dappLabelButton.text}
+                </InputLabelStake>
               </InputLabelWrapper>
               <Input
                 name="dapp"
@@ -248,7 +261,9 @@ class PackageCard extends React.Component<Props> {
             <AmountInputWrapper>
               <InputLabelWrapper>
                 <div>{button.text} DAPPHDL</div>
-                {<InputLabelStake>{formatAsset({ amount: stakedDappHdlAmount, symbol: DAPPHODL_SYMBOL }, { withSymbol: false, separateThousands: true })}</InputLabelStake>}
+                <InputLabelStake onClick={dappHdlLabelButton.onClick}>
+                  {dappHdlLabelButton.text}
+                </InputLabelStake>
               </InputLabelWrapper>
               <Input
                 name="dappHdl"
