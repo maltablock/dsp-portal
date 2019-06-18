@@ -5,6 +5,7 @@ import onClickOutside from 'react-onclickoutside';
 import checkboxChecked from 'app/shared/icons/checkbox_checked.svg';
 import checkboxUnchecked from 'app/shared/icons/checkbox_unchecked.svg';
 import cronIcon from 'app/shared/icons/cron.svg';
+import stakeIcon from 'app/shared/icons/stake.svg';
 import ifpIcon from 'app/shared/icons/ifp.svg';
 import oracleIcon from 'app/shared/icons/oracle.svg';
 
@@ -60,7 +61,10 @@ const ServiceIconAndNameWrapper = styled.div`
   margin-bottom: 14px;
 `;
 
-const ServiceIcon = styled.img``;
+const ServiceIcon = styled.img`
+  width: 32px;
+  height: 32px;
+`;
 
 const ServiceName = styled.div`
   color: ${props => props.color};
@@ -151,7 +155,7 @@ const iconByService = {
   cronservices: cronIcon,
   oracleservic: oracleIcon,
   ipfsservice1: ifpIcon,
-  stakeservice: cronIcon,
+  stakeservice: stakeIcon,
   default: ifpIcon,
 };
 
@@ -159,7 +163,7 @@ const colorByService = {
   cronservices: '#45D3C2',
   oracleservic: '#FC4A71',
   ipfsservice1: '#7D69FF',
-  stakeservice: '#7D69FF',
+  stakeservice: '#5660FF',
   default: '#7D69FF',
 };
 
