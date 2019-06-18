@@ -31,7 +31,7 @@ const CardWrapper = styled.div<any>`
   cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
 
   opacity: ${props => (props.isHidden ? 0.1 : 1)};
-  margin-bottom: ${props => (props.isSelected ? -120 : 16)}px;
+  margin-bottom: ${props => (props.isSelected ? -200 : 16)}px;
   z-index: ${props => (props.isSelected ? 1 : 'auto')};
 
   transition: opacity 0.2s ease;

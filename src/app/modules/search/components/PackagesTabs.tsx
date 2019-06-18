@@ -4,11 +4,18 @@ import { inject, observer } from 'mobx-react';
 
 import { ProfileStore } from 'app/modules/profile';
 import { SearchStore } from 'app/modules/search';
-import { TabsWrapper, Tab } from 'app/shared/components/Tabs';
+import { TabsWrapper, Tab as _Tab } from 'app/shared/components/Tabs';
 
 const Wrapper = styled.div`
   display: flex;
   margin: 0 auto 16px;
+`;
+
+const Tab = styled(_Tab)`
+  width: 170px;
+  @media (max-width: 600px) {
+    width: 100%;
+  }
 `;
 
 type Props = {
