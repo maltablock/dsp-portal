@@ -183,7 +183,7 @@ type Props = {
     text: string;
     onClick: (...any) => any;
   },
-  dapphdlLabelButton: {
+  dappHdlLabelButton: {
     text: string;
     onClick: (...any) => any;
   }
@@ -208,7 +208,7 @@ class PackageCard extends React.Component<Props> {
       stakedDappAmount,
       stakedDappHdlAmount,
       dappLabelButton,
-      dapphdlLabelButton,
+      dappHdlLabelButton,
     } = this.props;
 
     const serviceIcon = iconByService[p.data.service] || iconByService.default;
@@ -261,8 +261,8 @@ class PackageCard extends React.Component<Props> {
             <AmountInputWrapper>
               <InputLabelWrapper>
                 <div>{button.text} DAPPHDL</div>
-                <InputLabelStake onClick={dapphdlLabelButton.onClick}>
-                  {dapphdlLabelButton.text}
+                <InputLabelStake onClick={dappHdlLabelButton.onClick}>
+                  {dappHdlLabelButton.text}
                 </InputLabelStake>
               </InputLabelWrapper>
               <Input

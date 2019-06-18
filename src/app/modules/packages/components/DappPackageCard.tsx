@@ -52,7 +52,7 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
     { amount: unstakedDappAmount, symbol: DAPP_SYMBOL },
     { withSymbol: false },
   );
-  const unstakedDapphdl = formatAsset(
+  const unstakedDappHdl = formatAsset(
     { amount: unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL },
     { withSymbol: false },
   );
@@ -93,10 +93,10 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
           p.packageStore.stakeValueDapp = unstakedDapp;
         },
       }}
-      dapphdlLabelButton={{
-        text: unstakedDapphdl + ' Max',
+      dappHdlLabelButton={{
+        text: unstakedDappHdl + ' Max',
         onClick: () => {
-          p.packageStore.stakeValueDappHdl = unstakedDapphdl;
+          p.packageStore.stakeValueDappHdl = unstakedDappHdl;
         },
       }}
     />

@@ -125,7 +125,7 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     { withSymbol: false },
   );
 
-  const stakedDapphdl = formatAsset(
+  const stakedDappHdl = formatAsset(
     { amount: p.stakingBalanceFromSelfDappHdl, symbol: DAPPHODL_SYMBOL },
     { withSymbol: false },
   );
@@ -150,10 +150,10 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
           p.packageStore.stakeValueDapp = stakedDapp;
         },
       }}
-      dapphdlLabelButton={{
-        text: stakedDapphdl + ' Max',
+      dappHdlLabelButton={{
+        text: stakedDappHdl + ' Max',
         onClick: () => {
-          p.packageStore.stakeValueDappHdl = stakedDapphdl;
+          p.packageStore.stakeValueDappHdl = stakedDappHdl;
         },
       }}
     />
