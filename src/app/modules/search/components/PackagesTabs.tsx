@@ -20,7 +20,7 @@ const PackagesTabs = (props: Props) => {
   const { selectedTab, handleSelectTab } = props.searchStore!;
   const { isLoggedIn } = props.profileStore!;
 
-  const tabs = ['Packages', isLoggedIn && 'Staked', 'DSPs'].filter(Boolean)
+  const tabs = ['Packages', isLoggedIn && 'Staked', 'DSPs', 'Services'].filter(Boolean)
 
   return (
     <Wrapper>

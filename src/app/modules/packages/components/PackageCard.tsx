@@ -151,6 +151,7 @@ const iconByService = {
   cronservices: cronIcon,
   oracleservic: oracleIcon,
   ipfsservice1: ifpIcon,
+  stakeservice: cronIcon,
   default: ifpIcon,
 };
 
@@ -158,6 +159,7 @@ const colorByService = {
   cronservices: '#45D3C2',
   oracleservic: '#FC4A71',
   ipfsservice1: '#7D69FF',
+  stakeservice: '#7D69FF',
   default: '#7D69FF',
 };
 

@@ -38,6 +38,7 @@ class SearchStore {
     { text: 'IPFS Services', value: 'ipfsservice1' },
     { text: 'Cron Services', value: 'cronservices' },
     { text: 'Oracle Services', value: 'oracleservic' },
+    { text: 'Stake Services', value: 'stakeservice' },
   ]
 
   @computed get filterByText() {
