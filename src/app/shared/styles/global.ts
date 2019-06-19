@@ -1,5 +1,6 @@
 import { createGlobalStyle } from 'styled-components';
 import theme from 'styled-theming';
+import { lightDarkValues } from './utils';
 
 const GlobalStyles = createGlobalStyle`
   body {
@@ -7,19 +8,15 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     font-size: 16px;
     font-weight: 600;
+    color: ${lightDarkValues('#333', '#fff')};
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
-    color: ${theme('mode', {
-      light: '#333',
-      dark: '#fff',
-    })};
   }
 
   * {
     font-family: Montserrat, sans-serif;
     box-sizing: border-box;
-    transition: color, background-color, background, border-color 0.2s ease;
+    transition: color, background-color, background, border-color 0.3s ease;
   }
 `;
 

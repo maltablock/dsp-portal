@@ -1,6 +1,5 @@
 import React from 'react';
-import styled, { css } from 'styled-components';
-import theme from 'styled-theming';
+import styled from 'styled-components';
 
 import onClickOutside from 'react-onclickoutside';
 import cronIcon from 'app/shared/icons/cron.svg';
@@ -14,8 +13,6 @@ import DappPackage from '../state/DappPackage';
 import StakedPackage from '../state/StakedPackage';
 import { observer } from 'mobx-react';
 import StakingIcon from 'app/shared/components/StakingIcon';
-import { formatAsset } from 'app/shared/eos';
-import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
 import { lightDarkValues } from 'app/shared/styles/utils';
 import Checkbox from 'app/shared/components/Checkbox';
 

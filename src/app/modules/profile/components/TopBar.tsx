@@ -14,6 +14,8 @@ import meetOneIcon from 'app/shared/icons/meet_one_icon.jpg';
 import tokenPocketIcon from 'app/shared/icons/token_pocket_icon.jpg';
 import { WALLETS } from 'app/shared/eos/constants';
 import UiStore from 'app/root/state/UiStore';
+import ToggleButton from 'app/shared/components/ToggleButton';
+import darkmodeIcon from 'app/shared/icons/darkmode_icon.svg'
 
 const Wrapper = styled.div`
   display: flex;
@@ -49,13 +51,17 @@ const LoginControlsWrapper = styled.div`
 `;
 
 const MenuWrapper = styled.div`
-  width: 150px;
+  /* width: 150px; */
 `;
 
 const LogoText = styled.div`
   font-size: 19px;
   font-weight: bold;
   margin-left: 12px;
+`;
+
+const DarkModeIcon = styled.img`
+  margin: 0 16px 0 12px;
 `;
 
 type Props = {
@@ -74,8 +80,8 @@ const TopBar = ({ profileStore, uiStore }: Props) => {
       </LeftBlock>
 
       <RightBlock>
-        <input type="checkbox" checked={uiStore!.mode === 'dark'} onChange={uiStore!.toggleTheme} />
-
+        <ToggleButton checked={uiStore!.mode === 'dark'} onClick={uiStore!.toggleTheme} />
+        <DarkModeIcon src={darkmodeIcon} />
         {profileStore!.isLoggedIn ? (
           <MenuSimple
             text={profileStore!.accountInfo!.account_name}
