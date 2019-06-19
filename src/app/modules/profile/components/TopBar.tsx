@@ -53,7 +53,6 @@ const MenuWrapper = styled.div`
 `;
 
 const LogoText = styled.div`
-  color: #ffffff;
   font-size: 19px;
   font-weight: bold;
   margin-left: 12px;

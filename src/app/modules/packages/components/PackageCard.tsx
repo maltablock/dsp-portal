@@ -3,8 +3,6 @@ import styled, { css } from 'styled-components';
 import theme from 'styled-theming';
 
 import onClickOutside from 'react-onclickoutside';
-import checkboxChecked from 'app/shared/icons/checkbox_checked.svg';
-import checkboxUnchecked from 'app/shared/icons/checkbox_unchecked.svg';
 import cronIcon from 'app/shared/icons/cron.svg';
 import stakeIcon from 'app/shared/icons/stake.svg';
 import ifpIcon from 'app/shared/icons/ifp.svg';
@@ -19,6 +17,7 @@ import StakingIcon from 'app/shared/components/StakingIcon';
 import { formatAsset } from 'app/shared/eos';
 import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
 import { lightDarkValues } from 'app/shared/styles/utils';
+import Checkbox from 'app/shared/components/Checkbox';
 
 const MOBILE_WIDTH = 671;
 
@@ -230,7 +229,7 @@ class PackageCard extends React.Component<Props> {
         <TitleAndCheckboxWrapper isSelected={p.isSelected} onClick={p.handleDeselect}>
           <Title>{p.packageId.toUpperCase()}</Title>
           {showStakingIcon && <StakingIcon />}
-          <img src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
+          <Checkbox checked={p.isSelected} color={serviceColor} />
         </TitleAndCheckboxWrapper>
 
         <ServiceIconAndNameWrapper>

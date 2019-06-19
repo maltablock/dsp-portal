@@ -14,7 +14,6 @@ const OptionsList = styled(_OptionsList)`
   right: 0;
   margin-top: 16px;
   padding: 16px 0;
-  background-color: #273041;
 `;
 
 const OptionItem = styled(_OptionItem)`

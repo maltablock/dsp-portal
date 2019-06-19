@@ -40,6 +40,7 @@ const ToggleExpandButton = styled.div`
   z-index: 10;
   padding: 8px;
   cursor: pointer;
+  color: #fff;
 
   @media (min-width: ${MOBILE_WIDTH + 1}px) {
     display: none;

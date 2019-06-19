@@ -11,12 +11,12 @@ const InputWrapper = styled.div`
 `;
 
 const InputElement = styled.input`
+  color: ${lightDarkValues('#555', '#fff')};
   background-color: ${lightDarkValues('#e7ebf2', '#263040')};
   border-radius: 4px;
   border: none;
   width: 100%;
   padding: 15px 62px;
-  color: #fff;
   font-size: 15px;
   font-weight: 600;
   outline: none;
