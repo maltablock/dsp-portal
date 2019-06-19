@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 import onClickOutside from 'react-onclickoutside';
 
 import sixDotsIcon from 'app/shared/icons/six_dots_icon.svg';
+import { lightDarkValues } from '../styles/utils';
 
 export const _MenuWrapper = styled.div<any>`
   position: relative;
@@ -13,7 +14,7 @@ export const _MenuWrapper = styled.div<any>`
 
 export const _MenuInput = styled.div`
   position: relative;
-  background-color: #263040;
+  background-color: ${lightDarkValues('#e7ebf2', '#263040')};
   border-radius: 4px;
   border: none;
   width: 100%;
@@ -36,22 +37,22 @@ export const _OptionsList = styled.div`
   width: 100%;
   margin-top: 4px;
   padding: 4px 0;
-  background-color: #263040;
+  background-color: ${lightDarkValues('#e7ebf2', '#263040')};
   border-radius: 4px;
 `;
 
 export const _OptionItem = styled.div<any>`
   padding: 12px 18px;
   font-size: 15px;
-  color: #eee;
+  color: ${lightDarkValues('#555', '#eee')};
 
   ${props => props.active && css`
-    background-color: #0b1422;
-    color: #67768e;
+    background-color: ${lightDarkValues('#c1c5cc', '#0b1422')};
+    color: ${lightDarkValues('#555', '#67768e')};
   `}
 
   &:hover {
-    background-color: #0b1422;
+    background-color: ${lightDarkValues('#c1c5cc', '#0b1422')};
   }
 `;
 

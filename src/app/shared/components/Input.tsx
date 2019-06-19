@@ -1,12 +1,13 @@
 import React from 'react'
 import styled from 'styled-components';
+import { lightDarkValues } from '../styles/utils';
 
 const InputWrapper = styled.div`
   position: relative;
 `;
 
 export const InputElement = styled.input`
-  background-color: #fff;
+  background-color: ${lightDarkValues('#e7ebf2', '#fff')};
   border-radius: 4px;
   border: none;
   width: 100%;

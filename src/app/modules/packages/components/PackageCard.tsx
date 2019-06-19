@@ -1,5 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import theme from 'styled-theming';
 
 import onClickOutside from 'react-onclickoutside';
 import checkboxChecked from 'app/shared/icons/checkbox_checked.svg';
@@ -17,6 +18,7 @@ import { observer } from 'mobx-react';
 import StakingIcon from 'app/shared/components/StakingIcon';
 import { formatAsset } from 'app/shared/eos';
 import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
+import { lightDarkValues } from 'app/shared/styles/utils';
 
 const MOBILE_WIDTH = 671;
 
@@ -28,14 +30,17 @@ const CardWrapper = styled.div<any>`
   padding: 24px 16px;
   margin: 16px;
   border-radius: 8px;
-  background: linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%);
   cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
-
   opacity: ${props => (props.isHidden ? 0.1 : 1)};
   margin-bottom: ${props => (props.isSelected ? -200 : 16)}px;
   z-index: ${props => (props.isSelected ? 1 : 'auto')};
-
   transition: opacity 0.2s ease;
+  box-shadow: 0 0 8px 0 rgba(47,48,61,0.3);
+
+  background: ${lightDarkValues(
+    '#fff',
+    'linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%)',
+  )};
 
   @media (max-width: ${MOBILE_WIDTH}px) {
     width: calc(100% - 32px);
@@ -188,11 +193,11 @@ type Props = {
   dappLabelButton: {
     text: string;
     onClick: (...any) => any;
-  },
+  };
   dappHdlLabelButton: {
     text: string;
     onClick: (...any) => any;
-  }
+  };
 };
 
 class PackageCard extends React.Component<Props> {

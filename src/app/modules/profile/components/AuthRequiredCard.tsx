@@ -10,6 +10,7 @@ const CardWrapper = styled(BlueGradientCard)`
   height: auto;
   padding: 16px 16px 25px 16px;
   margin: 74px auto 97px;
+  color: #fff;
 
   @media (max-width: 672px) {
     width: calc(100% - 32px);

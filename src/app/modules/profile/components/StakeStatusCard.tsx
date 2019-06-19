@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { StyledFunction } from 'styled-components';
+import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import Button from 'app/shared/components/Button';

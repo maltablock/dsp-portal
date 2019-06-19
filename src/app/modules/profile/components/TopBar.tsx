@@ -13,6 +13,7 @@ import lynxIcon from 'app/shared/icons/lynx_icon.jpg';
 import meetOneIcon from 'app/shared/icons/meet_one_icon.jpg';
 import tokenPocketIcon from 'app/shared/icons/token_pocket_icon.jpg';
 import { WALLETS } from 'app/shared/eos/constants';
+import UiStore from 'app/root/state/UiStore';
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,7 +34,9 @@ const LeftBlock = styled.div`
 `;
 
 const RightBlock = styled.div`
+  display: flex;
   margin-left: auto;
+  align-items: center;
 `;
 
 const LoginControlsWrapper = styled.div`
@@ -58,9 +61,10 @@ const LogoText = styled.div`
 
 type Props = {
   profileStore?: ProfileStore;
+  uiStore?: UiStore;
 };
 
-const TopBar = ({ profileStore }: Props) => {
+const TopBar = ({ profileStore, uiStore }: Props) => {
   const { login } = profileStore!;
 
   return (
@@ -71,6 +75,8 @@ const TopBar = ({ profileStore }: Props) => {
       </LeftBlock>
 
       <RightBlock>
+        <input type="checkbox" checked={uiStore!.mode === 'dark'} onChange={uiStore!.toggleTheme} />
+
         {profileStore!.isLoggedIn ? (
           <MenuSimple
             text={profileStore!.accountInfo!.account_name}
@@ -133,4 +139,4 @@ const TopBar = ({ profileStore }: Props) => {
   );
 };
 
-export default inject('profileStore')(observer(TopBar));
+export default inject('profileStore', 'uiStore')(observer(TopBar));

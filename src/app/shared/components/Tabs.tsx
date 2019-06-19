@@ -1,5 +1,6 @@
-import React from 'react'
+import React from 'react';
 import styled from 'styled-components';
+import { lightDarkValues } from '../styles/utils';
 
 export const TabsWrapper = styled.div`
   display: flex;
@@ -14,10 +15,11 @@ export const Tab = styled.div<any>`
   font-size: 14px;
   text-align: center;
   cursor: pointer;
-  color: ${props => props.active ? '#fff' : '#67768E'};
-  background-color: ${props => props.active ? '#414DFF' : '#263040'};
+  color: ${props => (props.active ? '#fff' : '#67768E')};
+  background-color: ${props => (props.active ? '#414DFF' : lightDarkValues('#e7ebf2', '#263040'))};
 
   &:not(:last-child) {
-    border-right: 1px solid #10131f;
+    border-right: 1px solid;
+    border-color: ${lightDarkValues('#d6d7dc', '#10131f')};
   }
 `;
