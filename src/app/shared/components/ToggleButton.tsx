@@ -15,7 +15,7 @@ const Slider = styled.div<any>`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${props => props.checked ? '#414DFF' : '#E7EBF2'};
+  background-color: ${props => props.checked ? '#414DFF' : '#d4dae3'};
   border-radius: 16px;
   transition: 0.4s;
 

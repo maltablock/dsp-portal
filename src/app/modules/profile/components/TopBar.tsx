@@ -84,6 +84,7 @@ const TopBar = ({ profileStore, uiStore }: Props) => {
         <DarkModeIcon src={darkmodeIcon} />
         {profileStore!.isLoggedIn ? (
           <MenuSimple
+            transparentBg
             text={profileStore!.accountInfo!.account_name}
             options={[{ content: 'Logout', value: 'logout', onClick: profileStore!.logout }]}
           />
@@ -91,6 +92,7 @@ const TopBar = ({ profileStore, uiStore }: Props) => {
           <LoginControlsWrapper>
             <MenuWrapper>
               <MenuSimple
+                transparentBg
                 text={profileStore!.eosNetwork === 'kylin' ? 'Kylin Testnet' : 'Mainnet'}
                 options={[
                   { content: 'Mainnet', value: 'mainnet' },

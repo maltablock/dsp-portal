@@ -9,17 +9,18 @@ import { lightDarkValues } from '../styles/utils';
 export const _MenuWrapper = styled.div<any>`
   position: relative;
   cursor: pointer;
-  opacity: ${props => props.disabled ? 0.4 : 1};
+  opacity: ${props => (props.disabled ? 0.4 : 1)};
 `;
 
-export const _MenuInput = styled.div`
+export const _MenuInput = styled.div<any>`
   position: relative;
-  background-color: ${lightDarkValues('#e7ebf2', '#263040')};
+  background-color: ${props =>
+    props.transparentBg ? 'transparent' : lightDarkValues('#e7ebf2', '#263040')};
   border-radius: 4px;
   border: none;
   width: 100%;
   padding: 16px 18px;
-  color: #67768E;
+  color: #67768e;
   font-size: 14px;
   font-weight: 600;
 `;
@@ -46,10 +47,12 @@ export const _OptionItem = styled.div<any>`
   font-size: 15px;
   color: ${lightDarkValues('#555', '#eee')};
 
-  ${props => props.active && css`
-    background-color: ${lightDarkValues('#c1c5cc', '#0b1422')};
-    color: ${lightDarkValues('#555', '#67768e')};
-  `}
+  ${props =>
+    props.active &&
+    css`
+      background-color: ${lightDarkValues('#c1c5cc', '#0b1422')};
+      color: ${lightDarkValues('#555', '#67768e')};
+    `}
 
   &:hover {
     background-color: ${lightDarkValues('#c1c5cc', '#0b1422')};
@@ -57,16 +60,17 @@ export const _OptionItem = styled.div<any>`
 `;
 
 type Props = {
-  id?: string,
-  text: string,
-  disabled?: boolean,
+  id?: string;
+  text: string;
+  disabled?: boolean;
+  transparentBg?: boolean;
   options: Array<{
-    content: React.ReactNode,
-    value?: any
-    isActive?: boolean
-    onClick: (...any) => any
-  }>
-}
+    content: React.ReactNode;
+    value?: any;
+    isActive?: boolean;
+    onClick: (...any) => any;
+  }>;
+};
 
 export const menuFactory = ({
   MenuWrapper = _MenuWrapper,
@@ -77,42 +81,39 @@ export const menuFactory = ({
   OptionItem = _OptionItem,
 } = {}) => {
   class Menu extends React.Component<Props> {
-    state = { isOpen: false }
+    state = { isOpen: false };
 
     toggleIsOpen = () => this.setState({ isOpen: !this.state.isOpen });
 
     handleClickOutside = () => {
-      if (this.state.isOpen) this.setState({ isOpen: false });;
-    }
+      if (this.state.isOpen) this.setState({ isOpen: false });
+    };
 
     render() {
-      const { id, text, options, disabled } = this.props;
+      const { id, text, options, disabled, transparentBg = false } = this.props;
 
       return (
         <MenuWrapper id={id} onClick={this.toggleIsOpen} disabled={disabled}>
-          <MenuInput>
+          <MenuInput transparentBg={transparentBg}>
             {text}
             <Icon src={iconSrc} />
           </MenuInput>
 
-          {
-            this.state.isOpen &&
+          {this.state.isOpen && (
             <OptionsList>
-              {
-                options.map(option =>
-                  <OptionItem
-                    active={option.isActive}
-                    onClick={() => option.onClick(option.value)}
-                    key={option.value}
-                  >
-                    {option.content}
-                  </OptionItem>
-                )
-              }
+              {options.map(option => (
+                <OptionItem
+                  active={option.isActive}
+                  onClick={() => option.onClick(option.value)}
+                  key={option.value}
+                >
+                  {option.content}
+                </OptionItem>
+              ))}
             </OptionsList>
-          }
+          )}
         </MenuWrapper>
-      )
+      );
     }
   }
 

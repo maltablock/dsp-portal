@@ -6,9 +6,8 @@ import { menuFactory, _MenuInput, _MenuWrapper, _Icon, _OptionsList, _OptionItem
 import { lightDarkValues } from '../styles/utils';
 
 const MenuInput = styled(_MenuInput)`
-  /* color: #fff;
-  background-color: #111520; */
-  background-color: transparent;
+  background-color: ${props =>
+    props.transparentBg ? 'transparent' : lightDarkValues('#e7ebf2', '#111520')};
   color: ${lightDarkValues('#333', '#fff')};
   width: auto;
   padding: 16px 8px;

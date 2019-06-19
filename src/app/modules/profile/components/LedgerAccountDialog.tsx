@@ -17,6 +17,7 @@ import {
   DialogCard as _DialogCard,
   SubmitButton
 } from 'app/modules/dialogs/components/DialogComponents';
+import { lightDarkValues } from 'app/shared/styles/utils';
 
 
 const DialogCard = styled(_DialogCard)`
@@ -43,8 +44,8 @@ const Label = styled.div`
 `;
 
 const KeyIndexInput = styled(InputElement)`
-  color: #fff;
-  background-color: #111520;
+  color: ${lightDarkValues('#333', '#fff')};
+  background-color: ${lightDarkValues('#e7ebf2', '#111520')};
   padding: 16px 8px;
 `;
 

@@ -31,7 +31,7 @@ const CardWrapper = styled.div<any>`
   margin-bottom: ${props => (props.isSelected ? -200 : 16)}px;
   z-index: ${props => (props.isSelected ? 1 : 'auto')};
   transition: opacity 0.2s ease;
-  box-shadow: 0 0 8px 0 rgba(47,48,61,0.3);
+  box-shadow: 0 0 8px 0 rgba(47, 48, 61, 0.3);
 
   background: ${lightDarkValues(
     '#fff',
@@ -198,10 +198,16 @@ type Props = {
 
 class PackageCard extends React.Component<Props> {
   handleClickOutside = evt => {
-    const { package: p } = this.props;
-    if (p.isSelected) {
-      p.handleDeselect(evt);
-    }
+    setTimeout(() => {
+      const p = this.props.package;
+      // Deselect package only if click was performed outside of packages list
+      // (e.g. no other package was selected).
+      // Otherwise do nothing - this package were already deselected.
+      // Implemented this way to prevent annoying packages blinking
+      if (p.isSelected) {
+        p.handleDeselect(evt);
+      }
+    }, 300);
   };
 
   render() {
