@@ -1,20 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
-import theme from 'styled-theming';
 
+import pageBg from 'app/shared/assets/page_bg.png';
 import { lightDarkValues } from 'app/shared/styles/utils';
-import pageBg from 'app/shared/assets/page_bg.jpg';
 
 const PageWrapper = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: ${lightDarkValues('#fff', '#10131f')};
-  /* background: url(${pageBg}) no-repeat top center; */
-  /* background-size: contain; */
+  z-index: 1;
 
-  body * {
-    color: ${lightDarkValues('#333', '#fff')}
+  ::before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    content: '';
+    z-index: -1;
+    background: ${lightDarkValues('#fff', '#10131f')} url(${pageBg}) no-repeat top center;
+    background-size: 1920px auto;
+    opacity: ${lightDarkValues(0.1, 1)};
   }
 `;
 
