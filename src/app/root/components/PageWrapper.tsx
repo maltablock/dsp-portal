@@ -9,6 +9,7 @@ const PageWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  height: 100%;
   z-index: 1;
 
   ::before {
@@ -16,12 +17,13 @@ const PageWrapper = styled.div`
     top: 0;
     left: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     content: '';
     z-index: -1;
+    opacity: ${lightDarkValues(0.1, 1)};
     background: ${lightDarkValues('#fff', '#10131f')} url(${pageBg}) no-repeat top center;
     background-size: 1920px auto;
-    opacity: ${lightDarkValues(0.1, 1)};
+    transition: background 0.3s ease;
   }
 `;
 
