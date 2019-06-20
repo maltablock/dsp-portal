@@ -2,8 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import onClickOutside from 'react-onclickoutside';
-import checkboxChecked from 'app/shared/icons/checkbox_checked.svg';
-import checkboxUnchecked from 'app/shared/icons/checkbox_unchecked.svg';
 import cronIcon from 'app/shared/icons/cron.svg';
 import stakeIcon from 'app/shared/icons/stake.svg';
 import ifpIcon from 'app/shared/icons/ifp.svg';
@@ -15,8 +13,8 @@ import DappPackage from '../state/DappPackage';
 import StakedPackage from '../state/StakedPackage';
 import { observer } from 'mobx-react';
 import StakingIcon from 'app/shared/components/StakingIcon';
-import { formatAsset } from 'app/shared/eos';
-import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
+import { lightDarkValues } from 'app/shared/styles/utils';
+import Checkbox from 'app/shared/components/Checkbox';
 
 const MOBILE_WIDTH = 671;
 
@@ -28,14 +26,17 @@ const CardWrapper = styled.div<any>`
   padding: 24px 16px;
   margin: 16px;
   border-radius: 8px;
-  background: linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%);
   cursor: ${props => (props.isSelected ? 'default' : 'pointer')};
-
   opacity: ${props => (props.isHidden ? 0.1 : 1)};
   margin-bottom: ${props => (props.isSelected ? -200 : 16)}px;
   z-index: ${props => (props.isSelected ? 1 : 'auto')};
-
   transition: opacity 0.2s ease;
+  box-shadow: 0 0 8px 0 rgba(47, 48, 61, 0.3);
+
+  background: ${lightDarkValues(
+    '#fff',
+    'linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%)',
+  )};
 
   @media (max-width: ${MOBILE_WIDTH}px) {
     width: calc(100% - 32px);
@@ -188,19 +189,25 @@ type Props = {
   dappLabelButton: {
     text: string;
     onClick: (...any) => any;
-  },
+  };
   dappHdlLabelButton: {
     text: string;
     onClick: (...any) => any;
-  }
+  };
 };
 
 class PackageCard extends React.Component<Props> {
   handleClickOutside = evt => {
-    const { package: p } = this.props;
-    if (p.isSelected) {
-      p.handleDeselect(evt);
-    }
+    setTimeout(() => {
+      const p = this.props.package;
+      // Deselect package only if click was performed outside of packages list
+      // (e.g. no other package was selected).
+      // Otherwise do nothing - this package were already deselected.
+      // Implemented this way to prevent annoying packages blinking
+      if (p.isSelected) {
+        p.handleDeselect(evt);
+      }
+    }, 300);
   };
 
   render() {
@@ -225,7 +232,7 @@ class PackageCard extends React.Component<Props> {
         <TitleAndCheckboxWrapper isSelected={p.isSelected} onClick={p.handleDeselect}>
           <Title>{p.packageId.toUpperCase()}</Title>
           {showStakingIcon && <StakingIcon />}
-          <img src={p.isSelected ? checkboxChecked : checkboxUnchecked} />
+          <Checkbox checked={p.isSelected} color={serviceColor} />
         </TitleAndCheckboxWrapper>
 
         <ServiceIconAndNameWrapper>

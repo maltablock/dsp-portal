@@ -3,6 +3,7 @@ import { SearchStore } from 'app/modules/search';
 import { ProfileStore } from 'app/modules/profile';
 import { DialogStore } from 'app/modules/dialogs';
 import { DspStore } from 'app/modules/dsp';
+import UiStore from './state/UiStore';
 
 class RootStore {
   packageStore = new PackageStore(this);
@@ -10,6 +11,7 @@ class RootStore {
   profileStore = new ProfileStore(this);
   dialogStore = new DialogStore(this);
   dspStore = new DspStore(this);
+  uiStore = new UiStore();
 
   init() {
     this.packageStore.fetchDappPackages();

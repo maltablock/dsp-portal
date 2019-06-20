@@ -139,6 +139,7 @@ class ProfileStore {
 
   @action logout = async () => {
     this.setLoginStatusToStorage('false');
+    this.setLoginParamsToStorage(null);
 
     try {
       await getWallet().logout();

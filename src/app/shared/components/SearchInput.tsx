@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import searchIcon from 'app/shared/icons/search_icon.svg'
 import { ReactComponent as CloseIconSvg } from 'app/shared/icons/close_icon.svg'
+import { lightDarkValues } from '../styles/utils';
 
 const InputWrapper = styled.div`
   position: relative;
@@ -10,12 +11,12 @@ const InputWrapper = styled.div`
 `;
 
 const InputElement = styled.input`
-  background-color: #263040;
+  color: ${lightDarkValues('#555', '#fff')};
+  background-color: ${lightDarkValues('#e7ebf2', '#263040')};
   border-radius: 4px;
   border: none;
   width: 100%;
   padding: 15px 62px;
-  color: #fff;
   font-size: 15px;
   font-weight: 600;
   outline: none;

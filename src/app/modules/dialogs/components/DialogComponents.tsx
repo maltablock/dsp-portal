@@ -14,6 +14,7 @@ export const DialogContainer = styled.div`
   top: 0;
   left: 0;
   background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
 `;
 
 export const DialogCard = styled(BlueGradientCard)`

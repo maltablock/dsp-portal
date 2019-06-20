@@ -13,6 +13,9 @@ import lynxIcon from 'app/shared/icons/lynx_icon.jpg';
 import meetOneIcon from 'app/shared/icons/meet_one_icon.jpg';
 import tokenPocketIcon from 'app/shared/icons/token_pocket_icon.jpg';
 import { WALLETS } from 'app/shared/eos/constants';
+import UiStore from 'app/root/state/UiStore';
+import ToggleButton from 'app/shared/components/ToggleButton';
+import darkmodeIcon from 'app/shared/icons/darkmode_icon.svg'
 
 const Wrapper = styled.div`
   display: flex;
@@ -33,7 +36,9 @@ const LeftBlock = styled.div`
 `;
 
 const RightBlock = styled.div`
+  display: flex;
   margin-left: auto;
+  align-items: center;
 `;
 
 const LoginControlsWrapper = styled.div`
@@ -46,21 +51,25 @@ const LoginControlsWrapper = styled.div`
 `;
 
 const MenuWrapper = styled.div`
-  width: 150px;
+  /* width: 150px; */
 `;
 
 const LogoText = styled.div`
-  color: #ffffff;
   font-size: 19px;
   font-weight: bold;
   margin-left: 12px;
 `;
 
+const DarkModeIcon = styled.img`
+  margin: 0 16px 0 12px;
+`;
+
 type Props = {
   profileStore?: ProfileStore;
+  uiStore?: UiStore;
 };
 
-const TopBar = ({ profileStore }: Props) => {
+const TopBar = ({ profileStore, uiStore }: Props) => {
   const { login } = profileStore!;
 
   return (
@@ -71,8 +80,11 @@ const TopBar = ({ profileStore }: Props) => {
       </LeftBlock>
 
       <RightBlock>
+        <ToggleButton checked={uiStore!.mode === 'dark'} onClick={uiStore!.toggleTheme} />
+        <DarkModeIcon src={darkmodeIcon} />
         {profileStore!.isLoggedIn ? (
           <MenuSimple
+            transparentBg
             text={profileStore!.accountInfo!.account_name}
             options={[{ content: 'Logout', value: 'logout', onClick: profileStore!.logout }]}
           />
@@ -80,6 +92,7 @@ const TopBar = ({ profileStore }: Props) => {
           <LoginControlsWrapper>
             <MenuWrapper>
               <MenuSimple
+                transparentBg
                 text={profileStore!.eosNetwork === 'kylin' ? 'Kylin Testnet' : 'Mainnet'}
                 options={[
                   { content: 'Mainnet', value: 'mainnet' },
@@ -133,4 +146,4 @@ const TopBar = ({ profileStore }: Props) => {
   );
 };
 
-export default inject('profileStore')(observer(TopBar));
+export default inject('profileStore', 'uiStore')(observer(TopBar));

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { StyledFunction } from 'styled-components';
+import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
 import Button from 'app/shared/components/Button';
@@ -18,11 +18,12 @@ const Wrapper = styled.div<any>`
   width: 100%;
   margin: 8px;
   border-radius: 8px;
-  box-shadow: rgba(0, 0, 0, 0.4) 0px 5px 10px 3px;
   transition: margin-bottom 0.5s ease;
+  color: #fff;
 
   @media (max-width: ${MOBILE_WIDTH}px) {
     z-index: ${props => props.zIndex};
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 5px 10px 3px;
 
     :not(:last-child) {
       margin-bottom: ${props => (props.expanded ? 0 : -150)}px;
