@@ -9,10 +9,7 @@ type TableHeaderProps = {
 };
 
 export const TableHeader = styled.div<TableHeaderProps>`
-  /* width: 100%; */
-  display: flex;
   display: table-row;
-  /* justify-content: space-around; */
 
   & > * {
     flex: none;
@@ -68,12 +65,10 @@ export const TableRow = styled(TableHeader)`
 
 export const TableColumn = styled.div`
   display: table-cell;
-  /* width: 100%; */
   padding: 16px 8px;
 
   font-size: 14px;
   text-align: center;
-  /* width: ${100 / 6}%; */
 
   @media (max-width: ${MOBILE_WIDTH}px) {
     font-size: 12px;
