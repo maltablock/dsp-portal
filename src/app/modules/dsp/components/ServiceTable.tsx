@@ -19,7 +19,7 @@ type Props = {
 };
 
 
-const columnWidths = [5, 25, 25, 25, 20];
+const columnWidths = [5, 33, 33, 33, 33];
 
 class ServiceTable extends React.Component<Props> {
   componentDidMount() {
@@ -32,14 +32,16 @@ class ServiceTable extends React.Component<Props> {
     return (
       <TableWrapper>
         <BigHeading>Services</BigHeading>
-        <TableHeader columnWidths={columnWidths}>
-          <TableHeading>#</TableHeading>
-          <TableHeading>Service</TableHeading>
-          <TableHeading>Total Staked</TableHeading>
-          <TableHeading>Percentage Staked</TableHeading>
-          <TableHeading>Users</TableHeading>
-        </TableHeader>
+
         <TableContent>
+          <TableHeader columnWidths={columnWidths}>
+            <TableHeading>#</TableHeading>
+            <TableHeading>Service</TableHeading>
+            <TableHeading>Total Staked</TableHeading>
+            <TableHeading>Percentage Staked</TableHeading>
+            <TableHeading>Users</TableHeading>
+          </TableHeader>
+
           {dspStore.sortedFilteredServices.map((p, index) => (
             <TableRow columnWidths={columnWidths} key={p.service}>
               <TableColumn>{index + 1}</TableColumn>

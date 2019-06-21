@@ -9,9 +9,10 @@ type TableHeaderProps = {
 };
 
 export const TableHeader = styled.div<TableHeaderProps>`
-  width: 100%;
+  /* width: 100%; */
   display: flex;
-  justify-content: space-around;
+  display: table-row;
+  /* justify-content: space-around; */
 
   & > * {
     flex: none;
@@ -24,6 +25,12 @@ export const TableHeader = styled.div<TableHeaderProps>`
     width: ${percentage}%;
   }`,
     )}
+
+  @media (max-width: 600px) {
+    & > * {
+      width: auto;
+    }
+  }
 `;
 
 export const TableHeading = styled.div`
@@ -31,6 +38,9 @@ export const TableHeading = styled.div`
   font-size: 12px;
   text-align: center;
   text-transform: uppercase;
+  white-space: nowrap;
+  padding: 16px 8px;
+  display: table-cell;
 `;
 
 export const TableContent = styled.ol`
@@ -39,12 +49,14 @@ export const TableContent = styled.ol`
 `;
 
 export const TableRow = styled(TableHeader)`
+  display: table-row;
   margin: 0;
   padding: 16px 0;
   text-indent: 0;
   list-style-type: 0;
+  width: 100%;
 
-  &:nth-child(odd) {
+  &:nth-child(even):not(:first-child) {
     background-color: ${lightDarkValues('#f3f5f9', '#263040')};
   }
 
@@ -55,8 +67,13 @@ export const TableRow = styled(TableHeader)`
 `;
 
 export const TableColumn = styled.div`
+  display: table-cell;
+  /* width: 100%; */
+  padding: 16px 8px;
+
   font-size: 14px;
   text-align: center;
+  /* width: ${100 / 6}%; */
 
   @media (max-width: ${MOBILE_WIDTH}px) {
     font-size: 12px;
@@ -64,6 +81,9 @@ export const TableColumn = styled.div`
 `;
 
 export const TableWrapper = styled.div`
+  display: table;
+  table-layout: fixed;
+
   background: ${lightDarkValues(
     '#e7ebf2',
     'linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%)',
@@ -71,6 +91,10 @@ export const TableWrapper = styled.div`
   padding: 16px;
   margin-top: 16px;
   border-radius: 8px;
+
+  @media (min-width: ${MOBILE_WIDTH}px) {
+    width: 100%;
+  }
 `;
 
 export const BigHeading = styled.div`
@@ -78,4 +102,9 @@ export const BigHeading = styled.div`
   font-weight: 600;
   text-align: center;
   margin: 20px 0 40px 0;
+
+  @media (max-width: ${MOBILE_WIDTH}px) {
+    text-align: left;
+    padding-left: 8px;
+  }
 `;

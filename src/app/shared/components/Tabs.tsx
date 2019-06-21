@@ -6,7 +6,6 @@ export const TabsWrapper = styled.div`
   display: flex;
   width: 100%;
   border-radius: 4px;
-  overflow: hidden;
 `;
 
 export const Tab = styled.div<any>`
