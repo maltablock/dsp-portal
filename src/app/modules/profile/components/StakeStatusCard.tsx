@@ -129,7 +129,7 @@ const renderDetails = (details) => {
   const small = details.length > 1
 
   return details.map(({ text, amount, amountUsd, refreshButton }) => (
-    <React.Fragment>
+    <React.Fragment key={text}>
       <Text small={small}>{text}</Text>
       <Amount small={small}>
         {formatAsset(

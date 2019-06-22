@@ -1,5 +1,4 @@
 import { createGlobalStyle } from 'styled-components';
-import theme from 'styled-theming';
 import { lightDarkValues } from './utils';
 
 const GlobalStyles = createGlobalStyle`

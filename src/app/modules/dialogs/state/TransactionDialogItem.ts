@@ -30,7 +30,8 @@ export class TransactionDialogItem {
       case TransactionStatus.Success: {
         return `Transactions Successful`;
       }
-      case TransactionStatus.Failure: {
+      case TransactionStatus.Failure:
+      default: {
         return `Transaction failed`;
       }
     }

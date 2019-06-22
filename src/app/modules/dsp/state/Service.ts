@@ -5,8 +5,6 @@ import { IDspData } from 'app/shared/typings';
 import DspStore from './DspStore';
 import { decomposeAsset } from 'app/shared/eos';
 
-const BLOCKS_PER_DAY = 2 * 60 * 60 * 24;
-
 export default class Dsp {
   @observable data: IDspData;
   dspStore: DspStore;

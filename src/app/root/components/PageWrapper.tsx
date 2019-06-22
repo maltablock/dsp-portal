@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import pageBg from 'app/shared/assets/page_bg.png';

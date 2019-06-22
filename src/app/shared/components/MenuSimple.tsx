@@ -1,8 +1,7 @@
-import React from 'react'
 import styled from 'styled-components';
 
 import arrowDownIcon from 'app/shared/icons/arrow_down.svg';
-import { menuFactory, _MenuInput, _MenuWrapper, _Icon, _OptionsList, _OptionItem } from './Menu';
+import { menuFactory, _MenuInput, _Icon, _OptionsList, _OptionItem } from './Menu';
 import { lightDarkValues } from '../styles/utils';
 
 const MenuInput = styled(_MenuInput)`

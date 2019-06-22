@@ -136,6 +136,7 @@ const TopBar = ({ profileStore, uiStore }: Props) => {
                 },
               ].map(({ text, icon, wallet }) => ({
                 content: <LoginOptionContent text={text} icon={icon} />,
+                value: wallet,
                 onClick: () => login(wallet),
               }))}
             />
