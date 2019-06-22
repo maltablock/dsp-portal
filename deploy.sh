@@ -9,10 +9,10 @@ ${HOME}/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${K
 ${HOME}/google-cloud-sdk/bin/gcloud config set project ${GCLOUD_PROJECT}
 
 # Copy Files
-${HOME}/google-cloud-sdk/bin/gsutil rsync -d -r ${PWD}/build gs://${BUCKET_URI}/
+${HOME}/google-cloud-sdk/bin/gsutil -m rsync -d -r ${PWD}/build gs://${BUCKET_URI}/
 
 # Make Files Publically Accessible
-${HOME}/google-cloud-sdk/bin/gsutil acl ch -r -u AllUsers:R gs://${BUCKET_URI}/*
+${HOME}/google-cloud-sdk/bin/gsutil -m acl ch -r -u AllUsers:R gs://${BUCKET_URI}/*
 
 # Edit the website configuration
 ${HOME}/google-cloud-sdk/bin/gsutil web set -m index.html -e index.html gs://${BUCKET_URI}
