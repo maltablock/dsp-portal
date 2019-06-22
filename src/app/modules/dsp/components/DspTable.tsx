@@ -23,15 +23,17 @@ class DspTable extends React.Component<Props> {
     return (
       <TableWrapper>
         <BigHeading>DSPs</BigHeading>
-        <TableHeader columnWidths={columnWidths}>
-          <TableHeading>#</TableHeading>
-          <TableHeading>Provider</TableHeading>
-          <TableHeading>Total Staked</TableHeading>
-          <TableHeading>Percentage Staked</TableHeading>
-          <TableHeading>Users</TableHeading>
-          <TableHeading>Daily Reward</TableHeading>
-        </TableHeader>
+
         <TableContent>
+          <TableHeader columnWidths={columnWidths}>
+            <TableHeading>#</TableHeading>
+            <TableHeading>Provider</TableHeading>
+            <TableHeading>Total Staked</TableHeading>
+            <TableHeading>Percentage Staked</TableHeading>
+            <TableHeading>Users</TableHeading>
+            <TableHeading>Daily Reward</TableHeading>
+          </TableHeader>
+
           {dspStore.sortedDsps.map((p, index) => (
             <TableRow columnWidths={columnWidths} key={p.provider}>
               <TableColumn>{index + 1}</TableColumn>

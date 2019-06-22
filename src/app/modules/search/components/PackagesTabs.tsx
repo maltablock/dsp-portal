@@ -9,6 +9,12 @@ import { TabsWrapper, Tab as _Tab } from 'app/shared/components/Tabs';
 const Wrapper = styled.div`
   display: flex;
   margin: 0 auto 16px;
+
+  @media (max-width: 670px) {
+    width: calc(100% - 32px);
+    overflow-x: scroll;
+    margin: 0 16px 16px;
+  }
 `;
 
 const Tab = styled(_Tab)`

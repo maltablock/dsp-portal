@@ -58,6 +58,10 @@ const LogoText = styled.div`
   font-size: 19px;
   font-weight: bold;
   margin-left: 12px;
+
+  @media (max-width: 670px) {
+    display: none;
+  }
 `;
 
 const DarkModeIcon = styled.img`
