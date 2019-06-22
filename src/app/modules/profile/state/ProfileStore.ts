@@ -17,6 +17,7 @@ import {
 } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
+import { RpcError } from 'eosjs';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -131,6 +132,18 @@ class ProfileStore {
       console.error(err);
       this.setLoginStatusToStorage('false');
       this.setLoginParamsToStorage(null);
+
+      if(err instanceof RpcError && /unknown key/.test(err.message)) {
+        // fix a bug when changing networks with Scatter without logging out
+        // then forgetIdentity() is never called on login, but needs to be
+        // https://github.com/eosnewyork/eos-transit/blob/6430187a0e86080d8410e9f5cde3a6f39184db5b/packages/eos-transit-scatter-provider/src/index.ts#L48
+        // bug is triggered by eostransit get_account failing to fetch the user
+        try {
+          await getWallet().logout()
+          this.isLoggingIn = false;
+          return this.login(walletName)
+        } catch {}
+      }
     }
 
     this.isLoggingIn = false;
