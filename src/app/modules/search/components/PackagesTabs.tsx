@@ -27,14 +27,14 @@ const PackagesTabs = (props: Props) => {
   const { selectedTab, handleSelectTab } = props.searchStore!;
   const { isLoggedIn } = props.profileStore!;
 
-  const tabs = ['Packages', isLoggedIn && 'Staked', 'DSPs', 'Services'].filter(Boolean)
+  const tabs = ['Packages', isLoggedIn ? 'Staked' : '', 'DSPs', 'Services'].filter(Boolean)
 
   return (
     <Wrapper>
       <TabsWrapper>
         {
           tabs.map(tabName =>
-            <Tab active={selectedTab === tabName} onClick={() => handleSelectTab(tabName)}>
+            <Tab key={tabName} active={selectedTab === tabName} onClick={() => handleSelectTab(tabName)}>
               {tabName}
             </Tab>
           )

@@ -239,8 +239,8 @@ class PackageCard extends React.Component<Props> {
         </ServiceIconAndNameWrapper>
 
         <DetailsWrapper>
-          {details.map(detailBlock => (
-            <DetailsBlock>
+          {details.map((detailBlock, index) => (
+            <DetailsBlock key={index}>
               {detailBlock.map(({ label, value }) => (
                 <DetailsRow key={label}>
                   <DetailsLabel>{label}</DetailsLabel>
