@@ -17,7 +17,6 @@ import {
 } from 'app/modules/transactions/logic/transactions';
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
-import { DiscoveryData } from 'eos-transit/lib';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {

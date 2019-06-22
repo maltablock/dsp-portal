@@ -1,6 +1,5 @@
 import React from 'react';
 import { inject, observer } from 'mobx-react';
-import styled from 'styled-components';
 import DspStore from '../state/DspStore';
 import { formatAsset } from 'app/shared/eos';
 import { DAPP_SYMBOL } from 'app/shared/eos/constants';

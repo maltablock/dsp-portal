@@ -218,8 +218,6 @@ class PackageCard extends React.Component<Props> {
       button,
       showStakingIcon = false,
       deprecated = false,
-      stakedDappAmount,
-      stakedDappHdlAmount,
       dappLabelButton,
       dappHdlLabelButton,
     } = this.props;

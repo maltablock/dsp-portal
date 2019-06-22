@@ -1,14 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
 import { observable, action, computed } from 'mobx';
-import { inject, observer } from 'mobx-react';
-import { DiscoveryData, DiscoveryAccount } from 'eos-transit/lib';
+import { observer } from 'mobx-react';
+import { DiscoveryData } from 'eos-transit/lib';
 
 import { getWallet } from 'app/shared/eos';
 import { fetchAccountsForKeyMock } from '../mock-api';
 
 import DialogItem from 'app/modules/dialogs/state/DialogItem';
-import ProfileStore from '../state/ProfileStore';
 import MenuSimple from 'app/shared/components/MenuSimple';
 import { InputElement } from 'app/shared/components/Input';
 

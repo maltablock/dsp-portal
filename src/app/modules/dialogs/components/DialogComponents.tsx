@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
