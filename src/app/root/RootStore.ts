@@ -4,6 +4,7 @@ import { ProfileStore } from 'app/modules/profile';
 import { DialogStore } from 'app/modules/dialogs';
 import { DspStore } from 'app/modules/dsp';
 import UiStore from './state/UiStore';
+import { AirdropStore } from 'app/modules/airdrops';
 
 class RootStore {
   packageStore = new PackageStore(this);
@@ -12,6 +13,7 @@ class RootStore {
   dialogStore = new DialogStore(this);
   dspStore = new DspStore(this);
   uiStore = new UiStore();
+  airdropStore = new AirdropStore(this);
 
   init() {
     this.packageStore.fetchDappPackages();

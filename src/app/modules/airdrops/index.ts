@@ -1,2 +1,2 @@
-export { default as AirdropsStore } from "./state/AirdropsStore";
+export { default as AirdropStore } from "./state/AirdropStore";
 export { default as AirdropsContent } from "./components/AirdropsContent";
