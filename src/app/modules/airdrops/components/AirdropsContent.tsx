@@ -4,6 +4,7 @@ import { inject, observer } from 'mobx-react';
 
 import { SearchStore } from 'app/modules/search';
 import { DialogStore } from 'app/modules/dialogs';
+import AirdropsDescription from './AirdropsDescription';
 
 const Wrapper = styled.div`
   margin: 0 auto 16px;
@@ -27,7 +28,7 @@ type Props = {
 };
 
 const AirdropsContent = ({ searchStore, dialogStore }: Props) => {
-  return <Wrapper></Wrapper>
+  return <Wrapper><AirdropsDescription /></Wrapper>
 };
 
 export default inject('searchStore', 'dialogStore')(observer(AirdropsContent));
