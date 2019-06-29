@@ -37,6 +37,20 @@ export async function fetchRows<T>(options: GetTableRowsOptions): Promise<T[]> {
   return result.rows;
 }
 
+
+type VotersRow = {
+  owner: string;
+  proxy: string;
+  producers: string[];
+  staked: number;
+  last_vote_weight: number;
+  proxied_vote_weight: number;
+  is_proxy: boolean;
+  flags1: number;
+  reserved2: number;
+  reserved3: string;
+};
+fetchRows<VotersRow>({ code: `eosio`, table: `voters`, scope: `eosio`, lower_bound: `michaelgucci`, limit: 1})
 export async function fetchAllRows<T>(
   options: GetTableRowsOptions,
   indexName = `id`,

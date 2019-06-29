@@ -1,65 +1,36 @@
 import React from 'react'
-import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 
-import { SearchStore } from 'app/modules/search';
-import { DialogStore } from 'app/modules/dialogs';
-import DappPackageCard from 'app/modules/packages/components/DappPackageCard';
-import StakedPackageCard from 'app/modules/packages/components/StakedPackageCard';
-import { DspTable, ServiceTable } from 'app/modules/dsp';
-
-const Wrapper = styled.div`
-  margin: 0 auto 16px;
-  width: ${976 + 16 * 2}px;
-
-  @media (min-width: 672px) and (max-width: 1008px) {
-    width: ${640 + 16 * 2}px;
-  }
-
-  @media (max-width: 671px) {
-    width: 100%;
-    overflow-x: scroll;
-  }
-`;
+import UiStore from '../state/UiStore';
+import { AirdropsContent } from 'app/modules/airdrops';
+import DspServicesContent from './DspServicesContent';
 
 type Props = {
-  searchStore?: SearchStore;
-  dialogStore?: DialogStore;
+  uiStore?: UiStore;
 }
 
-const PageContent = ({ searchStore, dialogStore }: Props) => {
+const PageContent = ({ uiStore }: Props) => {
   let content
-  switch(searchStore!.selectedTab) {
-    case 'Staked': {
-      content = searchStore!.sortedStakedPackages.map(p =>
-        <StakedPackageCard key={p.data.id} dialogStore={dialogStore!} stakedPackage={p} />
-      )
-      break;
-    }
-    case 'Packages': {
-      content = searchStore!.sortedDappPackages.map(p =>
-        <DappPackageCard key={p.data.id} dialogStore={dialogStore!} dappPackage={p} />
-      )
-      break;
-    }
-    case 'Services': {
-      content = <ServiceTable />
-      break;
-    }
-    case 'DSPs':
-    default: {
-      content = <DspTable />
-      break;
-    }
+
+  switch(uiStore!.mainNavigation) {
+    case 'vAirdrops': {
+      content = <AirdropsContent />
+        break;
+      }
+      case 'DSP Services':
+      default: {
+        content = <DspServicesContent />
+        break;
+      }
   }
 
-  return (
-    <Wrapper>
-      {
-        content
-      }
-    </Wrapper>
-  )
+  return content
 }
 
-export default inject('searchStore','dialogStore')(observer(PageContent));
+export default inject('uiStore')(observer(PageContent));
+
+
+
+
+
+

@@ -4,7 +4,7 @@ const THEME_MODE_LS_KEY = 'app__theme_mode';
 
 export type MainNavigation = 'DSP Services' | 'vAirdrops'
 
-class UiStore {
+class AirdropsStore {
   @observable mode = localStorage.getItem(THEME_MODE_LS_KEY) || 'dark';
   @observable mainNavigation: MainNavigation = 'DSP Services';
 
@@ -18,4 +18,4 @@ class UiStore {
   }
 }
 
-export default UiStore;
+export default AirdropsStore;

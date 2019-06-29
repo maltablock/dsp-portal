@@ -5,8 +5,7 @@ import { ThemeProvider } from 'styled-components';
 import RootStore from './RootStore';
 import PageWrapper from './components/PageWrapper';
 import { AllDialogsContainer } from 'app/modules/dialogs';
-import { ProfileStatusContainer, TopBar } from 'app/modules/profile';
-import { SearchBar, PackagesTabs } from 'app/modules/search';
+import { TopBar } from 'app/modules/profile';
 import Content from './components/Content';
 import Footer from './components/Footer';
 import GlobalStyles from 'app/shared/styles/global';
@@ -30,9 +29,6 @@ class App extends React.Component {
 
             <PageWrapper>
               <TopBar />
-              <ProfileStatusContainer />
-              <PackagesTabs />
-              <SearchBar />
               <Content />
               <AllDialogsContainer />
               <Footer />
