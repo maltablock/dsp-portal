@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import { inject, observer } from 'mobx-react';
 
-import { SearchStore } from 'app/modules/search';
-import { DialogStore } from 'app/modules/dialogs';
 import AirdropsDescription from './AirdropsDescription';
+import AirdropStore from '../state/AirdropStore';
 
 const Wrapper = styled.div`
   margin: 0 auto 16px;
@@ -21,14 +20,27 @@ const Wrapper = styled.div`
   }
 `;
 
-
 type Props = {
-  searchStore?: SearchStore;
-  dialogStore?: DialogStore;
+  airdropStore?: AirdropStore;
 };
 
-const AirdropsContent = ({ searchStore, dialogStore }: Props) => {
-  return <Wrapper><AirdropsDescription /></Wrapper>
+const AirdropsContent = ({ airdropStore }: Props) => {
+  useEffect(() => {
+    airdropStore!.fetchAirdrops();
+  }, [airdropStore]);
+
+  return (
+    <Wrapper>
+      <AirdropsDescription />
+      <ol>
+        {airdropStore!.airdrops.map(airdrop => (
+          <li>
+            {airdrop.tokenName} {airdrop.tokenContract}
+          </li>
+        ))}
+      </ol>
+    </Wrapper>
+  );
 };
 
-export default inject('searchStore', 'dialogStore')(observer(AirdropsContent));
+export default inject('airdropStore')(observer(AirdropsContent));

@@ -13,7 +13,7 @@ type GetTableRowsOptions = {
   limit?: number;
   key_type?: string;
   index_position?: string;
-  reverse?: boolean
+  reverse?: boolean;
 };
 
 // work around the limit bug in nodes due to max timeout
@@ -37,20 +37,6 @@ export async function fetchRows<T>(options: GetTableRowsOptions): Promise<T[]> {
   return result.rows;
 }
 
-
-type VotersRow = {
-  owner: string;
-  proxy: string;
-  producers: string[];
-  staked: number;
-  last_vote_weight: number;
-  proxied_vote_weight: number;
-  is_proxy: boolean;
-  flags1: number;
-  reserved2: number;
-  reserved3: string;
-};
-fetchRows<VotersRow>({ code: `eosio`, table: `voters`, scope: `eosio`, lower_bound: `michaelgucci`, limit: 1})
 export async function fetchAllRows<T>(
   options: GetTableRowsOptions,
   indexName = `id`,
@@ -79,4 +65,24 @@ export async function fetchAllRows<T>(
   }
 
   return rows;
+}
+
+type ScopeResult = {
+  code: string;
+  count: number;
+  payer: string;
+  scope: string;
+  table: string;
+};
+
+export async function fetchAllScopes(contract: string, table: string): Promise<string[]> {
+  const mergedOptions = {
+    json: true,
+    lower_bound: 0,
+    upper_bound: -1,
+    limit: 9999,
+    code: contract, table
+  };
+  const rows = (await rpc.get_table_by_scope(mergedOptions)).rows as ScopeResult[];
+  return rows.map(row => row.scope)
 }

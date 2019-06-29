@@ -22,7 +22,7 @@ import { media } from 'app/shared/styles/breakpoints'
 
 const BackgroundDrop = styled.div`
   height: 66px;
-  background-color: ${lightDarkValues('#e7ebf299', '#1b222f99')};
+  background-color: ${lightDarkValues('#ffffff99', '#1b222f99')};
 `;
 
 const Wrapper = styled.div`

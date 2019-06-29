@@ -1,5 +1,6 @@
 import { AssetSymbol } from 'app/shared/typings';
 
+export const AIRDROPS_ACCOUNT = `maltablokdsp`;
 export const DAPPSERVICES_CONTRACT = `dappservices`;
 export const DAPPHODL_CONTRACT = `dappairhodl1`;
 export type DappContractTypes = `dappservices` | `dappairhodl1`
