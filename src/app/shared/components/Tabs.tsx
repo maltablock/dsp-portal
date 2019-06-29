@@ -33,7 +33,7 @@ export const MainNavigationTab = styled.button<any>`
   padding: 0 36px;
   height: 100%;
 
-  color: ${lightDarkValues('#ffff00', '#ffffff')};
+  color: ${lightDarkValues('#333', '#ffffff')};
   background: transparent;
 
   transition: border-color 0s;
@@ -49,6 +49,7 @@ export const MainNavigationTab = styled.button<any>`
     bottom: -8px;
     left: 0;
     right: 0;
-    background: ${props => (props.active ? lightDarkValues('blue', 'linear-gradient(180deg, #414DFF 0%, #5660FF 100%)') : 'transparent')};
+    background: ${props =>
+      props.active ? 'linear-gradient(180deg, #414DFF 0%, #5660FF 100%)' : 'transparent'};
   }
 `;
