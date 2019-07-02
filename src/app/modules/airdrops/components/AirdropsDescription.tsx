@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 import BlueGradientCard from 'app/shared/components/BlueGradientCard';
-
+import { lightDarkValues } from 'app/shared/styles/utils';
+import AirdropStore from '../state/AirdropStore';
+import { inject, observer } from 'mobx-react';
+import Button from 'app/shared/components/Button';
 
 const CardWrapper = styled(BlueGradientCard)`
   width: 640px;
   height: auto;
   padding: 40px 16px 40px 16px;
-  margin: 74px auto 97px;
+  margin: 74px auto 60px;
   color: #fff;
 
   @media (max-width: 672px) {
@@ -33,13 +36,69 @@ const Message = styled.div`
   text-align: center;
 `;
 
-const AirdropsDescription = () => {
-  return <CardWrapper>
-  <Title>vAirdrops</Title>
-  <Message>
-    This portal allows claiming any vAirdropped token. vAirdrop is a new kind of airdrop of LiquidApps and Malta Block that does not require any RAM for the initial token distribution.
-  </Message>
-</CardWrapper>
+const InputTransparent = styled.input`
+  flex: 1;
+  display: inline-block;
+  background-color: transparent;
+  border: none;
+  color: ${lightDarkValues(`#333`, `#fff`)};
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+
+  ::placeholder {
+    color: #a1a8b3;
+  }
+`;
+
+const StyledButton = styled(Button)`
+  background: linear-gradient(0deg, #5460ff 0%, #414eff 100%);
+  padding: 8px;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  width: 300px;
+  margin: 40px auto 0;
+  padding: 4px 4px 4px 20px;
+  border-radius: 4px;
+  background-color: ${lightDarkValues(`#ffffff`, `#1b222f`)};
+`;
+
+type Props = {
+  airdropStore?: AirdropStore;
 };
 
-export default AirdropsDescription
+const AirdropsDescription: React.FC<Props> = ({ airdropStore }: Props) => {
+  const [account, setAccount] = useState(airdropStore!.displayAccount);
+
+  const onSubmit = async event => {
+    event.preventDefault();
+    airdropStore!.changeDisplayAccount(account);
+    await airdropStore!.fetchBalances();
+  };
+
+  return (
+    <CardWrapper>
+      <Title>vAirdrops</Title>
+      <Message>
+        This portal allows claiming any vAirdropped token. vAirdrop is a new kind of airdrop of
+        LiquidApps and Malta Block that does not require any RAM for the initial token distribution.
+      </Message>
+      <StyledForm onSubmit={onSubmit}>
+        <InputTransparent
+          id="accountName"
+          name="accountName"
+          placeholder={airdropStore!.displayAccount || `account`}
+          value={account}
+          onChange={event => setAccount((event.target as HTMLInputElement).value)}
+          autoFocus
+          maxLength={13}
+        />
+        <StyledButton type="submit">Search</StyledButton>
+      </StyledForm>
+    </CardWrapper>
+  );
+};
+
+export default inject('airdropStore')(observer(AirdropsDescription));

@@ -136,6 +136,7 @@ const ThemeIcon = styled.img`
 type ThemeToggleProps = {
   uiStore?: UiStore;
 };
+
 const _ThemeToggle = ({ uiStore }: ThemeToggleProps) => {
   return (
     <React.Fragment>

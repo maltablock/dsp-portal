@@ -32,7 +32,7 @@ const MobileOverlay = styled.div`
   position: fixed;
   z-index: 99999;
   top: ${TOP_BAR_HEIGHT}px;
-  height: calc(100vh - ${TOP_BAR_HEIGHT}px);
+  bottom: 0;
   left: 0;
   right: 0;
 
