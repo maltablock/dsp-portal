@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 
   @media (max-width: 670px) {
     width: calc(100% - 32px);
-    overflow-x: scroll;
+    overflow-x: auto;
     margin: 0 16px 16px;
   }
 `;
