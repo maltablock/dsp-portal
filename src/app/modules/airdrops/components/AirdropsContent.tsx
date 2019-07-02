@@ -9,6 +9,9 @@ const Wrapper = styled.div`
   margin: 0 auto 16px;
   width: ${976 + 16 * 2}px;
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   @media (min-width: 672px) and (max-width: 1008px) {
     width: ${640 + 16 * 2}px;
@@ -20,18 +23,29 @@ const Wrapper = styled.div`
   }
 `;
 
+const InfoText = styled.div`
+  & > code {
+    color: #404efe;
+  }
+`
+
 type Props = {
   airdropStore?: AirdropStore;
 };
 
 const AirdropsContent = ({ airdropStore }: Props) => {
   useEffect(() => {
-    airdropStore!.fetchAirdrops();
+    airdropStore!.init();
   }, [airdropStore]);
 
   return (
     <Wrapper>
       <AirdropsDescription />
+      {airdropStore!.displayAccount ? (
+        <InfoText>
+          vAirdrop Balances for: <code>{airdropStore!.displayAccount}</code>
+        </InfoText>
+      ) : null}
       <ol>
         {airdropStore!.airdrops.map(airdrop => (
           <li>
