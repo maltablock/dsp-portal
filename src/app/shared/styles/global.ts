@@ -17,6 +17,10 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
     transition: color, background-color, background, border-color 0.3s ease;
   }
+
+  .modal-open {
+    overflow-y: hidden;
+  }
 `;
 
 export default GlobalStyles;

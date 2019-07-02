@@ -1,27 +1,17 @@
-import React from 'react';
-import styled from 'styled-components';
-import { observer, inject } from 'mobx-react';
-
-import { ProfileStore } from 'app/modules/profile';
-import { ReactComponent as Logo } from 'app/shared/assets/logo-maltablock.svg';
-import MenuSimple from 'app/shared/components/MenuSimple';
-import { LoginMenu, LoginOptionContent } from './LoginMenu';
-
-import scatterIcon from 'app/shared/icons/scatter_icon.svg';
-import ledgerIcon from 'app/shared/icons/ledger_icon.png';
-import lynxIcon from 'app/shared/icons/lynx_icon.jpg';
-import meetOneIcon from 'app/shared/icons/meet_one_icon.jpg';
-import tokenPocketIcon from 'app/shared/icons/token_pocket_icon.jpg';
-import { WALLETS } from 'app/shared/eos/constants';
-import UiStore from 'app/root/state/UiStore';
-import ToggleButton from 'app/shared/components/ToggleButton';
-import darkmodeIcon from 'app/shared/icons/darkmode_icon.svg';
-import { MainNavigationTab } from 'app/shared/components/Tabs';
 import { lightDarkValues } from 'app/shared/styles/utils';
-import { media } from 'app/shared/styles/breakpoints'
+import { inject, observer } from 'mobx-react';
+import React from 'react';
+import Media from 'react-media';
+import styled from 'styled-components';
+import TopBarDesktop from './TopBarDesktop';
+import TopBarMobile from './TopBarMobile';
+import { TOP_BAR_HEIGHT } from './TopBarShared'
+
+
+const MOBILE_WIDTH = 960;
 
 const BackgroundDrop = styled.div`
-  height: 66px;
+  height: ${TOP_BAR_HEIGHT}px;
   background-color: ${lightDarkValues('#ffffff99', '#1b222f99')};
 `;
 
@@ -32,164 +22,16 @@ const Wrapper = styled.div`
   padding: 8px 16px;
   width: 100%;
   height: 100%;
-
-  @media (min-width: 1440px) {
-    width: 1440px;
-  }
+  max-width: 1440px;
 `;
 
-
-const MainNavigation = styled.div`
-  height: 100%;
-  margin-left: 0;
-
-  ${media.greaterThan('sm')} {
-    margin-left: 20px;
-  }
-
-  ${media.greaterThan('md')} {
-    margin-left: 40px;
-  }
-
-  ${media.greaterThan('lg')} {
-    margin-left: 90px;
-  }
-`;
-
-const LeftBlock = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 100%;
-`;
-
-const RightBlock = styled.div`
-  display: flex;
-  margin-left: auto;
-  align-items: center;
-`;
-
-const LoginControlsWrapper = styled.div`
-  display: flex;
-  align-items: center;
-
-  & > :not(:last-child) {
-    margin-right: 16px;
-  }
-`;
-
-const MenuWrapper = styled.div`
-  /* width: 150px; */
-`;
-
-const LogoText = styled.div`
-  font-size: 19px;
-  font-weight: bold;
-  margin-left: 12px;
-
-  @media (max-width: 670px) {
-    display: none;
-  }
-`;
-
-const DarkModeIcon = styled.img`
-  margin: 0 16px 0 12px;
-`;
-
-type Props = {
-  profileStore?: ProfileStore;
-  uiStore?: UiStore;
-};
-
-const TopBar = ({ profileStore, uiStore }: Props) => {
-  const { login } = profileStore!;
-
+const TopBar = () => {
   return (
     <BackgroundDrop>
       <Wrapper>
-        <LeftBlock>
-          <Logo width={48} height={48} />
-          <LogoText>Malta Block</LogoText>
-          <MainNavigation>
-            <MainNavigationTab
-              active={uiStore!.mainNavigation === 'DSP Services'}
-              onClick={() => uiStore!.changeMainNavigation('DSP Services')}
-            >
-              DSP Services
-            </MainNavigationTab>
-            <MainNavigationTab
-              active={uiStore!.mainNavigation === 'vAirdrops'}
-              onClick={() => uiStore!.changeMainNavigation('vAirdrops')}
-            >
-              vAirdrops
-            </MainNavigationTab>
-          </MainNavigation>
-        </LeftBlock>
-
-        <RightBlock>
-          <ToggleButton checked={uiStore!.mode === 'dark'} onClick={uiStore!.toggleTheme} />
-          <DarkModeIcon src={darkmodeIcon} />
-          {profileStore!.isLoggedIn ? (
-            <MenuSimple
-              transparentBg
-              text={profileStore!.accountInfo!.account_name}
-              options={[{ content: 'Logout', value: 'logout', onClick: profileStore!.logout }]}
-            />
-          ) : (
-            <LoginControlsWrapper>
-              <MenuWrapper>
-                <MenuSimple
-                  transparentBg
-                  text={profileStore!.eosNetwork === 'kylin' ? 'Kylin Testnet' : 'Mainnet'}
-                  options={[
-                    { content: 'Mainnet', value: 'mainnet' },
-                    { content: 'Kylin Testnet', value: 'kylin' },
-                  ].map(({ content, value }) => ({
-                    content,
-                    value,
-                    isActive: profileStore!.eosNetwork === value,
-                    onClick: profileStore!.setEosNetwork,
-                  }))}
-                />
-              </MenuWrapper>
-              <LoginMenu
-                id="login-menu"
-                text={profileStore!.isLoggingIn ? 'Logging in...' : 'Login'}
-                options={[
-                  {
-                    text: 'Scatter',
-                    icon: scatterIcon,
-                    wallet: WALLETS.scatter,
-                  },
-                  {
-                    text: 'Ledger',
-                    icon: ledgerIcon,
-                    wallet: WALLETS.ledger,
-                  },
-                  {
-                    text: 'Lynx',
-                    icon: lynxIcon,
-                    wallet: WALLETS.lynx,
-                  },
-                  {
-                    text: 'Meet.One',
-                    icon: meetOneIcon,
-                    wallet: WALLETS.meetone,
-                  },
-                  {
-                    text: 'TokenPocket',
-                    icon: tokenPocketIcon,
-                    wallet: WALLETS.tokenpocket,
-                  },
-                ].map(({ text, icon, wallet }) => ({
-                  content: <LoginOptionContent text={text} icon={icon} />,
-                  value: wallet,
-                  onClick: () => login(wallet),
-                }))}
-              />
-            </LoginControlsWrapper>
-          )}
-        </RightBlock>
+        <Media query={`(max-width: ${MOBILE_WIDTH}px)`}>
+          {matches => (matches ? <TopBarMobile /> : <TopBarDesktop />)}
+        </Media>
       </Wrapper>
     </BackgroundDrop>
   );
