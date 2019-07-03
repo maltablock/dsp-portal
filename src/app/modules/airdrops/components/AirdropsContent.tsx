@@ -7,6 +7,12 @@ import AirdropStore from '../state/AirdropStore';
 import Button from 'app/shared/components/Button';
 import liquidAppsLogo from 'app/shared/icons/liquidapps_logo.svg';
 import { formatAsset } from 'app/shared/eos';
+import AirdropItem from '../state/AirdropItem';
+import { DialogStore } from 'app/modules/dialogs';
+import { vClaim } from 'app/modules/transactions/logic/transactions';
+import TransactionVClaimPending from 'app/modules/transactions/components/TransactionVClaimPending';
+import TransactionVClaimSuccess from 'app/modules/transactions/components/TransactionVClaimSuccess';
+import { lightDarkValues } from 'app/shared/styles/utils';
 
 const Wrapper = styled.div`
   margin: 0 auto 16px;
@@ -56,7 +62,10 @@ const AirdropWrapper = styled.li`
   height: 246px;
   width: 304px;
   border-radius: 8px;
-  background: linear-gradient(152.3deg, #282e3d 0%, #181824 100%);
+  background: ${lightDarkValues(
+    '#fff',
+    'linear-gradient(320deg, rgba(24, 24, 36, 1) 0%, rgba(40, 46, 61, 1) 100%)',
+  )};
   box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.31);
 `;
 
@@ -70,7 +79,6 @@ const Title = styled.div`
   font-size: 18px;
   font-weight: bold;
   line-height: 22px;
-  color: #dde0e3;
 `;
 
 const TokenIcon = styled.img`
@@ -121,18 +129,34 @@ const ClaimedBadge = styled.div`
   border-radius: 11px;
   padding: 4px 24px;
   font-size: 12px;
+  color: #fff;
 `;
 
 type Props = {
   airdropStore?: AirdropStore;
+  dialogStore?: DialogStore;
 };
 
-const AirdropsContent = ({ airdropStore }: Props) => {
+const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
   useEffect(() => {
     airdropStore!.init();
   }, [airdropStore]);
 
-  let airdropsList:(ReactElement|null) = null;
+  const onClick = (airdropItem: AirdropItem) => () => {
+    const payload = { tokenContract: airdropItem.tokenContract, symbol: airdropItem.data.token };
+
+    dialogStore!.openTransactionDialog({
+      contentSuccess: <TransactionVClaimSuccess {...payload} />,
+      contentPending: <TransactionVClaimPending {...payload} />,
+      performTransaction: async () => {
+        const result = await vClaim(payload);
+        await airdropStore!.fetchBalances()
+        return result;
+      },
+    });
+  };
+
+  let airdropsList: ReactElement | null = null;
   if (airdropStore!.displayAccount) {
     airdropsList = (
       <AirdropsList>
@@ -162,20 +186,21 @@ const AirdropsContent = ({ airdropStore }: Props) => {
               </DetailsRow>
             </DetailsWrapper>
 
-              <ButtonWrapper>
-                {airdrop.claimed ? (
-                  <ClaimedBadge>Claimed</ClaimedBadge>
-                ) : (
-                  <ClaimButton onClick={airdrop.claim}>
-                    Claim
-                  </ClaimButton>
-                )}
-              </ButtonWrapper>
+            <ButtonWrapper>
+              {airdrop.claimed ? (
+                <ClaimedBadge>Claimed</ClaimedBadge>
+              ) : airdrop.balance > 0 ? (
+                <ClaimButton onClick={onClick(airdrop)}>Claim</ClaimButton>
+              ) : (
+                <ClaimedBadge>Nothing to Claim</ClaimedBadge>
+              )}
+            </ButtonWrapper>
           </AirdropWrapper>
         ))}
       </AirdropsList>
     );
   }
+
   return (
     <Wrapper>
       <AirdropsDescription />
@@ -189,4 +214,4 @@ const AirdropsContent = ({ airdropStore }: Props) => {
   );
 };
 
-export default inject('airdropStore')(observer(AirdropsContent));
+export default inject('airdropStore', 'dialogStore')(observer(AirdropsContent));
