@@ -76,6 +76,16 @@ function encodeName(name: string, littleEndian = true): string {
   return encodeNameToUint64(name, littleEndian).toString();
 }
 
+function getTableBoundsForNameAsValue(name: string) {
+  const nameValue = nameToValue(name);
+  const nameValueP1 = nameValue.add(1);
+
+  return {
+    lower_bound: nameValue.toString(),
+    upper_bound: nameValueP1.toString()
+  };
+}
+
 function getTableBoundsForName(name: string) {
   const nameValue = nameToValue(name);
   const nameValueP1 = nameValue.add(1);
@@ -92,4 +102,5 @@ export {
   isName,
   encodeName, // encode human readable name to uint64 (number string)
   getTableBoundsForName,
+  getTableBoundsForNameAsValue,
 };

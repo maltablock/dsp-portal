@@ -5,6 +5,7 @@ import {
   DAPPHODL_SYMBOL,
   DAPPHODL_CONTRACT,
   DappContractTypes,
+  AIRDROPS_ACCOUNT,
 } from 'app/shared/eos/constants';
 import { Action } from 'eosjs/dist/eosjs-serialize';
 import { decomposeAsset, formatAsset } from 'app/shared/eos';
@@ -267,6 +268,38 @@ export const refreshAndCleanupTransaction = async (
   return await getWallet().eosApi.transact(
     {
       actions,
+    },
+    transactionOptions,
+  );
+};
+
+
+export type VClaimPayload = {
+  tokenContract: string;
+  symbol: string;
+};
+export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult> => {
+  return await getWallet().eosApi.transact(
+  {
+      actions: [
+        createAction({
+          account: payload.tokenContract,
+          name: 'open',
+          data: {
+            owner: getWallet().auth!.accountName,
+            symbol: payload.symbol,
+            ram_payer: getWallet().auth!.accountName,
+          },
+        }),
+        createAction({
+          account: AIRDROPS_ACCOUNT,
+          name: 'grab',
+          data: {
+            owner: getWallet().auth!.accountName,
+            token_contract: payload.tokenContract,
+          }
+        })
+      ],
     },
     transactionOptions,
   );

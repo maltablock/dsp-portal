@@ -1,4 +1,7 @@
 import { computed, observable, action } from 'mobx';
+import { fetchRows, getTableBoundsForNameAsValue } from 'app/shared/eos';
+import { AIRDROPS_ACCOUNT } from 'app/shared/eos/constants';
+import axios from 'axios';
 
 export type AirdropItemData = {
   issuer: string;
@@ -6,6 +9,10 @@ export type AirdropItemData = {
   token: string;
   url_prefix: string;
 };
+
+type GrabsTableRow = {
+  owner: string;
+}
 
 export default class AirdropItem {
   @observable data: AirdropItemData;
@@ -24,8 +31,23 @@ export default class AirdropItem {
   @action async fetchBalance(account: string) {
     this.resetBalance();
 
-    this.balance = Math.trunc(Math.random() * 1234);
-    this.claimed = Math.random() < 0.5;
+    this.balance = 0;
+    this.claimed = false;
+    const bounds = getTableBoundsForNameAsValue(account)
+
+    const grabsRows = await fetchRows<GrabsTableRow>({
+      code: AIRDROPS_ACCOUNT,
+      table: `grabs`,
+      scope: this.data.issuer,
+      lower_bound: `${bounds.lower_bound}`,
+      upper_bound: `${bounds.upper_bound}`,
+      limit: 1,
+      key_type: `uint64`
+    });
+    this.claimed = grabsRows.length > 0 && grabsRows[0].owner === account
+
+    const balanceResult = await axios.get(`${this.data.url_prefix}${account}`).catch(error => console.error(error.message));
+    this.balance = 1 /* TODO when cors issues are fixed */
   }
 
   @computed get tokenSymbol() {
@@ -52,6 +74,4 @@ export default class AirdropItem {
   @computed get bytesRequired() {
     return 241;
   }
-
-  @action async claim() {}
 }
