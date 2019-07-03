@@ -17,13 +17,13 @@ class AirdropStore {
     await this.fetchAirdrops();
     if (this.rootStore.profileStore.isLoggedIn) {
       this.displayAccount = this.rootStore.profileStore.accountInfo!.account_name;
+      await this.fetchBalances();
     }
-    await this.fetchBalances()
   }
 
   @action async fetchAirdrops() {
     const scopes = await fetchAllScopes(AIRDROPS_ACCOUNT, `airdrops`);
-    const airdropsData = await Promise.all(
+    let airdropsData = await Promise.all(
       scopes.map(scope =>
         fetchRows<AirdropItemData>({
           code: AIRDROPS_ACCOUNT,
@@ -42,7 +42,15 @@ class AirdropStore {
   }
 
   @action async fetchBalances() {
-    console.log(`Fetching balances for ${this.displayAccount}`)
+    if (!this.displayAccount) return;
+
+    await Promise.all([
+      this._airdrops.map(airdrop =>
+        airdrop.fetchBalance(this.displayAccount).catch(err => {
+          console.error(`fetchBalances failed: `, err.message);
+        }),
+      ),
+    ]);
   }
 
   @computed get airdrops() {
