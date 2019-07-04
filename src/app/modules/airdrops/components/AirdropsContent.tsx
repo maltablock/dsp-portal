@@ -144,13 +144,19 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
 
   const onClick = (airdropItem: AirdropItem) => () => {
     const payload = { tokenContract: airdropItem.tokenContract, symbol: airdropItem.data.token };
+    if (!airdropStore!.rootStore.profileStore.isLoggedIn) {
+      const loginMenu = document.querySelector('#login-menu');
+      // @ts-ignore
+      if (loginMenu) loginMenu.click();
+      return;
+    }
 
     dialogStore!.openTransactionDialog({
       contentSuccess: <TransactionVClaimSuccess {...payload} />,
       contentPending: <TransactionVClaimPending {...payload} />,
       performTransaction: async () => {
         const result = await vClaim(payload);
-        await airdropStore!.fetchBalances()
+        await airdropStore!.fetchBalances();
         return result;
       },
     });
@@ -173,7 +179,9 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
               <DetailsRow>
                 <DetailsLabel>Balance:</DetailsLabel>
                 <DetailsValue>
-                  {formatAsset({ amount: airdrop.balance, symbol: airdrop.tokenSymbol })}
+                  {airdrop.balance === undefined
+                    ? `Unknown`
+                    : formatAsset({ amount: airdrop.balance, symbol: airdrop.tokenSymbol })}
                 </DetailsValue>
               </DetailsRow>
               <DetailsRow>
@@ -189,7 +197,7 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
             <ButtonWrapper>
               {airdrop.claimed ? (
                 <ClaimedBadge>Claimed</ClaimedBadge>
-              ) : airdrop.balance > 0 ? (
+              ) : airdrop.balance === undefined || airdrop.balance > 0 ? (
                 <ClaimButton onClick={onClick(airdrop)}>Claim</ClaimButton>
               ) : (
                 <ClaimedBadge>Nothing to Claim</ClaimedBadge>
