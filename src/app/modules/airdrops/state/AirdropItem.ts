@@ -12,11 +12,11 @@ export type AirdropItemData = {
 
 type GrabsTableRow = {
   owner: string;
-}
+};
 
 export default class AirdropItem {
   @observable data: AirdropItemData;
-  @observable balance: number = 0;
+  @observable balance: number | undefined = undefined;
   @observable claimed: boolean = false;
 
   constructor(data: AirdropItemData) {
@@ -31,23 +31,37 @@ export default class AirdropItem {
   @action async fetchBalance(account: string) {
     this.resetBalance();
 
-    this.balance = 0;
+    this.balance = undefined;
     this.claimed = false;
-    const bounds = getTableBoundsForNameAsValue(account)
+    const bounds = getTableBoundsForNameAsValue(account);
 
-    const grabsRows = await fetchRows<GrabsTableRow>({
-      code: AIRDROPS_ACCOUNT,
-      table: `grabs`,
-      scope: this.data.issuer,
-      lower_bound: `${bounds.lower_bound}`,
-      upper_bound: `${bounds.upper_bound}`,
-      limit: 1,
-      key_type: `uint64`
-    });
-    this.claimed = grabsRows.length > 0 && grabsRows[0].owner === account
-
-    const balanceResult = await axios.get(`${this.data.url_prefix}${account}`).catch(error => console.error(error.message));
-    this.balance = 1 /* TODO when cors issues are fixed */
+    await Promise.all([
+      fetchRows<GrabsTableRow>({
+        code: AIRDROPS_ACCOUNT,
+        table: `grabs`,
+        scope: this.data.issuer,
+        lower_bound: `${bounds.lower_bound}`,
+        upper_bound: `${bounds.upper_bound}`,
+        limit: 1,
+        key_type: `uint64`,
+      })
+        .then(grabsRows => {
+          this.claimed = grabsRows.length > 0 && grabsRows[0].owner === account;
+        })
+        .catch(error => {
+          console.error(error.message);
+        }),
+      axios
+        .get(`${this.data.url_prefix}${account}`, {
+          headers: { 'content-type': 'application/x-www-form-urlencoded' },
+        })
+        .then(response => {
+          this.balance = Number.parseInt(response.data);
+        })
+        .catch(error => {
+          console.error(error.message);
+        }),
+    ]);
   }
 
   @computed get tokenSymbol() {

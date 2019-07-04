@@ -82,8 +82,9 @@ const AirdropsDescription: React.FC<Props> = ({ airdropStore }: Props) => {
     <CardWrapper>
       <Title>vAirdrops</Title>
       <Message>
-        This portal allows claiming any vAirdropped token. vAirdrop is a new kind of airdrop of
-        LiquidApps and Malta Block that does not require any RAM for the initial token distribution.
+        vAirdrop is a new breakthrough technique for distributing tokens on a massive scale using
+        Web Oracle Service through a DAPP Service Provider (DSP). vAirdrop can be done at a fraction
+        of the cost involved in doing an airdrop in the traditional way.
       </Message>
       <StyledForm onSubmit={onSubmit}>
         <InputTransparent
@@ -92,7 +93,7 @@ const AirdropsDescription: React.FC<Props> = ({ airdropStore }: Props) => {
           placeholder={airdropStore!.displayAccount || `account`}
           value={account}
           onChange={event => setAccount((event.target as HTMLInputElement).value)}
-          autoFocus
+          autoFocus={!airdropStore!.rootStore.profileStore.isLoggedIn}
           maxLength={13}
         />
         <StyledButton type="submit">Search</StyledButton>
