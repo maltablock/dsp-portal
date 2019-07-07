@@ -88,10 +88,10 @@ const TopBar = ({ uiStore }: Props) => {
             DSP Services
           </MainNavigationTabMobile>
           <MainNavigationTabMobile
-            active={uiStore!.mainNavigation === 'vAirdrops'}
-            onClick={() => (setMenuVisible(false), uiStore!.changeMainNavigation('vAirdrops'))}
+            active={uiStore!.mainNavigation === 'LiquidAirdrops'}
+            onClick={() => (setMenuVisible(false), uiStore!.changeMainNavigation('LiquidAirdrops'))}
           >
-            vAirdrops
+            LiquidAirdrops
           </MainNavigationTabMobile>
           <div>
             <ThemeToggle />

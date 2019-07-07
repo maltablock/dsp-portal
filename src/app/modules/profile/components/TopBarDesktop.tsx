@@ -42,10 +42,10 @@ const TopBar = ({ uiStore }: Props) => {
             DSP Services
           </MainNavigationTab>
           <MainNavigationTab
-            active={uiStore!.mainNavigation === 'vAirdrops'}
-            onClick={() => uiStore!.changeMainNavigation('vAirdrops')}
+            active={uiStore!.mainNavigation === 'LiquidAirdrops'}
+            onClick={() => uiStore!.changeMainNavigation('LiquidAirdrops')}
           >
-            vAirdrops
+            LiquidAirdrops
           </MainNavigationTab>
         </MainNavigation>
       </LeftBlock>

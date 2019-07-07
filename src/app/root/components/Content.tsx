@@ -13,7 +13,7 @@ const PageContent = ({ uiStore }: Props) => {
   let content
 
   switch(uiStore!.mainNavigation) {
-    case 'vAirdrops': {
+    case 'LiquidAirdrops': {
       content = <AirdropsContent />
         break;
       }
