@@ -17,7 +17,7 @@ export type TransactionResult = {
 const transactionOptions = {
   broadcast: true,
   blocksBehind: 3,
-  expireSeconds: 60,
+  expireSeconds: 300,
 };
 
 const createAction = (action: any): Action => {
@@ -277,6 +277,7 @@ export const refreshAndCleanupTransaction = async (
 export type VClaimPayload = {
   tokenContract: string;
   symbol: string;
+  accountToClaimFor: string;
 };
 export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult> => {
   return await getWallet().eosApi.transact(
@@ -286,7 +287,7 @@ export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult>
           account: payload.tokenContract,
           name: 'open',
           data: {
-            owner: getWallet().auth!.accountName,
+            owner: payload.accountToClaimFor,
             symbol: payload.symbol,
             ram_payer: getWallet().auth!.accountName,
           },
@@ -295,7 +296,7 @@ export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult>
           account: AIRDROPS_ACCOUNT,
           name: 'grab',
           data: {
-            owner: getWallet().auth!.accountName,
+            owner: payload.accountToClaimFor,
             token_contract: payload.tokenContract,
           }
         })

@@ -8,6 +8,7 @@ class AirdropStore {
   rootStore: RootStore;
   @observable protected _airdrops: AirdropItem[] = [];
   @observable displayAccount: string = '';
+  @observable loadingBalances: boolean = false;
 
   constructor(rootStore: RootStore) {
     this.rootStore = rootStore;
@@ -34,7 +35,9 @@ class AirdropStore {
       ),
     );
 
-    this._airdrops = airdropsData.filter(Boolean).map(data => new AirdropItem(data!));
+    this._airdrops = airdropsData
+      .filter(Boolean)
+      .map((data, index) => new AirdropItem(scopes[index], data!));
   }
 
   @action async changeDisplayAccount(account: string) {
@@ -44,13 +47,20 @@ class AirdropStore {
   @action async fetchBalances() {
     if (!this.displayAccount) return;
 
-    await Promise.all([
-      this._airdrops.map(airdrop =>
-        airdrop.fetchBalance(this.displayAccount).catch(err => {
-          console.error(`fetchBalances failed: `, err.message);
-        }),
-      ),
-    ]);
+    this.loadingBalances = true;
+    try {
+      await Promise.all(
+        this._airdrops.map(airdrop =>
+          airdrop.fetchBalance(this.displayAccount).catch(err => {
+            console.error(`fetchBalances failed: `, err.message);
+          }),
+        ),
+      );
+    } catch (err) {
+      console.error(err.message);
+    }
+
+    this.loadingBalances = false;
   }
 
   @computed get airdrops() {

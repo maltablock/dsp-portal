@@ -128,6 +128,10 @@ class ProfileStore {
       this.fetchInfo();
       this.setLoginStatusToStorage('true');
       this.setWalletToStorage(walletName);
+
+      if(this.rootStore.uiStore.mainNavigation === `LiquidAirdrops`) {
+        this.rootStore.airdropStore.init()
+      }
     } catch (err) {
       console.error(err);
       this.setLoginStatusToStorage('false');

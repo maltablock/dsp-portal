@@ -16,10 +16,12 @@ type GrabsTableRow = {
 
 export default class AirdropItem {
   @observable data: AirdropItemData;
+  @observable tokenContract: string;
   @observable balance: number | undefined = undefined;
   @observable claimed: boolean = false;
 
-  constructor(data: AirdropItemData) {
+  constructor(tokenContract, data: AirdropItemData) {
+    this.tokenContract = tokenContract
     this.data = data;
   }
 
@@ -35,7 +37,7 @@ export default class AirdropItem {
     this.claimed = false;
     const bounds = getTableBoundsForNameAsValue(account);
 
-    await Promise.all([
+    return Promise.all([
       fetchRows<GrabsTableRow>({
         code: AIRDROPS_ACCOUNT,
         table: `grabs`,
@@ -52,13 +54,21 @@ export default class AirdropItem {
           console.error(error.message);
         }),
       axios
-        .get(`${this.data.url_prefix}${account}`, {
+        // .get(`${this.data.url_prefix}${account}`, {
+        .get(`https://airdropsdac-snapshots.s3.us-east-2.amazonaws.com/liquid/tulip/entries/${account}`, {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         })
         .then(response => {
           this.balance = Number.parseInt(response.data);
         })
         .catch(error => {
+          // AWS S3 responds with 403 Forbidden error when account entry does not exist
+          // which means account was never included in the snapshot or had a balance of 0
+          if(error.response && error.response.status === 403) {
+            this.balance = 0;
+            return;
+          }
+
           console.error(error.message);
         }),
     ]);
@@ -75,10 +85,6 @@ export default class AirdropItem {
 
   @computed get tokenName() {
     return this.data.token.split(`,`)[1];
-  }
-
-  @computed get tokenContract() {
-    return this.data.issuer;
   }
 
   @computed get endDate() {

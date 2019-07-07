@@ -123,7 +123,7 @@ const ClaimButton = styled(Button)`
     #5826ff;
 `;
 
-const ClaimedBadge = styled.div`
+const Badge = styled.div`
   display: inline-block;
   background-color: #414dff;
   border-radius: 11px;
@@ -143,7 +143,11 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
   }, [airdropStore]);
 
   const onClick = (airdropItem: AirdropItem) => () => {
-    const payload = { tokenContract: airdropItem.tokenContract, symbol: airdropItem.data.token };
+    const payload = {
+      accountToClaimFor: airdropStore!.displayAccount,
+      tokenContract: airdropItem.tokenContract,
+      symbol: airdropItem.data.token,
+    };
     if (!airdropStore!.rootStore.profileStore.isLoggedIn) {
       const loginMenu = document.querySelector('#login-menu');
       // @ts-ignore
@@ -160,6 +164,21 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
         return result;
       },
     });
+  };
+
+  const geButton = airdrop => {
+    let button: ReactElement;
+    if (airdropStore!.loadingBalances) {
+      button = <Badge>Loading ...</Badge>;
+    } else if (airdrop.claimed) {
+      button = <Badge>Claimed</Badge>;
+    } else if (airdrop.balance === undefined || airdrop.balance > 0) {
+      // undefined can happen if there's an error reading the entry
+      button = <ClaimButton onClick={onClick(airdrop)}>Claim</ClaimButton>;
+    } else {
+      button = <Badge>Nothing to Claim</Badge>;
+    }
+    return button;
   };
 
   let airdropsList: ReactElement | null = null;
@@ -194,15 +213,7 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
               </DetailsRow>
             </DetailsWrapper>
 
-            <ButtonWrapper>
-              {airdrop.claimed ? (
-                <ClaimedBadge>Claimed</ClaimedBadge>
-              ) : airdrop.balance === undefined || airdrop.balance > 0 ? (
-                <ClaimButton onClick={onClick(airdrop)}>Claim</ClaimButton>
-              ) : (
-                <ClaimedBadge>Nothing to Claim</ClaimedBadge>
-              )}
-            </ButtonWrapper>
+            <ButtonWrapper>{geButton(airdrop)}</ButtonWrapper>
           </AirdropWrapper>
         ))}
       </AirdropsList>
