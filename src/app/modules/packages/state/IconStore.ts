@@ -13,7 +13,7 @@ const DEFAULT_ICONS_BY_PROVIDER = {
   airdropsdac1: maltablockIcon,
   eosinfradsp1: 'https://www.eosinfra.io/static/logo-icon.png',
   eosiodetroit: 'https://pbs.twimg.com/profile_images/1003049388946673665/OzbWXSAp_400x400.jpg',
-  eoshenzhenio: 'http://user-assets.sxlcdn.com/images/480719/FhqPX0NIbzcpA4be8naZ0nTvclDT.png?imageMogr2/strip/auto-orient/thumbnail/300x300%3E/quality/90!/format/png',
+  eoshenzhenio: 'https://user-assets.sxlcdn.com/images/480719/FhqPX0NIbzcpA4be8naZ0nTvclDT.png?imageMogr2/strip/auto-orient/thumbnail/300x300%3E/quality/90!/format/png',
   boidcomdsp11: 'https://www.alohaeos.com/media/2019/03/09/x/x/y/boidcomproxy/KMEd-2.png',
   eosusadspdsp: 'https://static.wixstatic.com/media/177a7e_1c4749d75e904539a3b4b1656efac94d~mv2.png/v1/fill/w_60,h_60,al_c,q_80,usm_0.66_1.00_0.01/eosusa_256.webp',
 };
