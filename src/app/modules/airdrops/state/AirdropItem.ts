@@ -54,8 +54,7 @@ export default class AirdropItem {
           console.error(error.message);
         }),
       axios
-        // .get(`${this.data.url_prefix}${account}`, {
-        .get(`https://airdropsdac-snapshots.s3.us-east-2.amazonaws.com/liquid/tulip/entries/${account}`, {
+        .get(`${this.data.url_prefix}${account}`, {
           headers: { 'content-type': 'application/x-www-form-urlencoded' },
         })
         .then(response => {
