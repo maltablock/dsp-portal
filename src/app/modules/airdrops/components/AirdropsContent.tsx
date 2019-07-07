@@ -225,7 +225,7 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
       <AirdropsDescription />
       {airdropStore!.displayAccount ? (
         <InfoText>
-          vAirdrop Balances for: <code>{airdropStore!.displayAccount}</code>
+          LiquidAirdrop Balances for: <code>{airdropStore!.displayAccount}</code>
         </InfoText>
       ) : null}
       {airdropsList}
