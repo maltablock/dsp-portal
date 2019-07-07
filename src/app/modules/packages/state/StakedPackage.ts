@@ -31,10 +31,6 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     return dappPackage
   }
 
-  @computed get quotaNumber() {
-    return this.data.quota;
-  }
-
   @computed get minStakeNumber() {
     if(!this.dappPackage) return 0
     return this.dappPackage.minStakeNumber
@@ -99,6 +95,10 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     }
 
     return refunds
+  }
+
+  @computed get packgePeriodInSeconds() {
+    return this.dappPackage.packgePeriodInSeconds;
   }
 }
 

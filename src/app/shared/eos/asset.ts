@@ -1,5 +1,6 @@
 import { Asset, AssetSymbol } from "app/shared/typings";
 import BigNumber from "bignumber.js";
+import { separateThousands } from "../utils/format";
 
 type FormatOptions = {
   withSymbol?: boolean;
@@ -35,7 +36,7 @@ export function formatAsset({ amount, symbol }: FormattableAsset, formatOptions?
   if (options.separateThousands) {
     // adds `,` thousand separators
     // https://stackoverflow.com/a/2901298/9843487
-    pre = pre.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    pre = separateThousands(pre);
   }
 
   let result = `${pre}.${decimals}`;
