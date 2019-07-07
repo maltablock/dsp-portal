@@ -82,8 +82,8 @@ const AirdropsDescription: React.FC<Props> = ({ airdropStore }: Props) => {
     <CardWrapper>
       <Title>LiquidAirdrops</Title>
       <Message>
-        vAirdrop is a new breakthrough technique for distributing tokens on a massive scale using
-        Web Oracle Service through a DAPP Service Provider (DSP). vAirdrop can be done at a fraction
+        LiquidAirdrop is a new breakthrough technique for distributing tokens on a massive scale using
+        Web Oracle Service through a DAPP Service Provider (DSP). LiquidAirdrops can be done at a fraction
         of the cost involved in doing an airdrop in the traditional way.
       </Message>
       <StyledForm onSubmit={onSubmit}>
