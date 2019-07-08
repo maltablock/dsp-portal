@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 const ContentInfo = styled.div`
   margin-top: 4px;
+  max-width: 800px;
 `;
 
 const AmountText = styled.span`
