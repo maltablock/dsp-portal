@@ -32,7 +32,7 @@ export const sortFn = <P extends Package>(_packages: P[], sortBy: string): P[] =
 
   switch (sortBy) {
     case 'quota':
-      return packages.sort((a, b) => a.quotaNumber - b.quotaNumber);
+      return packages.sort((a, b) => a.quotaAsTransactionsPerSecond - b.quotaAsTransactionsPerSecond);
     case 'min_stake_quantity':
       return packages.sort((a, b) => a.minStakeNumber - b.minStakeNumber);
     case 'min_unstake_period':

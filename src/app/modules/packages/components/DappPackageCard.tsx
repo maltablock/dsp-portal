@@ -59,7 +59,7 @@ const DappPackageCard = ({ dappPackage, dialogStore }: Props) => {
 
   const details = [
     [
-      { label: 'Quota', value: p.data.quota },
+      { label: 'Quota', value: p.quotaAsTransactionsPerTimeFormatted },
       { label: 'Min Stake', value: p.data.min_stake_quantity },
     ],
   ];

@@ -30,7 +30,7 @@ export type IStakedPackageData = {
   package_started: string;
   pending_package: string;
   provider: string;
-  quota: number;
+  quota: string;
   service: string;
   icon?: string;
   stakingBalanceFromSelf: number;

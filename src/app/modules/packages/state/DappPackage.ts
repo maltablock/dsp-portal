@@ -12,10 +12,6 @@ class DappPackage extends PackageBase<IDappPackageData> {
     super(data, packageStore);
   }
 
-  @computed get quotaNumber() {
-    return stringToNumber(this.data.quota);
-  }
-
   @computed get minStakeNumber() {
     return stringToNumber(this.data.min_stake_quantity);
   }
@@ -47,6 +43,10 @@ class DappPackage extends PackageBase<IDappPackageData> {
   
   @computed get stakingBalanceFromSelfDappHdl() {
     return this.stakedPackage ? this.stakedPackage.stakingBalanceFromSelfDappHdl : 0
+  }
+
+  @computed get packgePeriodInSeconds() {
+    return this.data.package_period;
   }
 
   @computed get isDeprecated() {

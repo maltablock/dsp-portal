@@ -39,7 +39,6 @@ export const aggregateStackedPackagesData = ({
   return accountExtResults.map(stake => {
     const identifier = `${stake.provider}|${stake.service}`;
     const { amount: balance, symbol } = decomposeAsset(stake.balance);
-    const { amount: quota } = decomposeAsset(stake.quota);
 
     const stakingBalanceFromSelf: number = decomposeAsset(
       get(groupedStakesAccount, `${identifier}.0.balance`, `0.0000 DAPP`) as string,
@@ -59,7 +58,6 @@ export const aggregateStackedPackagesData = ({
       ...stake,
       balance,
       symbol,
-      quota,
       icon: '',
       stakingBalanceFromSelf,
       stakingBalanceFromSelfDappHdl,
