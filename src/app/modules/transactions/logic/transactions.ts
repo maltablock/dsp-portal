@@ -1,4 +1,8 @@
-import { getWallet } from 'app/shared/eos/wallet';
+import {
+  getWallet,
+  changeWalletRpcToHistoryNode,
+  changeWalletRpcToDsp,
+} from 'app/shared/eos/wallet';
 import {
   DAPPSERVICES_CONTRACT,
   DAPP_SYMBOL,
@@ -46,17 +50,24 @@ export type StakePayload = {
   unstakedDappAmount: number;
 };
 export const stakeTransaction = async (stake: StakePayload): Promise<TransactionResult> => {
-  const stakeAmountDappFormatted = `${stake.quantityDapp || `0.0000`} ${DAPP_SYMBOL.symbolCode}`
+  const stakeAmountDappFormatted = `${stake.quantityDapp || `0.0000`} ${DAPP_SYMBOL.symbolCode}`;
   const stakeAmountDapp = decomposeAsset(stakeAmountDappFormatted).amount;
-  const stakeAmountDappHdlFormatted = `${stake.quantityDappHdl || `0.0000`} ${DAPPHODL_SYMBOL.symbolCode}`
+  const stakeAmountDappHdlFormatted = `${stake.quantityDappHdl || `0.0000`} ${
+    DAPPHODL_SYMBOL.symbolCode
+  }`;
   const stakeAmountDappHdl = decomposeAsset(stakeAmountDappHdlFormatted).amount;
 
-  if (stakeAmountDapp > stake.unstakedDappAmount || stakeAmountDappHdl > stake.unstakedDappHdlAmount) {
+  if (
+    stakeAmountDapp > stake.unstakedDappAmount ||
+    stakeAmountDappHdl > stake.unstakedDappHdlAmount
+  ) {
     throw new Error(
-      `You don't have enough funds to stake ${stakeAmountDappFormatted} and ${stakeAmountDappHdlFormatted}.\nAvailable: ${formatAsset({
-        amount: stake.unstakedDappAmount,
-        symbol: DAPP_SYMBOL,
-      })}, ${formatAsset({ amount: stake.unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL })}`,
+      `You don't have enough funds to stake ${stakeAmountDappFormatted} and ${stakeAmountDappHdlFormatted}.\nAvailable: ${formatAsset(
+        {
+          amount: stake.unstakedDappAmount,
+          symbol: DAPP_SYMBOL,
+        },
+      )}, ${formatAsset({ amount: stake.unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL })}`,
     );
   }
 
@@ -71,7 +82,7 @@ export const stakeTransaction = async (stake: StakePayload): Promise<Transaction
           from: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: stakeAmountDappFormatted
+          quantity: stakeAmountDappFormatted,
         },
       }),
     );
@@ -120,17 +131,24 @@ export type UnstakePayload = {
   stakingBalanceFromSelfDappHdl: number;
 };
 export const unstakeTransaction = async (stake: UnstakePayload): Promise<TransactionResult> => {
-  const stakeAmountDappFormatted = `${stake.quantityDapp || `0.0000`} ${DAPP_SYMBOL.symbolCode}`
+  const stakeAmountDappFormatted = `${stake.quantityDapp || `0.0000`} ${DAPP_SYMBOL.symbolCode}`;
   const stakeAmountDapp = decomposeAsset(stakeAmountDappFormatted).amount;
-  const stakeAmountDappHdlFormatted = `${stake.quantityDappHdl || `0.0000`} ${DAPPHODL_SYMBOL.symbolCode}`
+  const stakeAmountDappHdlFormatted = `${stake.quantityDappHdl || `0.0000`} ${
+    DAPPHODL_SYMBOL.symbolCode
+  }`;
   const stakeAmountDappHdl = decomposeAsset(stakeAmountDappHdlFormatted).amount;
 
-  if (stakeAmountDapp > stake.stakingBalanceFromSelf || stakeAmountDappHdl > stake.stakingBalanceFromSelfDappHdl) {
+  if (
+    stakeAmountDapp > stake.stakingBalanceFromSelf ||
+    stakeAmountDappHdl > stake.stakingBalanceFromSelfDappHdl
+  ) {
     throw new Error(
-      `You don't have enough funds staked to this package to unstake ${stakeAmountDappFormatted} and ${stakeAmountDappHdlFormatted}.\nAvailable: ${formatAsset({
-        amount: stake.stakingBalanceFromSelf,
-        symbol: DAPP_SYMBOL,
-      })}, ${formatAsset({ amount: stake.stakingBalanceFromSelfDappHdl, symbol: DAPPHODL_SYMBOL })}`,
+      `You don't have enough funds staked to this package to unstake ${stakeAmountDappFormatted} and ${stakeAmountDappHdlFormatted}.\nAvailable: ${formatAsset(
+        {
+          amount: stake.stakingBalanceFromSelf,
+          symbol: DAPP_SYMBOL,
+        },
+      )}, ${formatAsset({ amount: stake.stakingBalanceFromSelfDappHdl, symbol: DAPPHODL_SYMBOL })}`,
     );
   }
 
@@ -144,7 +162,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
           to: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: stakeAmountDappFormatted
+          quantity: stakeAmountDappFormatted,
         },
       }),
     );
@@ -159,7 +177,7 @@ export const unstakeTransaction = async (stake: UnstakePayload): Promise<Transac
           owner: getWallet().auth!.accountName,
           provider: stake.provider,
           service: stake.service,
-          quantity: stakeAmountDappHdlFormatted
+          quantity: stakeAmountDappHdlFormatted,
         },
       }),
     );
@@ -273,35 +291,45 @@ export const refreshAndCleanupTransaction = async (
   );
 };
 
-
 export type VClaimPayload = {
   tokenContract: string;
   symbol: string;
   accountToClaimFor: string;
 };
 export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult> => {
-  return await getWallet().eosApi.transact(
-  {
-      actions: [
-        createAction({
-          account: payload.tokenContract,
-          name: 'open',
-          data: {
-            owner: payload.accountToClaimFor,
-            symbol: payload.symbol,
-            ram_payer: getWallet().auth!.accountName,
-          },
-        }),
-        createAction({
-          account: AIRDROPS_ACCOUNT,
-          name: 'grab',
-          data: {
-            owner: payload.accountToClaimFor,
-            token_contract: payload.tokenContract,
-          }
-        })
-      ],
-    },
-    transactionOptions,
-  );
+  // ledger's discover needs a (state-)history-api enabled node
+  // but DSPs don't have that
+  // change to DSP node for this action
+  try {
+    changeWalletRpcToDsp();
+    const txResult = await getWallet().eosApi.transact(
+      {
+        actions: [
+          createAction({
+            account: payload.tokenContract,
+            name: 'open',
+            data: {
+              owner: payload.accountToClaimFor,
+              symbol: payload.symbol,
+              ram_payer: getWallet().auth!.accountName,
+            },
+          }),
+          createAction({
+            account: AIRDROPS_ACCOUNT,
+            name: 'grab',
+            data: {
+              owner: payload.accountToClaimFor,
+              token_contract: payload.tokenContract,
+            },
+          }),
+        ],
+      },
+      transactionOptions,
+    );
+    return txResult;
+  } catch (err) {
+    throw err;
+  } finally {
+    changeWalletRpcToHistoryNode();
+  }
 };

@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import flatten from 'lodash/flatten';
-import { getWallet, fetchRows, decomposeAsset, selectWalletProvider } from 'app/shared/eos';
+import { getWallet, fetchRows, decomposeAsset, selectWalletProvider, changeWalletRpcToHistoryNode, changeWalletRpcToDsp } from 'app/shared/eos';
 import {
   DAPPSERVICES_CONTRACT,
   DAPPHODL_CONTRACT,
@@ -122,6 +122,7 @@ class ProfileStore {
       }
 
       const accountInfo = (await getWallet().login(...loginParams)) as unknown;
+
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
       this.dappHdlInfo = this.dappInfo = undefined;
