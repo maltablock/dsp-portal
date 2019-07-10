@@ -112,11 +112,17 @@ class ProfileStore {
 
         if (loginParamsCache) {
           loginParams = loginParamsCache;
+          // for auto-login we need to call discover once
+          // as eos-transit does not directly pass-down keyIndex, key to the ledger login function
+          try {
+            await getWallet().discover({ pathIndexList: [Number.parseInt(loginParams[2])] })
+          } catch {}
         } else {
           const {
-            data: { account, authorization },
+            data: { account, authorization, index, key },
           } = await this.rootStore.dialogStore.openDialog(DialogTypes.LEDGER_ACCOUNT);
-          loginParams = [account, authorization];
+          loginParams = [account, authorization, index, key];
+
           this.setLoginParamsToStorage(loginParams);
         }
       }

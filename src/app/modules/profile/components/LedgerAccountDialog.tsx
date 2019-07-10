@@ -70,6 +70,7 @@ type Account = {
 @observer
 class LedgerAccountDialog extends React.Component<Props> {
   @observable keyIndex: string = '';
+  @observable key: string = '';
   @observable selectedAccount: Account | null = null;
   @observable isFetching = false;
   @observable accounts: Account[] = [];
@@ -98,6 +99,7 @@ class LedgerAccountDialog extends React.Component<Props> {
 
       const accountsMap = data.keyToAccountMap.find(({ index }) => index === keyIndex);
       if (!accountsMap) throw new Error(`Accounts Map not found for key index: ${keyIndex}`);
+      this.key = accountsMap.key
       this.accounts = accountsMap.accounts;
     } catch (err) {
       console.error(err);
@@ -109,7 +111,7 @@ class LedgerAccountDialog extends React.Component<Props> {
   @action handleSubmit = () => {
     if (!this.selectedAccount) return;
     const { account, authorization } = this.selectedAccount;
-    this.props.dialog.submit({ account, authorization })
+    this.props.dialog.submit({ account, authorization, index: this.keyIndex, key: this.key })
   }
 
   render() {

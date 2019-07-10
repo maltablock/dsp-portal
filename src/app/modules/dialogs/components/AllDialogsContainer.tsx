@@ -20,12 +20,12 @@ const AllDialogs = ({ dialogStore }: Props) => {
       }
 
       {
-        dialogStore!.dialogs.map(dialog => {
+        dialogStore!.dialogs.map((dialog, index) => {
           switch (dialog.type) {
             case DialogTypes.WITHDRAW_WARNING:
-              return <WithdrawWarningDialog dialog={dialog} />;
+              return <WithdrawWarningDialog key={index} dialog={dialog} />;
             case DialogTypes.LEDGER_ACCOUNT:
-              return <LedgerAccountDialog dialog={dialog} />
+              return <LedgerAccountDialog key={index} dialog={dialog} />
             default:
               return null;
           }
