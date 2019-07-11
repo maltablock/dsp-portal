@@ -1,6 +1,6 @@
 import { observable, action, computed } from 'mobx';
 import flatten from 'lodash/flatten';
-import { getWallet, fetchRows, decomposeAsset, selectWalletProvider } from 'app/shared/eos';
+import { getWallet, fetchRows, decomposeAsset, selectWalletProvider, changeWalletRpcToHistoryNode, changeWalletRpcToDsp } from 'app/shared/eos';
 import {
   DAPPSERVICES_CONTRACT,
   DAPPHODL_CONTRACT,
@@ -112,16 +112,23 @@ class ProfileStore {
 
         if (loginParamsCache) {
           loginParams = loginParamsCache;
+          // for auto-login we need to call discover once
+          // as eos-transit does not directly pass-down keyIndex, key to the ledger login function
+          try {
+            await getWallet().discover({ pathIndexList: [Number.parseInt(loginParams[2])] })
+          } catch {}
         } else {
           const {
-            data: { account, authorization },
+            data: { account, authorization, index, key },
           } = await this.rootStore.dialogStore.openDialog(DialogTypes.LEDGER_ACCOUNT);
-          loginParams = [account, authorization];
+          loginParams = [account, authorization, index, key];
+
           this.setLoginParamsToStorage(loginParams);
         }
       }
 
       const accountInfo = (await getWallet().login(...loginParams)) as unknown;
+
       this.accountInfo = accountInfo as AccountInfoFixed;
       // reset all observables to not have stale data from previous account
       this.dappHdlInfo = this.dappInfo = undefined;

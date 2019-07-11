@@ -27,7 +27,7 @@ const KylinNetwork: IEOSNetwork = createNetwork(
 );
 
 const MainNetwork: IEOSNetwork = createNetwork(
-  `https://dsp.airdropsdac.com:443`,
+  `https://public.eosinfra.io:443`,
   `aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906`,
 );
 
@@ -46,8 +46,18 @@ function getNetwork() {
   }
 }
 
+function getDspEndpointForNetwork() {
+  const eosNetwork = getNetworkName()
+
+  switch (eosNetwork) {
+    default:
+      return `https://dsp.airdropsdac.com:443`;
+  }
+}
+
 const network = getNetwork();
 
 const rpc = new JsonRpc(network.nodeEndpoint);
+const dspRpc = new JsonRpc(getDspEndpointForNetwork());
 
-export { getNetwork, getNetworkName, rpc };
+export { getNetwork, getNetworkName, rpc, dspRpc };

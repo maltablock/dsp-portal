@@ -1,12 +1,13 @@
 import { initAccessContext, Wallet } from 'eos-transit';
 
+import { Api, JsonRpc } from 'eosjs';
 import scatter from 'eos-transit-scatter-provider';
 import ledger from 'eos-transit-ledger-provider';
 import lynx from 'eos-transit-lynx-provider';
 import meetone from 'eos-transit-meetone-provider';
 import tokenpocket from 'eos-transit-tokenpocket-provider';
 
-import { getNetwork } from './networks';
+import { getNetwork, rpc, dspRpc } from './networks';
 import { WALLETS, walletIdByName } from './constants';
 
 const network = getNetwork();
@@ -32,6 +33,24 @@ export function selectWalletProvider(walletName: WALLETS) {
 }
 
 export function getWallet() {
-  if (!wallet) throw new Error("Wallet is not initialized yet!")
+  if (!wallet) throw new Error('Wallet is not initialized yet!');
   return wallet;
+}
+
+function changeWalletRpc(rpc) {
+  const wallet = getWallet();
+  wallet.ctx.eosRpc = rpc;
+  wallet.eosApi = new Api({
+    rpc: rpc,
+    chainId: wallet.ctx.network.chainId,
+    signatureProvider: wallet.provider.signatureProvider,
+  });
+}
+
+export function changeWalletRpcToDsp() {
+  changeWalletRpc(dspRpc)
+}
+
+export function changeWalletRpcToHistoryNode() {
+  changeWalletRpc(rpc)
 }

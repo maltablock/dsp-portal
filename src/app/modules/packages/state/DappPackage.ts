@@ -50,9 +50,12 @@ class DappPackage extends PackageBase<IDappPackageData> {
   }
 
   @computed get isDeprecated() {
+    // deprecation is not implemented in the smart contract yet
+    // make nothing deprecated except known deprecated airdropsdac1 packages
+    return !this.data.api_endpoint || this.data.api_endpoint === `null`;
+
     // handle special case until enablepkg action is implemented in contract
-    if(this.providerLowercased === `airdropsdac1` && (this.packageId === `ora1` || this.packageId === `cron1`)) return false
-    return !(Boolean(this.data.enabled) && this.data.api_endpoint && this.data.api_endpoint !== `null`)
+    // return !(Boolean(this.data.enabled) && this.data.api_endpoint && this.data.api_endpoint !== `null`)
   }
 }
 
