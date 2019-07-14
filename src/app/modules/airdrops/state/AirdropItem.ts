@@ -2,6 +2,8 @@ import { computed, observable, action } from 'mobx';
 import { fetchRows, getTableBoundsForNameAsValue } from 'app/shared/eos';
 import { AIRDROPS_ACCOUNT } from 'app/shared/eos/constants';
 import axios from 'axios';
+import emanateSrc from 'app/shared/assets/emanate.svg'
+import liquidAppsSrc from 'app/shared/icons/liquidapps_logo.svg';
 
 export type AirdropItemData = {
   issuer: string;
@@ -92,5 +94,14 @@ export default class AirdropItem {
 
   @computed get bytesRequired() {
     return 241;
+  }
+
+  @computed get tokenLogoSrc() {
+    switch(this.tokenContract) {
+      case `emanateoneos`:
+        return emanateSrc
+      default:
+        return liquidAppsSrc
+    }
   }
 }
