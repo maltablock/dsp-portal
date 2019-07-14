@@ -5,7 +5,6 @@ import { inject, observer } from 'mobx-react';
 import AirdropsDescription from './AirdropsDescription';
 import AirdropStore from '../state/AirdropStore';
 import Button from 'app/shared/components/Button';
-import liquidAppsLogo from 'app/shared/icons/liquidapps_logo.svg';
 import { formatAsset } from 'app/shared/eos';
 import AirdropItem from '../state/AirdropItem';
 import { DialogStore } from 'app/modules/dialogs';
@@ -86,6 +85,7 @@ const TokenIcon = styled.img`
   height: 48px;
   border-radius: 50%;
   margin-right: 8px;
+  mix-blend-mode: ${lightDarkValues(`difference`, `initial`)};
 `;
 
 const SubTitle = styled.div`
@@ -188,7 +188,7 @@ const AirdropsContent = ({ airdropStore, dialogStore }: Props) => {
         {airdropStore!.airdrops.map(airdrop => (
           <AirdropWrapper key={`${airdrop.tokenContract}|${airdrop.tokenName}`}>
             <Heading>
-              <TokenIcon src={liquidAppsLogo} />
+              <TokenIcon src={airdrop.tokenLogoSrc} />
               <Title>{airdrop.tokenName}</Title>
             </Heading>
 
