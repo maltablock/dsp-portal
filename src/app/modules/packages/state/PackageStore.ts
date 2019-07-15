@@ -114,15 +114,15 @@ class PackageStore {
     // bounds for checksum256 are split into two 16 bytes little-endians
     // https://eosio.stackexchange.com/a/4344/118
     const stakesDappHodlBounds = {
-      lower_bound: `${nameBounds.lower_bound}${`0`.repeat(16)}${`0`.repeat(32)}`,
-      upper_bound: `${nameBounds.upper_bound}${`0`.repeat(16)}${`F`.repeat(32)}`,
+      lower_bound: `${nameBounds.lower_bound}${`0`.repeat(48)}`,
+      upper_bound: `${nameBounds.upper_bound}${`0`.repeat(48)}`,
     };
 
     // bounds for checksum256 are split into two 16 bytes little-endians
     // https://eosio.stackexchange.com/a/4344/118
     const refundsDappHodlBounds = {
       lower_bound: `${nameBounds.lower_bound}${`0`.repeat(48)}`,
-      upper_bound: `${nameBounds.upper_bound}${`F`.repeat(48)}`,
+      upper_bound: `${nameBounds.upper_bound}${`0`.repeat(48)}`,
     };
 
     const [
