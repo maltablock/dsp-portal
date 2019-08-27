@@ -42,7 +42,9 @@ class IconStore {
         const iconUrl = res && res.data && res.data.logo && res.data.logo.logo_256;
 
         if (iconUrl && isURL(iconUrl)) {
-          this.iconUrlByProvider.set(provider, iconUrl);
+          // avoid mixed content
+          let httpsIconUrl = iconUrl.replace(`http://`, `https://`)
+          this.iconUrlByProvider.set(provider, httpsIconUrl);
           return true;
         } else {
           throw new Error(`Icon URL is empty or invalid. URL: "${iconUrl}"`)
