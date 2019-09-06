@@ -47,8 +47,8 @@ export const TableContent = styled.ol`
 export const TableRow = styled(TableHeader)`
   display: table-row;
   margin: 0;
-  padding: 16px 0;
   text-indent: 0;
+  padding: 16px 0;
   list-style-type: 0;
   width: 100%;
 

@@ -49,7 +49,7 @@ export const _OptionItem = styled.div<any>`
 
   ${props =>
     props.active &&
-    css`
+    `
       background-color: ${lightDarkValues('#c1c5cc', '#0b1422')};
       color: ${lightDarkValues('#555', '#67768e')};
     `}
