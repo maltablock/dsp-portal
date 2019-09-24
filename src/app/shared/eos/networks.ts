@@ -51,7 +51,7 @@ function getDspEndpointForNetwork() {
 
   switch (eosNetwork) {
     default:
-      return `https://dsp.airdropsdac.com:31443`;
+      return `https://dsp.airdropsdac.com`;
   }
 }
 
