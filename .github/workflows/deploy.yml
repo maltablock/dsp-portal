@@ -29,6 +29,8 @@ jobs:
 
       - name: Print
         run: |
+          pwd
+          ls -al
           cd build
           ls -al
 
