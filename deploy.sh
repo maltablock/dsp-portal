@@ -14,5 +14,6 @@ gsutil -m rsync -d -r ${PWD}/build gs://${BUCKET_URI}/
 # Make Files Publically Accessible
 gsutil -m acl ch -r -u AllUsers:R gs://${BUCKET_URI}/*
 
-# Edit the website configuration
+# Edit the bucket configuration to serve main and error websites
+# instead of the standard bucket listing
 gsutil web set -m index.html -e index.html gs://${BUCKET_URI}

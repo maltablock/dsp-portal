@@ -1,5 +1,7 @@
 # DSP Portal App
 
+> ⚠️ **Pushes to master are automatically deployed.**
+
 ## Available Scripts
 
 In the project directory, you can run:
