@@ -43,7 +43,7 @@ export default class AirdropItem {
       fetchRows<GrabsTableRow>({
         code: AIRDROPS_ACCOUNT,
         table: `grabs`,
-        scope: this.data.issuer,
+        scope: this.tokenContract,
         lower_bound: `${bounds.lower_bound}`,
         upper_bound: `${bounds.upper_bound}`,
         limit: 1,

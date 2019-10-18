@@ -13,7 +13,7 @@ import { WALLETS, walletIdByName } from './constants';
 const network = getNetwork();
 
 const accessContext = initAccessContext({
-  appName: 'DAPP Portal Malta Block',
+  appName: `DAPP Portal Malta Block`,
   network,
   walletProviders: [scatter(), ledger(), lynx(), meetone(), tokenpocket()],
 });
