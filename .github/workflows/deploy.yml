@@ -23,7 +23,7 @@ jobs:
       - name: npm install, build
         run: |
           npm install
-          npm build
+          npm run build
         env:
           CI: true
 
@@ -44,11 +44,9 @@ jobs:
 #         with:
 #           args: "components install beta --quiet && gcloud beta run deploy ${{ secrets.GCLOUD_APP_NAME }} --quiet --image gcr.io/${{ secrets.GCLOUD_PROJECT }}/${{ secrets.GCLOUD_APP_NAME }} --region us-east1 --project ${{ secrets.GCLOUD_PROJECT }} --platform managed"
 
-#      - name:  gcloud deploy
-#        uses: actions/gcloud/cli@master
-#        with:
-#          args: app deploy
-#        env:
-#          GCLOUD_AUTH: ${{ secrets.GCLOUD_AUTH }}
-#          CLOUDSDK_CORE_PROJECT: ${{ secrets.PROJECT_NAME }}
-#
+#       - name: Upload to GCP bucket
+#         uses: docker://gcr.io/cloud-builders/gsutil
+#         with:
+#           args: -m cp -r build/* < bucket link for gsutil >
+#         env:
+#           CLOUDSDK_CORE_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT_ID }}
