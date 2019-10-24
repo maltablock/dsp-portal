@@ -106,3 +106,9 @@ export type RefundsTableRow = {
   service: string;
   unstake_time: string;
 };
+
+export type WithRouterProps = {
+  location: {
+    pathname: string
+  }
+}

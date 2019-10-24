@@ -18,6 +18,8 @@ import {
 import demoData from '../demo-data.json';
 import { DialogTypes } from 'app/modules/dialogs';
 import { RpcError } from 'eosjs';
+import browserHistory from 'app/root/browserHistory';
+import { ROUTES } from 'app/root/constants/routes';
 
 // AccountInfo from eos-transit/lib has the wrong types
 type AccountInfoFixed = {
@@ -136,7 +138,7 @@ class ProfileStore {
       this.setLoginStatusToStorage('true');
       this.setWalletToStorage(walletName);
 
-      if(this.rootStore.uiStore.mainNavigation === `LiquidAirdrops`) {
+      if (browserHistory.location.pathname === ROUTES.LIQUID_AIRDROPS) {
         this.rootStore.airdropStore.init()
       }
     } catch (err) {

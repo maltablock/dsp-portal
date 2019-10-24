@@ -1,36 +1,16 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react';
+import { Route, Switch, Redirect } from 'react-router';
 
-import UiStore from '../state/UiStore';
 import { AirdropsContent } from 'app/modules/airdrops';
 import DspServicesContent from './DspServicesContent';
+import { ROUTES } from '../constants/routes';
 
-type Props = {
-  uiStore?: UiStore;
-}
+const PageContent = () => (
+  <Switch>
+    <Route path={ROUTES.MAIN} exact component={DspServicesContent} />
+    <Route path={ROUTES.LIQUID_AIRDROPS} exact component={AirdropsContent} />
+    <Redirect to={ROUTES.MAIN} />
+  </Switch>
+)
 
-const PageContent = ({ uiStore }: Props) => {
-  let content
-
-  switch(uiStore!.mainNavigation) {
-    case 'LiquidAirdrops': {
-      content = <AirdropsContent />
-        break;
-      }
-      case 'DSP Services':
-      default: {
-        content = <DspServicesContent />
-        break;
-      }
-  }
-
-  return content
-}
-
-export default inject('uiStore')(observer(PageContent));
-
-
-
-
-
-
+export default PageContent;

@@ -1,7 +1,9 @@
 import React from 'react';
 import { Provider as MobxProvider, observer } from 'mobx-react';
 import { ThemeProvider } from 'styled-components';
+import { Router } from 'react-router';
 
+import browserHistory from './browserHistory';
 import RootStore from './RootStore';
 import PageWrapper from './components/PageWrapper';
 import { AllDialogsContainer } from 'app/modules/dialogs';
@@ -23,19 +25,21 @@ class App extends React.Component {
   render() {
     return (
       <MobxProvider {...rootStore}>
-        <ThemeProvider theme={{ mode: rootStore.uiStore.mode }}>
-          <React.Fragment>
-            <GlobalStyles />
+        <Router history={browserHistory}>
+          <ThemeProvider theme={{ mode: rootStore.uiStore.mode }}>
+            <React.Fragment>
+              <GlobalStyles />
 
-            <PageWrapper>
-              <TopBar />
-              <Content />
-              <AllDialogsContainer />
-              <Footer />
-            </PageWrapper>
+              <PageWrapper>
+                <TopBar />
+                <Content />
+                <AllDialogsContainer />
+                <Footer />
+              </PageWrapper>
 
-          </React.Fragment>
-        </ThemeProvider>
+            </React.Fragment>
+          </ThemeProvider>
+        </Router>
       </MobxProvider>
     );
   }
