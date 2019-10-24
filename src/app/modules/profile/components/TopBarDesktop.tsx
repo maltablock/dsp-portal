@@ -1,11 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
-import { inject, observer } from 'mobx-react';
-import UiStore from 'app/root/state/UiStore';
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
+
 import { ReactComponent as Logo } from 'app/shared/assets/logo-maltablock.svg';
 import { MainNavigationTab } from 'app/shared/components/Tabs';
 import { media } from 'app/shared/styles/breakpoints';
 import { LeftBlock, LoginControls, RightBlock, ThemeToggle, LogoText } from './TopBarShared';
+import { WithRouterProps } from 'app/shared/typings';
+import { ROUTES_LIST } from 'app/root/constants/routes';
 
 const MainNavigation = styled.div`
   height: 100%;
@@ -24,29 +27,22 @@ const MainNavigation = styled.div`
   }
 `;
 
-type Props = {
-  uiStore?: UiStore;
-};
-
-const TopBar = ({ uiStore }: Props) => {
+const TopBar = ({ location: { pathname } }: WithRouterProps) => {
   return (
     <React.Fragment>
       <LeftBlock>
         <Logo width={48} height={48} />
         <LogoText>Malta Block</LogoText>
         <MainNavigation>
-          <MainNavigationTab
-            active={uiStore!.mainNavigation === 'DSP Services'}
-            onClick={() => uiStore!.changeMainNavigation('DSP Services')}
-          >
-            DSP Services
-          </MainNavigationTab>
-          <MainNavigationTab
-            active={uiStore!.mainNavigation === 'LiquidAirdrops'}
-            onClick={() => uiStore!.changeMainNavigation('LiquidAirdrops')}
-          >
-            LiquidAirdrops
-          </MainNavigationTab>
+          {
+            ROUTES_LIST.map(({ path, text }) =>
+              <Link to={path}>
+                <MainNavigationTab active={path === pathname}>
+                  {text}
+                </MainNavigationTab>
+              </Link>
+            )
+          }
         </MainNavigation>
       </LeftBlock>
 
@@ -58,4 +54,4 @@ const TopBar = ({ uiStore }: Props) => {
   );
 };
 
-export default inject('profileStore', 'uiStore')(observer(TopBar));
+export default withRouter(TopBar);

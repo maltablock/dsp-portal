@@ -1,11 +1,12 @@
-import UiStore from 'app/root/state/UiStore';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
+import { withRouter } from 'react-router';
+import { Link } from 'react-router-dom';
+
 import { ReactComponent as Logo } from 'app/shared/assets/logo-maltablock.svg';
 import { ReactComponent as CloseIcon } from 'app/shared/icons/icon-menu-close.svg';
 import { ReactComponent as MenuIcon } from 'app/shared/icons/icon-menu.svg';
 import { lightDarkValues } from 'app/shared/styles/utils';
-import { inject, observer } from 'mobx-react';
-import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
 import {
   LeftBlock,
   LoginControls,
@@ -15,6 +16,8 @@ import {
   LogoText,
 } from './TopBarShared';
 import { MainNavigationTab } from 'app/shared/components/Tabs';
+import { ROUTES_LIST } from 'app/root/constants/routes';
+import { WithRouterProps } from 'app/shared/typings';
 
 const MenuIconWrapper = styled.button`
   margin-left: 16px;
@@ -48,11 +51,8 @@ const MainNavigationTabMobile = styled(MainNavigationTab)`
   margin-bottom: 40px;
 `
 
-type Props = {
-  uiStore?: UiStore;
-};
 
-const TopBar = ({ uiStore }: Props) => {
+const TopBar = ({ location: { pathname } }: WithRouterProps) => {
   const [showMenu, setMenuVisible] = useState(false);
 
   // prevent scrolling in body when menu is open
@@ -81,18 +81,15 @@ const TopBar = ({ uiStore }: Props) => {
       </RightBlock>
       {showMenu && (
         <MobileOverlay>
-          <MainNavigationTabMobile
-            active={uiStore!.mainNavigation === 'DSP Services'}
-            onClick={() => (setMenuVisible(false), uiStore!.changeMainNavigation('DSP Services'))}
-          >
-            DSP Services
-          </MainNavigationTabMobile>
-          <MainNavigationTabMobile
-            active={uiStore!.mainNavigation === 'LiquidAirdrops'}
-            onClick={() => (setMenuVisible(false), uiStore!.changeMainNavigation('LiquidAirdrops'))}
-          >
-            LiquidAirdrops
-          </MainNavigationTabMobile>
+          {
+            ROUTES_LIST.map(({ path, text }) =>
+              <Link to={path} onClick={() => setMenuVisible(false)}>
+                <MainNavigationTabMobile active={path === pathname}>
+                  {text}
+                </MainNavigationTabMobile>
+              </Link>
+            )
+          }
           <div>
             <ThemeToggle />
           </div>
@@ -102,4 +99,4 @@ const TopBar = ({ uiStore }: Props) => {
   );
 };
 
-export default inject('uiStore')(observer(TopBar));
+export default withRouter(TopBar)
