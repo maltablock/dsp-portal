@@ -38,7 +38,7 @@
     "start": "NODE_PATH=src/ react-scripts start",
     "build": "NODE_PATH=src/ react-scripts build",
     "test": "react-scripts test",
-    "deploy": "npm run build && sh ./deploy.sh",
+    "deploy": "npm run build && sh ./postbuild.sh && sh ./deploy.sh",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
