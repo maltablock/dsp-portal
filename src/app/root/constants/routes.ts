@@ -1,6 +1,6 @@
 export const ROUTES = {
   MAIN: '/',
-  LIQUID_AIRDROPS: '/liquiairdrops'
+  LIQUID_AIRDROPS: '/liquidairdrops'
 };
 
 export const ROUTES_LIST = [
