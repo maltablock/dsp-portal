@@ -17,6 +17,7 @@
     "eos-transit-scatter-provider": "^3.1.0",
     "eos-transit-tokenpocket-provider": "^3.1.2",
     "eosjs": "^20.0.0",
+    "history": "^4.10.1",
     "lodash": "^4.17.11",
     "long": "^4.0.0",
     "mobx": "^5.10.1",
@@ -25,6 +26,8 @@
     "react-dom": "^16.8.6",
     "react-media": "^1.9.2",
     "react-onclickoutside": "^6.8.0",
+    "react-router": "^5.1.2",
+    "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
     "styled-components": "^4.2.0",
     "styled-theming": "^2.2.0",
@@ -35,7 +38,7 @@
     "start": "NODE_PATH=src/ react-scripts start",
     "build": "NODE_PATH=src/ react-scripts build",
     "test": "react-scripts test",
-    "deploy": "npm run build && sh ./deploy.sh",
+    "deploy": "npm run build && sh ./postbuild.sh && sh ./deploy.sh",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -54,8 +57,11 @@
     ]
   },
   "devDependencies": {
+    "@types/history": "^4.7.3",
     "@types/lodash": "^4.14.134",
     "@types/react-onclickoutside": "^6.7.3",
+    "@types/react-router": "^5.1.2",
+    "@types/react-router-dom": "^5.1.0",
     "@types/styled-components": "^4.1.15",
     "@types/styled-theming": "^2.2.1",
     "cross-env": "^5.2.0"

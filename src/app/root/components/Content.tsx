@@ -1,36 +1,23 @@
 import React from 'react'
-import { inject, observer } from 'mobx-react';
+import { Route, Switch, Redirect } from 'react-router';
 
-import UiStore from '../state/UiStore';
 import { AirdropsContent } from 'app/modules/airdrops';
 import DspServicesContent from './DspServicesContent';
+import { ROUTES } from '../constants/routes';
 
-type Props = {
-  uiStore?: UiStore;
-}
+const PageContent = () => (
+  <Switch>
+    <Route path={ROUTES.MAIN} exact component={DspServicesContent} />
 
-const PageContent = ({ uiStore }: Props) => {
-  let content
+    {/*
+      Temporary fix to handle trailing slash for `LIQUID_AIRDROPS` route.
+      TODO: Remove this redirect when it will be fixed on the server-side.
+    */}
+    <Redirect exact strict from={ROUTES.LIQUID_AIRDROPS + '/'} to={ROUTES.LIQUID_AIRDROPS} />
 
-  switch(uiStore!.mainNavigation) {
-    case 'LiquidAirdrops': {
-      content = <AirdropsContent />
-        break;
-      }
-      case 'DSP Services':
-      default: {
-        content = <DspServicesContent />
-        break;
-      }
-  }
+    <Route path={ROUTES.LIQUID_AIRDROPS} exact component={AirdropsContent} />
+    <Redirect to={ROUTES.MAIN} />
+  </Switch>
+)
 
-  return content
-}
-
-export default inject('uiStore')(observer(PageContent));
-
-
-
-
-
-
+export default PageContent;
