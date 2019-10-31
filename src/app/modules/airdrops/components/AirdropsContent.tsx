@@ -85,7 +85,6 @@ const TokenIcon = styled.img`
   height: 48px;
   border-radius: 50%;
   margin-right: 8px;
-  mix-blend-mode: ${lightDarkValues(`difference`, `initial`)};
 `;
 
 const SubTitle = styled.div`
