@@ -79,7 +79,6 @@ const getCardDetails = (p: StakedPackage) => {
   }
 
   if (p.refundFromSelf || p.refundFromSelfDappHdl) {
-    console.log(p.refundFromSelfDappHdl)
     const dappUnstakeTime = p.refundFromSelf ? p.refundFromSelf.unstake_time : new Date(0)
     const dappHdlUnstakeTime = p.refundFromSelfDappHdl ? p.refundFromSelfDappHdl.unstake_time : new Date(0)
     const maxUnstakeTime = dappUnstakeTime.getTime() > dappHdlUnstakeTime.getTime() ? dappUnstakeTime : dappHdlUnstakeTime
