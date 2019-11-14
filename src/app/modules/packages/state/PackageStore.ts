@@ -199,7 +199,8 @@ class PackageStore {
     );
 
     this.stakedPackages = aggregateStackedPackagesData({
-      accountExtResults,
+      // on Kylin the secondary index works in a different way and returns all rows, filter by our account
+      accountExtResults: accountExtResults.filter(accExt => accExt.account === accountInfo.account_name),
       stakesDappHodlResults,
       stakesAccountResults,
       refundsDappHodlResults,

@@ -21,8 +21,8 @@ type GetTableRowsOptions = {
 export async function fetchRows<T>(options: GetTableRowsOptions): Promise<T[]> {
   const mergedOptions = {
     json: true,
-    lower_bound: 0,
-    upper_bound: -1,
+    lower_bound: undefined,
+    upper_bound: undefined,
     limit: 9999,
     ...options,
   };
