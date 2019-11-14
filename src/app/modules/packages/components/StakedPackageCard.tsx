@@ -1,16 +1,33 @@
 import React from 'react';
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import StakedPackage from '../state/StakedPackage';
 import PackageCard from './PackageCard';
 import { formatAsset } from 'app/shared/eos';
 import { DialogStore } from 'app/modules/dialogs';
-import { unstakeTransaction } from 'app/modules/transactions/logic/transactions';
+import { unstakeTransaction, stakeTransaction } from 'app/modules/transactions/logic/transactions';
 import TransactionUnstakePending from 'app/modules/transactions/components/TransactionUnstakePending';
 import TransactionUnstakeSuccess from 'app/modules/transactions/components/TransactionUnstakeSuccess';
 import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
 import { secondsToTimeObject } from 'app/shared/utils/time';
 import { differenceInSeconds } from 'date-fns';
+import ToggleButton from 'app/shared/components/ToggleButton';
+import TransactionStakeSuccess from 'app/modules/transactions/components/TransactionStakeSuccess';
+import TransactionStakePending from 'app/modules/transactions/components/TransactionStakePending';
+
+const ToggleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+`;
+
+const ToggleLabel = styled.div<{ isActive?: boolean, alignRight?: boolean }>`
+  width: 50%;
+  opacity: ${props => props.isActive ? 1 : 0.3};
+  text-align: ${props => props.alignRight ? 'right' : 'left'};
+  transition: 0.4s;
+`;
 
 type Props = {
   stakedPackage: StakedPackage;
@@ -61,28 +78,18 @@ const getCardDetails = (p: StakedPackage) => {
     });
   }
 
-  if (p.refundFromSelf) {
+  if (p.refundFromSelf || p.refundFromSelfDappHdl) {
+    const dappUnstakeTime = p.refundFromSelf ? p.refundFromSelf.unstake_time : new Date(0)
+    const dappHdlUnstakeTime = p.refundFromSelfDappHdl ? p.refundFromSelfDappHdl.unstake_time : new Date(0)
+    const maxUnstakeTime = dappUnstakeTime.getTime() > dappHdlUnstakeTime.getTime() ? dappUnstakeTime : dappHdlUnstakeTime
     details.push([
       {
         label: 'Amount Unstaking:',
-        value: formatAsset({ amount: p.refundFromSelf.amount, symbol: DAPP_SYMBOL }),
+        value: formatAsset({ amount: p.refundFromSelfAmount + p.refundFromSelfDappHdlAmount, symbol: DAPP_SYMBOL }),
       },
       {
         label: 'Time Remaining:',
-        value: formatUnstakeEndTime(p.refundFromSelf.unstake_time),
-      },
-    ]);
-  }
-
-  if (p.refundFromSelfDappHdl) {
-    details.push([
-      {
-        label: 'Amount Unstaking:',
-        value: formatAsset({ amount: p.refundFromSelfDappHdl.amount, symbol: DAPPHODL_SYMBOL }),
-      },
-      {
-        label: 'Time Remaining:',
-        value: formatUnstakeEndTime(p.refundFromSelfDappHdl.unstake_time),
+        value: formatUnstakeEndTime(maxUnstakeTime),
       },
     ]);
   }
@@ -92,6 +99,8 @@ const getCardDetails = (p: StakedPackage) => {
 
 const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
   const p = stakedPackage;
+  const { isUnstakeSelected, toggleIsUnstakeSelected } = p.packageStore;
+
   const onClick = () => {
     const selectedStakedPackage = p.packageStore.selectedStakedPackage;
     if (!selectedStakedPackage) return;
@@ -106,11 +115,25 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
       stakingBalanceFromSelfDappHdl: selectedStakedPackage.stakingBalanceFromSelfDappHdl,
     };
 
+    const stakePayload = {
+      provider: selectedStakedPackage.providerLowercased,
+      service: selectedStakedPackage.serviceLowercased,
+      package: selectedStakedPackage.packageId,
+      quantityDapp: p.packageStore.stakeValueDapp,
+      quantityDappHdl: p.packageStore.stakeValueDappHdl,
+      unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.unstakedDappHdlAmount,
+      unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedDappAmount,
+    };
+
     dialogStore.openTransactionDialog({
-      contentSuccess: <TransactionUnstakeSuccess {...unstakePayload} />,
-      contentPending: <TransactionUnstakePending {...unstakePayload} />,
+      contentSuccess: isUnstakeSelected ? <TransactionUnstakeSuccess {...unstakePayload} /> : <TransactionStakeSuccess {...stakePayload} />,
+      contentPending: isUnstakeSelected ? <TransactionUnstakePending {...unstakePayload} /> : <TransactionStakePending {...stakePayload} />,
       performTransaction: async () => {
-        const result = await unstakeTransaction(unstakePayload);
+        const result = await (
+          isUnstakeSelected
+          ? unstakeTransaction(unstakePayload)
+          : stakeTransaction(stakePayload)
+        );
         await p.packageStore.rootStore.profileStore.fetchInfo();
         return result;
       },
@@ -120,42 +143,58 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     });
   };
 
-  const stakedDapp = formatAsset(
-    { amount: p.stakingBalanceFromSelf, symbol: DAPP_SYMBOL },
+  const { unstakedDappAmount, unstakedDappHdlAmount } = p.packageStore.rootStore.profileStore;
+  const maxDapp = formatAsset(
+    { amount: isUnstakeSelected ? p.stakingBalanceFromSelf : unstakedDappAmount, symbol: DAPP_SYMBOL },
     { withSymbol: false },
   );
 
-  const stakedDappHdl = formatAsset(
-    { amount: p.stakingBalanceFromSelfDappHdl, symbol: DAPPHODL_SYMBOL },
+  const maxDappHdl = formatAsset(
+    { amount: isUnstakeSelected ? p.stakingBalanceFromSelfDappHdl : unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL },
     { withSymbol: false },
   );
+
+  const stakeUnstakeText = isUnstakeSelected ? 'UnStake' : 'Stake';
 
   return (
     <PackageCard
       package={stakedPackage}
       details={getCardDetails(p)}
       input={{
-        placeholder: 'UnStake Amount',
+        placeholder: `${stakeUnstakeText} Amount`,
       }}
       button={{
-        text: 'UnStake',
+        text: stakeUnstakeText,
         onClick,
       }}
       deprecated={p.isDeprecated}
       stakedDappAmount={p.stakingBalanceFromSelf}
       stakedDappHdlAmount={p.stakingBalanceFromSelfDappHdl}
       dappLabelButton={{
-        text: stakedDapp + ' Max',
+        text: maxDapp + ' Max',
         onClick: () => {
-          p.packageStore.stakeValueDapp = stakedDapp;
+          p.packageStore.stakeValueDapp = maxDapp;
         },
       }}
       dappHdlLabelButton={{
-        text: stakedDappHdl + ' Max',
+        text: maxDappHdl + ' Max',
         onClick: () => {
-          p.packageStore.stakeValueDappHdl = stakedDappHdl;
+          p.packageStore.stakeValueDappHdl = maxDappHdl;
         },
       }}
+      afterDetailsContainer={
+        p.isSelected &&
+        <ToggleWrapper>
+          <ToggleLabel isActive={!isUnstakeSelected}>Stake</ToggleLabel>
+          <ToggleButton
+            checked={isUnstakeSelected}
+            onClick={toggleIsUnstakeSelected}
+            alwaysActiveBg
+            size={24}
+          />
+          <ToggleLabel isActive={isUnstakeSelected} alignRight>UnStake</ToggleLabel>
+        </ToggleWrapper>
+      }
     />
   );
 };

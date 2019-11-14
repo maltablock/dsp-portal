@@ -56,7 +56,8 @@ export const TableRow = styled(TableHeader)`
     background-color: ${lightDarkValues('#f3f5f9', '#263040')};
   }
 
-  &:hover {
+  /* increase specifiers to overwrite background-color */
+  &&&:hover {
     background-color: #414dff;
     color: #fff;
   }
