@@ -115,10 +115,10 @@ class PackageStore {
     const nameBounds = getTableBoundsForName(accountInfo.account_name);
 
     // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service. ALL LITTLE ENDIAN (!)
-    // https://github.com/liquidapps-io/zeus-dapp-network/blob/9f0fd5d8cff78d7f429a6284aedeb23f45f21263/dapp-services/contracts/eos/dappservices/dappservices.cpp#L116
+    // https://github.com/liquidapps-io/zeus-sdk/blob/master/boxes/groups/dapp-network/dapp-services/contracts/eos/dappservices/dappservices.cpp#L205
     const accountExtBounds = {
       lower_bound: `0x${`0`.repeat(16)}${nameBounds.lower_bound}`,
-      upper_bound: `0x${`0`.repeat(16)}${nameBounds.upper_bound}`,
+      upper_bound: `0x${`F`.repeat(16)}${nameBounds.lower_bound}`,
     };
 
     // bounds for checksum256 are split into two 16 bytes little-endians
@@ -130,9 +130,11 @@ class PackageStore {
 
     // bounds for checksum256 are split into two 16 bytes little-endians
     // https://eosio.stackexchange.com/a/4344/118
+    // TODO: Add symbolCode for DAPP here which was introduced
+    // https://github.com/liquidapps-io/zeus-sdk/blob/master/boxes/groups/dapp-network/dapp-services/contracts/eos/dappservices/dappservices.cpp#L71
     const refundsDappHodlBounds = {
-      lower_bound: `${nameBounds.lower_bound}${`0`.repeat(48)}`,
-      upper_bound: `${nameBounds.upper_bound}${`0`.repeat(48)}`,
+      lower_bound: `${nameBounds.lower_bound}${`0`.repeat(16)}${`0`.repeat(32)}`,
+      upper_bound: `${nameBounds.upper_bound}${`0`.repeat(16)}${`0`.repeat(32)}`,
     };
 
     const [

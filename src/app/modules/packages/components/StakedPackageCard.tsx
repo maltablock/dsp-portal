@@ -13,6 +13,8 @@ import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
 import { secondsToTimeObject } from 'app/shared/utils/time';
 import { differenceInSeconds } from 'date-fns';
 import ToggleButton from 'app/shared/components/ToggleButton';
+import TransactionStakeSuccess from 'app/modules/transactions/components/TransactionStakeSuccess';
+import TransactionStakePending from 'app/modules/transactions/components/TransactionStakePending';
 
 const ToggleWrapper = styled.div`
   display: flex;
@@ -76,28 +78,19 @@ const getCardDetails = (p: StakedPackage) => {
     });
   }
 
-  if (p.refundFromSelf) {
+  if (p.refundFromSelf || p.refundFromSelfDappHdl) {
+    console.log(p.refundFromSelfDappHdl)
+    const dappUnstakeTime = p.refundFromSelf ? p.refundFromSelf.unstake_time : new Date(0)
+    const dappHdlUnstakeTime = p.refundFromSelfDappHdl ? p.refundFromSelfDappHdl.unstake_time : new Date(0)
+    const maxUnstakeTime = dappUnstakeTime.getTime() > dappHdlUnstakeTime.getTime() ? dappUnstakeTime : dappHdlUnstakeTime
     details.push([
       {
         label: 'Amount Unstaking:',
-        value: formatAsset({ amount: p.refundFromSelf.amount, symbol: DAPP_SYMBOL }),
+        value: formatAsset({ amount: p.refundFromSelfAmount + p.refundFromSelfDappHdlAmount, symbol: DAPP_SYMBOL }),
       },
       {
         label: 'Time Remaining:',
-        value: formatUnstakeEndTime(p.refundFromSelf.unstake_time),
-      },
-    ]);
-  }
-
-  if (p.refundFromSelfDappHdl) {
-    details.push([
-      {
-        label: 'Amount Unstaking:',
-        value: formatAsset({ amount: p.refundFromSelfDappHdl.amount, symbol: DAPPHODL_SYMBOL }),
-      },
-      {
-        label: 'Time Remaining:',
-        value: formatUnstakeEndTime(p.refundFromSelfDappHdl.unstake_time),
+        value: formatUnstakeEndTime(maxUnstakeTime),
       },
     ]);
   }
@@ -134,8 +127,8 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     };
 
     dialogStore.openTransactionDialog({
-      contentSuccess: <TransactionUnstakeSuccess {...unstakePayload} />,
-      contentPending: <TransactionUnstakePending {...unstakePayload} />,
+      contentSuccess: isUnstakeSelected ? <TransactionUnstakeSuccess {...unstakePayload} /> : <TransactionStakeSuccess {...stakePayload} />,
+      contentPending: isUnstakeSelected ? <TransactionUnstakePending {...unstakePayload} /> : <TransactionStakePending {...stakePayload} />,
       performTransaction: async () => {
         const result = await (
           isUnstakeSelected
@@ -151,13 +144,14 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     });
   };
 
-  const stakedDapp = formatAsset(
-    { amount: p.stakingBalanceFromSelf, symbol: DAPP_SYMBOL },
+  const { unstakedDappAmount, unstakedDappHdlAmount } = p.packageStore.rootStore.profileStore;
+  const maxDapp = formatAsset(
+    { amount: isUnstakeSelected ? p.stakingBalanceFromSelf : unstakedDappAmount, symbol: DAPP_SYMBOL },
     { withSymbol: false },
   );
 
-  const stakedDappHdl = formatAsset(
-    { amount: p.stakingBalanceFromSelfDappHdl, symbol: DAPPHODL_SYMBOL },
+  const maxDappHdl = formatAsset(
+    { amount: isUnstakeSelected ? p.stakingBalanceFromSelfDappHdl : unstakedDappHdlAmount, symbol: DAPPHODL_SYMBOL },
     { withSymbol: false },
   );
 
@@ -178,15 +172,15 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
       stakedDappAmount={p.stakingBalanceFromSelf}
       stakedDappHdlAmount={p.stakingBalanceFromSelfDappHdl}
       dappLabelButton={{
-        text: stakedDapp + ' Max',
+        text: maxDapp + ' Max',
         onClick: () => {
-          p.packageStore.stakeValueDapp = stakedDapp;
+          p.packageStore.stakeValueDapp = maxDapp;
         },
       }}
       dappHdlLabelButton={{
-        text: stakedDappHdl + ' Max',
+        text: maxDappHdl + ' Max',
         onClick: () => {
-          p.packageStore.stakeValueDappHdl = stakedDappHdl;
+          p.packageStore.stakeValueDappHdl = maxDappHdl;
         },
       }}
       afterDetailsContainer={
