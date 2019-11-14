@@ -1,16 +1,31 @@
 import React from 'react';
 import { observer } from 'mobx-react';
+import styled from 'styled-components';
 
 import StakedPackage from '../state/StakedPackage';
 import PackageCard from './PackageCard';
 import { formatAsset } from 'app/shared/eos';
 import { DialogStore } from 'app/modules/dialogs';
-import { unstakeTransaction } from 'app/modules/transactions/logic/transactions';
+import { unstakeTransaction, stakeTransaction } from 'app/modules/transactions/logic/transactions';
 import TransactionUnstakePending from 'app/modules/transactions/components/TransactionUnstakePending';
 import TransactionUnstakeSuccess from 'app/modules/transactions/components/TransactionUnstakeSuccess';
 import { DAPP_SYMBOL, DAPPHODL_SYMBOL } from 'app/shared/eos/constants';
 import { secondsToTimeObject } from 'app/shared/utils/time';
 import { differenceInSeconds } from 'date-fns';
+import ToggleButton from 'app/shared/components/ToggleButton';
+
+const ToggleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+`;
+
+const ToggleLabel = styled.div<{ isActive?: boolean, alignRight?: boolean }>`
+  width: 50%;
+  opacity: ${props => props.isActive ? 1 : 0.3};
+  text-align: ${props => props.alignRight ? 'right' : 'left'};
+  transition: 0.4s;
+`;
 
 type Props = {
   stakedPackage: StakedPackage;
@@ -92,6 +107,8 @@ const getCardDetails = (p: StakedPackage) => {
 
 const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
   const p = stakedPackage;
+  const { isUnstakeSelected, toggleIsUnstakeSelected } = p.packageStore;
+
   const onClick = () => {
     const selectedStakedPackage = p.packageStore.selectedStakedPackage;
     if (!selectedStakedPackage) return;
@@ -106,11 +123,25 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
       stakingBalanceFromSelfDappHdl: selectedStakedPackage.stakingBalanceFromSelfDappHdl,
     };
 
+    const stakePayload = {
+      provider: selectedStakedPackage.providerLowercased,
+      service: selectedStakedPackage.serviceLowercased,
+      package: selectedStakedPackage.packageId,
+      quantityDapp: p.packageStore.stakeValueDapp,
+      quantityDappHdl: p.packageStore.stakeValueDappHdl,
+      unstakedDappHdlAmount: p.packageStore.rootStore.profileStore.unstakedDappHdlAmount,
+      unstakedDappAmount: p.packageStore.rootStore.profileStore.unstakedDappAmount,
+    };
+
     dialogStore.openTransactionDialog({
       contentSuccess: <TransactionUnstakeSuccess {...unstakePayload} />,
       contentPending: <TransactionUnstakePending {...unstakePayload} />,
       performTransaction: async () => {
-        const result = await unstakeTransaction(unstakePayload);
+        const result = await (
+          isUnstakeSelected
+          ? unstakeTransaction(unstakePayload)
+          : stakeTransaction(stakePayload)
+        );
         await p.packageStore.rootStore.profileStore.fetchInfo();
         return result;
       },
@@ -130,15 +161,17 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
     { withSymbol: false },
   );
 
+  const stakeUnstakeText = isUnstakeSelected ? 'UnStake' : 'Stake';
+
   return (
     <PackageCard
       package={stakedPackage}
       details={getCardDetails(p)}
       input={{
-        placeholder: 'UnStake Amount',
+        placeholder: `${stakeUnstakeText} Amount`,
       }}
       button={{
-        text: 'UnStake',
+        text: stakeUnstakeText,
         onClick,
       }}
       deprecated={p.isDeprecated}
@@ -156,6 +189,19 @@ const StakedPackageCard = ({ stakedPackage, dialogStore }: Props) => {
           p.packageStore.stakeValueDappHdl = stakedDappHdl;
         },
       }}
+      afterDetailsContainer={
+        p.isSelected &&
+        <ToggleWrapper>
+          <ToggleLabel isActive={!isUnstakeSelected}>Stake</ToggleLabel>
+          <ToggleButton
+            checked={isUnstakeSelected}
+            onClick={toggleIsUnstakeSelected}
+            alwaysActiveBg
+            size={24}
+          />
+          <ToggleLabel isActive={isUnstakeSelected} alignRight>UnStake</ToggleLabel>
+        </ToggleWrapper>
+      }
     />
   );
 };

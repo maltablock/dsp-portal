@@ -66,6 +66,16 @@ class PackageStore {
   };
 
   /**
+   * Stake/UnStake toggle button for staked packages
+   */
+
+  @observable isUnstakeSelected = true;
+
+  @action toggleIsUnstakeSelected = () => {
+    this.isUnstakeSelected = !this.isUnstakeSelected;
+  }
+
+  /**
    * DAPP packages
    */
 

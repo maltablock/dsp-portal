@@ -15,6 +15,7 @@ import { observer } from 'mobx-react';
 import StakingIcon from 'app/shared/components/StakingIcon';
 import { lightDarkValues } from 'app/shared/styles/utils';
 import Checkbox from 'app/shared/components/Checkbox';
+import ToggleButton from 'app/shared/components/ToggleButton';
 
 const MOBILE_WIDTH = 671;
 
@@ -185,6 +186,7 @@ type Props = {
   stakedDappAmount: number;
   stakedDappHdlAmount: number;
   showStakingIcon?: boolean;
+  afterDetailsContainer?: React.ReactNode,
   deprecated?: boolean;
   dappLabelButton: {
     text: string;
@@ -220,6 +222,7 @@ class PackageCard extends React.Component<Props> {
       deprecated = false,
       dappLabelButton,
       dappHdlLabelButton,
+      afterDetailsContainer,
     } = this.props;
 
     const serviceIcon = iconByService[p.data.service] || iconByService.default;
@@ -250,6 +253,8 @@ class PackageCard extends React.Component<Props> {
             </DetailsBlock>
           ))}
         </DetailsWrapper>
+
+        {afterDetailsContainer}
 
         {p.isSelected && (
           <React.Fragment>
