@@ -114,12 +114,16 @@ class PackageStore {
 
     const nameBounds = getTableBoundsForName(accountInfo.account_name);
 
+    // for some reason some upper / lower bounds are not working anymore
+    // just fetch all rows now instead, and wait until EOS 2 is deployed
+    // https://github.com/EOSIO/eos/pull/7530
+
     // by_account_service consists of 128 bit: 64 bit encoded name, 64 bit encoded service. ALL LITTLE ENDIAN (!)
     // https://github.com/liquidapps-io/zeus-sdk/blob/master/boxes/groups/dapp-network/dapp-services/contracts/eos/dappservices/dappservices.cpp#L205
-    const accountExtBounds = {
-      lower_bound: `0x${`0`.repeat(16)}${nameBounds.lower_bound}`,
-      upper_bound: `0x${`F`.repeat(16)}${nameBounds.lower_bound}`,
-    };
+    // const accountExtBounds = {
+    //   lower_bound: `0x${`0`.repeat(16)}${nameBounds.lower_bound}`,
+    //   upper_bound: `0x${`F`.repeat(16)}${nameBounds.lower_bound}`,
+    // };
 
     // bounds for checksum256 are split into two 16 bytes little-endians
     // https://eosio.stackexchange.com/a/4344/118
@@ -145,14 +149,13 @@ class PackageStore {
       refundsDappHodlResults,
     ] = await Promise.all<any>(
       [
-        fetchRows<AccountExtRow>({
+        fetchAllRows<AccountExtRow>({
           code: DAPPSERVICES_CONTRACT,
           scope: `DAPP`,
           table: `accountext`,
-          index_position: `3`, // &accountext::by_account_service
-          key_type: `i128`,
-          lower_bound: `${accountExtBounds.lower_bound}`,
-          upper_bound: `${accountExtBounds.upper_bound}`,
+          index_position: `1`,
+          key_type: `i64`,
+          lower_bound: 0,
         }),
 
         // staked to logged in account through account itself
