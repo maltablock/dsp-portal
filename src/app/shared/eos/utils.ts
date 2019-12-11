@@ -44,7 +44,7 @@ export async function fetchAllRows<T>(
   const mergedOptions = {
     json: true,
     lower_bound: 0,
-    upper_bound: -1,
+    upper_bound: undefined,
     limit: 9999,
     ...options,
   };
@@ -61,7 +61,7 @@ export async function fetchAllRows<T>(
 
     if (!result.more || result.rows.length === 0) break;
 
-    lowerBound = result.rows[result.rows.length - 1][indexName] + 1;
+    lowerBound = result.next_key
   }
 
   return rows;
@@ -78,8 +78,8 @@ type ScopeResult = {
 export async function fetchAllScopes(contract: string, table: string): Promise<string[]> {
   const mergedOptions = {
     json: true,
-    lower_bound: 0,
-    upper_bound: -1,
+    lower_bound: undefined,
+    upper_bound: undefined,
     limit: 9999,
     code: contract, table
   };
