@@ -3,9 +3,6 @@ import { AccountExtRow, StakingTableRow, RefundsTableRow } from 'app/shared/typi
 import groupBy from 'lodash/groupBy';
 import get from 'lodash/get';
 
-
-
-
 type StakedPackagesFetchResults = {
   accountExtResults: AccountExtRow[];
   stakesDappHodlResults: StakingTableRow[];
@@ -54,8 +51,14 @@ export const aggregateStackedPackagesData = ({
       get(groupedRefundsDappHodl, `${identifier}.0`, undefined) as any,
     );
 
+    const { account, service, provider, package: _package, pending_package, ...otherStake } = stake
     const data = {
-      ...stake,
+      ...otherStake,
+      account: account,
+      service: service,
+      provider: provider,
+      package: _package,
+      pending_package: pending_package,
       balance,
       symbol,
       icon: '',

@@ -36,7 +36,7 @@ const TopBar = ({ location: { pathname } }: WithRouterProps) => {
         <MainNavigation>
           {
             ROUTES_LIST.map(({ path, text }) =>
-              <Link to={path}>
+              <Link key={path} to={path}>
                 <MainNavigationTab active={path === pathname}>
                   {text}
                 </MainNavigationTab>

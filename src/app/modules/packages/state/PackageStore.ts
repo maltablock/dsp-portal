@@ -201,7 +201,7 @@ class PackageStore {
       ),
     );
 
-    this.stakedPackages = aggregateStackedPackagesData({
+    let stakedPackages = aggregateStackedPackagesData({
       // on Kylin the secondary index works in a different way and returns all rows, filter by our account
       accountExtResults: accountExtResults.filter(accExt => accExt.account === accountInfo.account_name),
       stakesDappHodlResults,
@@ -209,6 +209,11 @@ class PackageStore {
       refundsDappHodlResults,
       refundsAccountResults,
     }).map(data => new StakedPackage(data, this));
+
+    // filter all packages that are broken
+    stakedPackages = stakedPackages.filter(p => !p.isBroken)
+
+    this.stakedPackages = stakedPackages
   };
 }
 

@@ -24,6 +24,16 @@ class StakedPackage extends PackageBase<IStakedPackageData> {
     return true;
   }
 
+  @computed get isBroken() {
+    // for some reason it's possible to have an accountsext table for a service
+    // that doesn't exist by preceding a valid service name with dots, like `.ipfsservice1`
+    const broken = !this.dappPackage
+    if(broken) {
+      console.warn(`Broken package found:`, this.providerLowercased, this.serviceLowercased, this.packageId)
+    }
+    return broken
+  }
+
   @computed get dappPackage() {
     const dappPackage = this.packageStore.dappPackages.find(dappPackage => {
       return this.isEqual(dappPackage)
