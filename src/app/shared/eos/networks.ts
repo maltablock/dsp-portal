@@ -27,7 +27,8 @@ const KylinNetwork: IEOSNetwork = createNetwork(
 );
 
 const MainNetwork: IEOSNetwork = createNetwork(
-  `https://eos.greymass.com:443`,
+  // `https://eos.greymass.com:443`,
+  `https://api.eossweden.org:443`,
   `aca376f206b8fc25a6ed44dbdc66547c36c6c33e3a119ffbeaef943642f0e906`,
 );
 

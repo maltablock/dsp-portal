@@ -1,6 +1,6 @@
 import { rpc } from './networks';
 
-const MAX_PAGINATION_FETCHES = 5;
+const MAX_PAGINATION_FETCHES = 20;
 
 // https://github.com/EOSIO/eosjs-api/blob/master/docs/api.md#eos.getTableRows
 type GetTableRowsOptions = {
@@ -61,7 +61,13 @@ export async function fetchAllRows<T>(
 
     if (!result.more || result.rows.length === 0) break;
 
-    lowerBound = result.next_key
+    // EOS 2.0 api
+    if(typeof result.next_key !== `undefined`) {
+      lowerBound = result.next_key
+    } else {
+      console.log(result.rows[result.rows.length - 1])
+      lowerBound = Number.parseInt(`${result.rows[result.rows.length - 1][indexName]}`) + 1;
+    }
   }
 
   return rows;
