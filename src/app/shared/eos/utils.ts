@@ -65,7 +65,6 @@ export async function fetchAllRows<T>(
     if(typeof result.next_key !== `undefined`) {
       lowerBound = result.next_key
     } else {
-      console.log(result.rows[result.rows.length - 1])
       lowerBound = Number.parseInt(`${result.rows[result.rows.length - 1][indexName]}`) + 1;
     }
   }
