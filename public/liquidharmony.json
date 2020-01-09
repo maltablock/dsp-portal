@@ -1,0 +1,31 @@
+{
+    "name": "liquidharmony",
+    "description": "LiquidHarmony includes all oracle related logic from the DAPP Network. This includes things like http fetches, IBC and XIBC fetches, vCPU and more",
+    "dsp_json_uri": "https://dsp.maltablock.org/dsp.json",
+    "logo":{
+      "logo_256": "https://maltablock.org/img/bp-json/maltablock_logo_256x256.png",
+      "logo_1024": "https://maltablock.org/img/bp-json/maltablock_logo_1024x1024.png",
+      "logo_svg": "https://maltablock.org/img/bp-json/maltablock_logo_1024x1024.svg"
+    },
+    "service_level_agreement": {
+        "availability":{
+            "uptime_9s": 5
+        },
+        "performance":{
+            "95": 500
+        }
+    },
+    "pinning":{
+        "ttl": 2400,
+        "public": false
+    },
+    "locations":[
+        {
+          "name": "Virgina",
+          "country": "US",
+          "latitude": 37.926868,
+          "longitude": -78.024902
+        }
+    ]
+}
+
