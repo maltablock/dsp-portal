@@ -116,9 +116,17 @@ class ProfileStore {
           loginParams = loginParamsCache;
           // for auto-login we need to call discover once
           // as eos-transit does not directly pass-down keyIndex, key to the ledger login function
-          try {
-            await getWallet().discover({ pathIndexList: [Number.parseInt(loginParams[2])] })
-          } catch {}
+          await Promise.race([
+            getWallet().discover({
+              pathIndexList: [Number.parseInt(loginParams[2])]
+            }),
+            new Promise((res, rej) =>
+              setTimeout(
+                () => rej(new Error(`Ledger discover timed out`)),
+                15000
+              )
+            )
+          ]);
         } else {
           const {
             data: { account, authorization, index, key },

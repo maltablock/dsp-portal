@@ -302,6 +302,7 @@ export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult>
   // change to DSP node for this action
   try {
     changeWalletRpcToDsp();
+
     const txResult = await getWallet().eosApi.transact(
       {
         actions: [
@@ -326,6 +327,23 @@ export const vClaim = async (payload: VClaimPayload): Promise<TransactionResult>
       },
       transactionOptions,
     );
+
+    // const txResult = await getWallet().eosApi.transact(
+    //   {
+    //     actions: [
+    //       createAction({
+    //         account: AIRDROPS_ACCOUNT,
+    //         name: 'readamount',
+    //         data: {
+    //           account: payload.accountToClaimFor,
+    //           token_contract: payload.tokenContract,
+    //         },
+    //       }),
+    //     ],
+    //   },
+    //   transactionOptions,
+    // );
+
     return txResult;
   } catch (err) {
     throw err;
