@@ -22,8 +22,12 @@ class AirdropStore {
     }
   }
 
+  private filterAirdrops(scopes:string[]) {
+  return scopes.filter(s => s !== `emanateoneos`)
+}
+
   @action async fetchAirdrops() {
-    const scopes = await fetchAllScopes(AIRDROPS_ACCOUNT, `airdrops`);
+    const scopes = this.filterAirdrops(await fetchAllScopes(AIRDROPS_ACCOUNT, `airdrops`));
     let airdropsData = await Promise.all(
       scopes.map(scope =>
         fetchRows<AirdropItemData>({

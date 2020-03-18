@@ -2,8 +2,8 @@ import { computed, observable, action } from 'mobx';
 import { fetchRows, getTableBoundsForNameAsValue } from 'app/shared/eos';
 import { AIRDROPS_ACCOUNT } from 'app/shared/eos/constants';
 import axios from 'axios';
-import emanateSrc from 'app/shared/assets/emanate_logo.svg'
-import tulipSrc from 'app/shared/assets/tulip_logo.svg'
+import emanateSrc from 'app/shared/assets/emanate_logo.svg';
+import tulipSrc from 'app/shared/assets/tulip_logo.svg';
 import liquidAppsSrc from 'app/shared/icons/liquidapps_logo.svg';
 
 export type AirdropItemData = {
@@ -24,7 +24,7 @@ export default class AirdropItem {
   @observable claimed: boolean = false;
 
   constructor(tokenContract, data: AirdropItemData) {
-    this.tokenContract = tokenContract
+    this.tokenContract = tokenContract;
     this.data = data;
   }
 
@@ -64,13 +64,7 @@ export default class AirdropItem {
           this.balance = Number.parseInt(response.data);
         })
         .catch(error => {
-          // AWS S3 responds with 403 Forbidden error when account entry does not exist
-          // which means account was never included in the snapshot or had a balance of 0
-          if(error.response && error.response.status === 403) {
-            this.balance = 0;
-            return;
-          }
-
+          this.balance = 0;
           console.error(error.message);
         }),
     ]);
@@ -98,13 +92,13 @@ export default class AirdropItem {
   }
 
   @computed get tokenLogoSrc() {
-    switch(this.tokenContract) {
+    switch (this.tokenContract) {
       case `emanateoneos`:
-        return emanateSrc
+        return emanateSrc;
       case `tulip.vr`:
-        return tulipSrc
+        return tulipSrc;
       default:
-        return liquidAppsSrc
+        return liquidAppsSrc;
     }
   }
 }
